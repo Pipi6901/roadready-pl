@@ -21,6 +21,7 @@
 | [06-monetization.md](docs/06-monetization.md) | Подписка, лимиты free-тарифа, требования сторов, аналитика |
 | [07-roadmap.md](docs/07-roadmap.md) | План по фазам, вехи, критерии готовности |
 | [08-risks-open-questions.md](docs/08-risks-open-questions.md) | Риски и вопросы, требующие решения заказчика |
+| [09-tech-stack.md](docs/09-tech-stack.md) | Стек с проверенными версиями, выбор биллинга, офлайн и медиа |
 
 ## Исходные материалы
 
