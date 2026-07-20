@@ -144,11 +144,12 @@ export default function DashboardScreen() {
               <Row style={{ gap: 16 }}>
                 <ProgressRing
                   value={progress.lessonsToday / DAILY_GOAL_LESSONS}
-                  label={`${progress.lessonsToday}/${DAILY_GOAL_LESSONS}`}
+                  current={Math.min(progress.lessonsToday, DAILY_GOAL_LESSONS)}
+                  max={DAILY_GOAL_LESSONS}
                 />
                 <View style={{ flex: 1, gap: 4 }}>
                   <Txt size={14} weight="600">
-                    {progress.lessonsToday}/{DAILY_GOAL_LESSONS} lessons done today
+                    {Math.min(progress.lessonsToday, DAILY_GOAL_LESSONS)}/{DAILY_GOAL_LESSONS} lessons done today
                   </Txt>
                   <Txt size={12} color={t.colors.textSecondary}>
                     {progress.goalMet

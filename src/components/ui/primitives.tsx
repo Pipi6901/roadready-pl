@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Pressable, type PressableProps, ScrollView, type ScrollViewProps, StyleSheet, Text,
+  Animated, Easing, Pressable, type PressableProps, ScrollView, type ScrollViewProps, StyleSheet, Text,
   type TextProps, type TextStyle, View, type ViewProps, type ViewStyle,
 } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
@@ -223,6 +223,25 @@ interface ProgressBarProps {
 export function ProgressBar({ value, height = 8, trackColor, fillColor }: ProgressBarProps) {
   const t = useTheme();
   const pct = Math.max(0, Math.min(1, value));
+  // Plain state (not Animated.View) drives the width: `Animated.createAnimatedComponent`
+  // force-injects a `collapsable` prop meant for the native driver, which
+  // react-native-web then leaks onto the DOM as an invalid attribute.
+  const [renderedPct, setRenderedPct] = React.useState(0);
+
+  React.useEffect(() => {
+    setRenderedPct(0);
+    const progress = new Animated.Value(0);
+    const id = progress.addListener(({ value: v }) => setRenderedPct(v));
+    Animated.timing(progress, {
+      toValue: pct,
+      duration: 900,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+    return () => progress.removeListener(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pct]);
+
   return (
     <View
       accessible
@@ -238,7 +257,7 @@ export function ProgressBar({ value, height = 8, trackColor, fillColor }: Progre
     >
       <View
         style={{
-          width: `${pct * 100}%`,
+          width: `${renderedPct * 100}%`,
           height: '100%',
           borderRadius: height / 2,
           backgroundColor: fillColor ?? t.colors.success,

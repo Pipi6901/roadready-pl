@@ -32,7 +32,19 @@ export function NavBar({ title, action = 'back', onAction }: NavBarProps) {
       }}
     >
       <Pressable
-        onPress={onAction ?? (() => router.back())}
+        onPress={
+          onAction ??
+          (() => {
+            // If this screen was reached without building up navigation history
+            // (deep link, hot reload, direct URL on web), there is nothing to
+            // pop back to — fall back to the tab home instead of a no-op.
+            if (router.canGoBack()) {
+              router.back();
+            } else {
+              router.replace('/(tabs)');
+            }
+          })
+        }
         accessibilityRole="button"
         accessibilityLabel={label}
         hitSlop={6}

@@ -1,15 +1,15 @@
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Alert, Pressable, View } from 'react-native';
+import { Alert, View } from 'react-native';
 
 import { Avatar } from '@/components/settings/Avatar';
 import { NavBar } from '@/components/settings/NavBar';
 import { formatDate, planLabel } from '@/components/settings/plan';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { SettingsSection, useCardShadow } from '@/components/settings/SettingsSection';
-import { Icon } from '@/components/ui/Icon';
-import { ProgressBar, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
+import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
+import { Slider } from '@/components/ui/Slider';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
@@ -18,7 +18,11 @@ import { useTheme } from '@/theme/ThemeProvider';
 
 const VOICE_SPEED_MIN = 0.5;
 const VOICE_SPEED_MAX = 2;
-const VOICE_SPEED_STEP = 0.1;
+// Matches the spacing between major and minor ticks, so the thumb can only
+// ever land exactly on one of them.
+const VOICE_SPEED_STEP = 0.125;
+const VOICE_SPEED_TICKS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+const VOICE_SPEED_MINOR_TICKS = [0.625, 0.875, 1.125, 1.375, 1.625, 1.875];
 
 /** "20:00" -> "8:00 PM". */
 function formatTime(hhmm: string): string {
@@ -79,22 +83,6 @@ export default function SettingsScreen() {
     );
   };
 
-  const onEditExamDate = () => {
-    // TODO: replace with the native date picker (goal-setting screen reuse).
-    Alert.alert(
-      'Test date',
-      settings.examDate
-        ? `Your test is set for ${formatDate(settings.examDate)}.`
-        : 'Set your test date to see a countdown and a readiness estimate.',
-      settings.examDate
-        ? [
-            { text: 'Close', style: 'cancel' },
-            { text: 'Clear date', style: 'destructive', onPress: () => settings.update({ examDate: null }) },
-          ]
-        : [{ text: 'OK' }],
-    );
-  };
-
   const onEditReminderTime = () => {
     // TODO: replace with the native time picker once notifications are wired.
     Alert.alert('Reminder time', `Daily reminder is set for ${formatTime(settings.reminderTime)}.`);
@@ -105,10 +93,10 @@ export default function SettingsScreen() {
     Alert.alert(doc, `${doc} will open here once the document is published.`);
   };
 
-  const setVoiceSpeed = (delta: number) => {
-    const next = Math.round((settings.voiceSpeed + delta) * 10) / 10;
-    settings.update({ voiceSpeed: Math.min(VOICE_SPEED_MAX, Math.max(VOICE_SPEED_MIN, next)) });
-  };
+  // Local draft so dragging feels instant; the store only writes once the
+  // finger lifts (see Slider's onSlidingComplete), not on every pixel moved.
+  const [voiceSpeedDraft, setVoiceSpeedDraft] = React.useState(settings.voiceSpeed);
+  React.useEffect(() => setVoiceSpeedDraft(settings.voiceSpeed), [settings.voiceSpeed]);
 
   return (
     <Screen>
@@ -161,7 +149,7 @@ export default function SettingsScreen() {
             <SettingsRow
               label="Test date"
               value={settings.daysUntilExam !== null ? `${settings.daysUntilExam} days away` : 'Not set'}
-              onPress={onEditExamDate}
+              onPress={() => router.push('/settings/exam-date')}
               last
             />
           </SettingsSection>
@@ -219,30 +207,23 @@ export default function SettingsScreen() {
           </SettingsSection>
 
           <SettingsSection title="Audio" icon="volume-2">
-            <SettingsRow label="Voice speed" value={`${settings.voiceSpeed.toFixed(1)}×`}>
-              {/* Stepper instead of a draggable slider: no slider dependency is
-                  installed, and −/+ buttons are the more accessible control. */}
-              <Row style={{ gap: 12 }}>
-                <SpeedButton
-                  icon="chevron-left"
-                  label="Decrease voice speed"
-                  disabled={settings.voiceSpeed <= VOICE_SPEED_MIN}
-                  onPress={() => setVoiceSpeed(-VOICE_SPEED_STEP)}
+            <SettingsRow label="Voice speed">
+              <View style={{ gap: 4 }}>
+                <Txt size={15} weight="700" align="center" color={t.colors.successDark}>
+                  {voiceSpeedDraft.toFixed(1)}×
+                </Txt>
+                <Slider
+                  min={VOICE_SPEED_MIN}
+                  max={VOICE_SPEED_MAX}
+                  step={VOICE_SPEED_STEP}
+                  ticks={VOICE_SPEED_TICKS}
+                  minorTicks={VOICE_SPEED_MINOR_TICKS}
+                  value={voiceSpeedDraft}
+                  onValueChange={setVoiceSpeedDraft}
+                  onSlidingComplete={(next) => settings.update({ voiceSpeed: next })}
+                  accessibilityLabel="Voice speed"
                 />
-                <View style={{ flex: 1 }}>
-                  <ProgressBar
-                    value={(settings.voiceSpeed - VOICE_SPEED_MIN) / (VOICE_SPEED_MAX - VOICE_SPEED_MIN)}
-                    height={6}
-                    fillColor={t.colors.success}
-                  />
-                </View>
-                <SpeedButton
-                  icon="chevron-right"
-                  label="Increase voice speed"
-                  disabled={settings.voiceSpeed >= VOICE_SPEED_MAX}
-                  onPress={() => setVoiceSpeed(VOICE_SPEED_STEP)}
-                />
-              </Row>
+              </View>
             </SettingsRow>
             <SettingsRow
               label="Auto-read questions"
@@ -266,37 +247,5 @@ export default function SettingsScreen() {
         </View>
       </ScreenScroll>
     </Screen>
-  );
-}
-
-function SpeedButton({
-  icon, label, onPress, disabled,
-}: {
-  icon: 'chevron-left' | 'chevron-right';
-  label: string;
-  onPress: () => void;
-  disabled: boolean;
-}) {
-  const t = useTheme();
-  return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      accessibilityState={{ disabled }}
-      hitSlop={8}
-      style={({ pressed }) => ({
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: t.colors.sage100,
-        opacity: disabled ? 0.4 : pressed ? 0.7 : 1,
-      })}
-    >
-      <Icon name={icon} size={18} color={t.colors.onSurfaceAlt} />
-    </Pressable>
   );
 }

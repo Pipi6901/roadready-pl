@@ -3,6 +3,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { SecondaryAction } from '@/components/learning/SecondaryAction';
+import { CountUpText } from '@/components/ui/CountUpText';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, ProgressBar, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { DAILY_GOAL_LESSONS } from '@/constants/rules';
@@ -46,10 +47,13 @@ export default function LessonCompleteScreen() {
     error: t.colors.error,
   };
 
-  const chips: { icon: IconName; value: string; label: string; bg: string; edge: string; fg: string }[] = [
+  const chips: {
+    icon: IconName; value: number; suffix?: string; celebrate?: boolean; label: string;
+    bg: string; edge: string; fg: string;
+  }[] = [
     {
       icon: 'check',
-      value: String(total),
+      value: total,
       label: 'Exercises',
       bg: t.colors.successBg,
       edge: t.colors.success,
@@ -57,7 +61,8 @@ export default function LessonCompleteScreen() {
     },
     {
       icon: 'zap',
-      value: String(xp),
+      value: xp,
+      celebrate: perfect,
       label: 'XP earned',
       bg: t.colors.amber50,
       edge: t.colors.amber,
@@ -65,7 +70,9 @@ export default function LessonCompleteScreen() {
     },
     {
       icon: 'target',
-      value: `${accuracy}%`,
+      value: accuracy,
+      suffix: '%',
+      celebrate: accuracy === 100,
       label: 'Accuracy',
       bg: t.colors.sage100,
       edge: t.colors.onSurfaceAlt,
@@ -206,7 +213,7 @@ export default function LessonCompleteScreen() {
             <View
               key={chip.label}
               accessible
-              accessibilityLabel={`${chip.label}: ${chip.value}`}
+              accessibilityLabel={`${chip.label}: ${chip.value}${chip.suffix ?? ''}`}
               style={{
                 flex: 1,
                 gap: 4,
@@ -237,9 +244,7 @@ export default function LessonCompleteScreen() {
               >
                 <Icon name={chip.icon} size={14} color={chip.fg} />
               </View>
-              <Txt size={17} weight="700">
-                {chip.value}
-              </Txt>
+              <CountUpText value={chip.value} suffix={chip.suffix} celebrate={chip.celebrate} size={17} />
               <Txt size={11} color={t.colors.textSecondary}>
                 {chip.label}
               </Txt>
@@ -254,7 +259,7 @@ export default function LessonCompleteScreen() {
               Daily goal
             </Txt>
             <Txt size={12} weight="600" color={t.colors.textSecondary}>
-              {progress.lessonsToday}/{DAILY_GOAL_LESSONS} lessons
+              {Math.min(progress.lessonsToday, DAILY_GOAL_LESSONS)}/{DAILY_GOAL_LESSONS} lessons
             </Txt>
           </Row>
           <ProgressBar value={progress.lessonsToday / DAILY_GOAL_LESSONS} />

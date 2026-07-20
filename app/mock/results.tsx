@@ -4,7 +4,8 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { SoftButton } from '@/components/practice/SoftButton';
 import { Icon } from '@/components/ui/Icon';
-import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
+import { Button, ProgressBar, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
+import { ProgressRing } from '@/components/ui/ProgressRing';
 import { mockSession, requiredToPass } from '@/features/practice/mockSession';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
@@ -55,9 +56,15 @@ export default function MockResultsScreen() {
         contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 10, paddingBottom: 4, gap: 14 }}
       >
         <View style={{ alignItems: 'center', gap: 8, paddingTop: 2 }}>
-          <Txt size={40} weight="700" color={attempt.passed ? t.colors.successDark : t.colors.error}>
-            {attempt.score}/{attempt.total}
-          </Txt>
+          <ProgressRing
+            value={attempt.total ? attempt.score / attempt.total : 0}
+            current={attempt.score}
+            max={attempt.total}
+            size={120}
+            thickness={12}
+            labelSize={26}
+            fillColor={verdictColor}
+          />
 
           {/* Icon + word carry the verdict; the colour only reinforces it. */}
           <Row
@@ -100,16 +107,11 @@ export default function MockResultsScreen() {
                   {row.pct}%
                 </Txt>
               </Row>
-              <View style={{ height: 7, borderRadius: 4, backgroundColor: t.colors.sage100, overflow: 'hidden' }}>
-                <View
-                  style={{
-                    height: 7,
-                    width: `${row.pct}%`,
-                    borderRadius: 4,
-                    backgroundColor: row.pct >= 80 ? t.colors.success : t.colors.amber,
-                  }}
-                />
-              </View>
+              <ProgressBar
+                value={row.pct / 100}
+                height={7}
+                fillColor={row.pct >= 80 ? t.colors.success : t.colors.amber}
+              />
             </View>
           ))}
         </View>

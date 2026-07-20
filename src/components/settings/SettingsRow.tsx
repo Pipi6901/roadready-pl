@@ -1,8 +1,9 @@
 import React from 'react';
-import { Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
+import { Toggle } from '@/components/ui/Toggle';
 import { useTheme } from '@/theme/ThemeProvider';
 
 interface SettingsRowProps {
@@ -83,16 +84,12 @@ export function SettingsRow({
         {right}
 
         {hasSwitch ? (
-          <Switch
-            value={switchValue}
+          <Toggle
+            value={!!switchValue}
             onValueChange={onSwitchChange}
             disabled={disabled}
             accessibilityLabel={label}
-            accessibilityState={{ checked: switchValue, disabled }}
             accessibilityHint={accessibilityHint}
-            trackColor={{ false: t.colors.border, true: t.colors.accent }}
-            thumbColor={t.colors.surface}
-            ios_backgroundColor={t.colors.border}
           />
         ) : null}
 

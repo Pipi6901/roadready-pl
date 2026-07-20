@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, View } from 'react-native';
+import { View } from 'react-native';
 
 import { BilingualText } from '@/components/BilingualText';
 import { Icon } from '@/components/ui/Icon';
@@ -8,8 +8,8 @@ import { useTheme } from '@/theme/ThemeProvider';
 
 interface FeedbackSheetProps {
   correct: boolean;
-  /** Animated translateY driven by the lesson screen. */
-  translateY: Animated.Value;
+  /** translateY (px) driven by the lesson screen's slide animation. */
+  translateY: number;
   explanation: string;
   explanationTranslation?: string | null;
   /** Right answer, shown only after a wrong pick. */
@@ -36,7 +36,7 @@ export function FeedbackSheet({
   const tone = correct ? t.colors.successDark : t.colors.error;
 
   return (
-    <Animated.View
+    <View
       accessibilityViewIsModal={visible}
       accessibilityElementsHidden={!visible}
       importantForAccessibility={visible ? 'yes' : 'no-hide-descendants'}
@@ -144,6 +144,6 @@ export function FeedbackSheet({
       ) : null}
 
       <Button label={correct ? 'Continue' : 'Got it'} onPress={onContinue} />
-    </Animated.View>
+    </View>
   );
 }

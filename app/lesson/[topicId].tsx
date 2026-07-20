@@ -42,16 +42,38 @@ export default function LessonScreen() {
     [content, topicId, lessonIndex],
   );
 
-  const [index, setIndex] = React.useState(0);
+  // The working queue, not `questions` directly: a wrong answer pushes its
+  // question to the back for ONE retry instead of advancing (Duolingo-style).
+  // If it's still wrong on that retry, it's dropped rather than requeued
+  // again — otherwise a question the learner is genuinely stuck on would
+  // cycle forever and the lesson could never end. It still lands in weak
+  // spots (via recordAnswer's `inReview` flag below) for later practice.
+  const [queue, setQueue] = React.useState(questions);
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [answered, setAnswered] = React.useState(false);
-  const [correctCount, setCorrectCount] = React.useState(0);
+  // Only the first attempt at each question counts toward the lesson's score
+  // — retries just have to be gotten right to finish, they don't earn it back.
+  const [firstAttempt, setFirstAttempt] = React.useState<Record<string, boolean>>({});
+  // How many times each question has been attempted, to cap retries at one.
+  const [attemptCounts, setAttemptCounts] = React.useState<Record<string, number>>({});
   const [flagged, setFlagged] = React.useState<Record<string, boolean>>({});
   const [sheetHeight, setSheetHeight] = React.useState(0);
+  // Permanently-cleared count so far, for the progress dots.
+  const masteredCount = questions.length - queue.length;
 
   const sheetY = React.useRef(new Animated.Value(SHEET_HIDDEN)).current;
+  // Mirrored into plain state so FeedbackSheet can use a regular View instead
+  // of Animated.View: `Animated.createAnimatedComponent` force-injects a
+  // `collapsable` prop meant for the native driver, which react-native-web
+  // then leaks onto the DOM as an invalid attribute.
+  const [sheetYValue, setSheetYValue] = React.useState(SHEET_HIDDEN);
 
-  const question = questions[index];
+  React.useEffect(() => {
+    const id = sheetY.addListener(({ value }) => setSheetYValue(value));
+    return () => sheetY.removeListener(id);
+  }, [sheetY]);
+
+  const question = queue[0];
   const isCorrect = !!question && selectedId === question.correctOptionId;
   // Gate only between cards: answering the last free question must still show
   // its feedback rather than swapping the screen out mid-sentence.
@@ -85,7 +107,8 @@ export default function LessonScreen() {
 
     setSelectedId(optionId);
     setAnswered(true);
-    if (correct) setCorrectCount((c) => c + 1);
+    setFirstAttempt((prev) => (question.id in prev ? prev : { ...prev, [question.id]: correct }));
+    setAttemptCounts((prev) => ({ ...prev, [question.id]: (prev[question.id] ?? 0) + 1 }));
 
     progress.recordAnswer(question.id, correct);
     subscription.countQuestion();
@@ -97,41 +120,56 @@ export default function LessonScreen() {
       toValue: 0,
       duration: 260,
       easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
   };
 
   const handleContinue = () => {
-    const isLast = index >= questions.length - 1;
-
-    if (isLast) {
-      const { xp } = progress.completeLesson(topicId, correctCount);
-      router.replace({
-        pathname: '/lesson/complete',
-        params: {
-          topicId,
-          total: String(questions.length),
-          correct: String(correctCount),
-          xp: String(xp),
-        },
-      });
-      return;
-    }
+    const wasCorrect = isCorrect;
+    const finishedQuestion = question;
 
     Animated.timing(sheetY, {
       toValue: SHEET_HIDDEN,
       duration: 180,
       easing: Easing.in(Easing.cubic),
-      useNativeDriver: true,
-    }).start(() => {
-      setIndex((i) => i + 1);
+      useNativeDriver: false,
+    }).start();
+
+    // Driven from a plain timer rather than the animation callback so
+    // advancing the queue never depends on requestAnimationFrame ticking
+    // (e.g. a backgrounded tab) — matches the same fix used on the splash
+    // screen's exit animation.
+    setTimeout(() => {
+      const rest = queue.slice(1);
+      // Correct -> permanently done. Wrong on the first try -> one more
+      // shot at the back of the line. Still wrong on the retry -> give up on
+      // it for this lesson instead of looping forever.
+      const attempts = attemptCounts[finishedQuestion.id] ?? 1;
+      const nextQueue = wasCorrect || attempts >= 2 ? rest : [...rest, finishedQuestion];
+
+      if (nextQueue.length === 0) {
+        const finalCorrect = Object.values(firstAttempt).filter(Boolean).length;
+        const { xp } = progress.completeLesson(topicId, finalCorrect);
+        router.replace({
+          pathname: '/lesson/complete',
+          params: {
+            topicId,
+            total: String(questions.length),
+            correct: String(finalCorrect),
+            xp: String(xp),
+          },
+        });
+        return;
+      }
+
+      setQueue(nextQueue);
       setSelectedId(null);
       setAnswered(false);
-    });
+    }, 180);
   };
 
   const handleExit = () => {
-    const started = index > 0 || answered;
+    const started = masteredCount > 0 || answered;
     if (!started) {
       router.back();
       return;
@@ -226,8 +264,8 @@ export default function LessonScreen() {
     <Screen>
       <LessonTopBar
         total={questions.length}
-        index={index}
-        answered={answered ? index + 1 : index}
+        index={masteredCount}
+        answered={answered ? masteredCount + (isCorrect ? 1 : 0) : masteredCount}
         onClose={handleExit}
         onFlag={() => setFlagged((f) => ({ ...f, [question.id]: !f[question.id] }))}
         flagged={!!flagged[question.id]}
@@ -298,7 +336,7 @@ export default function LessonScreen() {
 
       <FeedbackSheet
         correct={isCorrect}
-        translateY={sheetY}
+        translateY={sheetYValue}
         explanation={question.explanation}
         explanationTranslation={question.translation?.explanation}
         correctAnswer={correctOption?.text ?? ''}
