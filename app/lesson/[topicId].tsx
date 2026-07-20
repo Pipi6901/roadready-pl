@@ -6,11 +6,12 @@ import { Alert, Animated, Easing, Pressable, ScrollView, View } from 'react-nati
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BilingualText } from '@/components/BilingualText';
-import { AnswerOptionCard, type AnswerOptionState } from '@/components/learning/AnswerOptionCard';
+import { AnswerOption, type AnswerOptionState } from '@/components/AnswerOption';
 import { FeedbackSheet } from '@/components/learning/FeedbackSheet';
 import { LessonTopBar } from '@/components/learning/LessonTopBar';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, Txt } from '@/components/ui/primitives';
+import { PAYWALL_ENABLED } from '@/constants/flags';
 import { XP_PER_CORRECT } from '@/constants/rules';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
@@ -186,7 +187,9 @@ export default function LessonScreen() {
           </Txt>
 
           <View style={{ alignSelf: 'stretch', gap: 10, marginTop: 8 }}>
-            <Button label="See Pro plans" onPress={() => router.push('/paywall')} />
+            {PAYWALL_ENABLED ? (
+              <Button label="See Pro plans" onPress={() => router.push('/paywall')} />
+            ) : null}
             <Button label="Back to topics" variant="ghost" onPress={() => router.back()} />
           </View>
         </View>
@@ -212,7 +215,7 @@ export default function LessonScreen() {
 
   const optionState = (optionId: string): AnswerOptionState => {
     if (!answered) return 'idle';
-    if (optionId === selectedId) return isCorrect ? 'selected-correct' : 'selected-incorrect';
+    if (optionId === selectedId) return isCorrect ? 'correct' : 'incorrect';
     if (optionId === question.correctOptionId) return 'revealed-correct';
     return 'idle';
   };
@@ -280,7 +283,7 @@ export default function LessonScreen() {
 
         <View style={{ gap: 10 }}>
           {question.options.map((option, i) => (
-            <AnswerOptionCard
+            <AnswerOption
               key={option.id}
               letter={LETTERS[i] ?? option.id}
               text={option.text}

@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
-import { AnswerOption } from '@/components/practice/AnswerOption';
+import { AnswerOption } from '@/components/AnswerOption';
 import { SoftButton } from '@/components/practice/SoftButton';
 import { BilingualText } from '@/components/BilingualText';
 import { Icon } from '@/components/ui/Icon';

@@ -7,6 +7,7 @@ import { GradientScreen } from '@/components/onboarding/GradientScreen';
 import { OnboardingButton } from '@/components/onboarding/OnboardingButton';
 import { Icon } from '@/components/ui/Icon';
 import { Row, Txt } from '@/components/ui/primitives';
+import { PAYWALL_ENABLED } from '@/constants/flags';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -71,6 +72,13 @@ export default function GoalScreen() {
   };
 
   const finish = (date: string | null) => {
+    // With the paywall off, this is the last onboarding step: mark the flow
+    // done here instead of letting the paywall do it.
+    if (!PAYWALL_ENABLED) {
+      update({ examDate: date, onboarded: true });
+      router.replace('/(tabs)');
+      return;
+    }
     update({ examDate: date });
     router.push('/paywall');
   };

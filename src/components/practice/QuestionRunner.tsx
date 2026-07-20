@@ -10,7 +10,7 @@ import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { DisplayQuestion } from '@/types/content';
-import { AnswerOption, type AnswerOptionState } from './AnswerOption';
+import { AnswerOption, type AnswerOptionState } from '@/components/AnswerOption';
 import { cardShadow } from './shadow';
 
 interface QuestionRunnerProps {

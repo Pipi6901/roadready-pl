@@ -22,6 +22,7 @@
 | [07-roadmap.md](docs/07-roadmap.md) | План по фазам, вехи, критерии готовности |
 | [08-risks-open-questions.md](docs/08-risks-open-questions.md) | Риски и вопросы, требующие решения заказчика |
 | [09-tech-stack.md](docs/09-tech-stack.md) | Стек с проверенными версиями, выбор биллинга, офлайн и медиа |
+| [11-feature-flags.md](docs/11-feature-flags.md) | Что выключено флагами и как включить обратно |
 
 ## Исходные материалы
 

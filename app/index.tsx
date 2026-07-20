@@ -3,6 +3,7 @@ import React from 'react';
 import { Pressable, useWindowDimensions, View } from 'react-native';
 
 import { DecoLayer, DotGrid, type DecoItem } from '@/components/onboarding/Decor';
+import { ONBOARDING_ENABLED, ONBOARDING_SKIP_DEFAULTS } from '@/constants/flags';
 import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
 import { useSettings } from '@/store/SettingsProvider';
@@ -41,13 +42,29 @@ export default function SplashScreen() {
   const t = useTheme();
   const router = useRouter();
   const { width, height } = useWindowDimensions();
-  const { ready, onboarded } = useSettings();
+  const { ready, onboarded, update } = useSettings();
   const [elapsed, setElapsed] = React.useState(false);
 
   const go = React.useCallback(() => {
     if (!ready) return;
+
+    // Onboarding is switched off until it is wired through Adapty. Its screens
+    // are untouched and still reachable by URL — only this gate skips them,
+    // seeding the defaults onboarding would otherwise have collected.
+    if (!ONBOARDING_ENABLED) {
+      if (!onboarded) {
+        update({
+          onboarded: true,
+          countryCode: ONBOARDING_SKIP_DEFAULTS.countryCode,
+          localeCode: ONBOARDING_SKIP_DEFAULTS.localeCode,
+        });
+      }
+      router.replace('/(tabs)');
+      return;
+    }
+
     router.replace(onboarded ? '/(tabs)' : '/welcome');
-  }, [ready, onboarded, router]);
+  }, [ready, onboarded, update, router]);
 
   React.useEffect(() => {
     const id = setTimeout(() => setElapsed(true), AUTO_ADVANCE_MS);

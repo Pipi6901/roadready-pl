@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { HAZARD_ENABLED as HAZARD_FLAG, PAYWALL_ENABLED } from '@/constants/flags';
 import { FREE_QUESTIONS_PER_DAY } from '@/constants/rules';
 import { KEYS, load, save } from './storage';
 
@@ -106,13 +107,19 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   const value = useMemo<SubscriptionContextValue>(() => {
     const isPro = state.status === 'trial' || state.status === 'active';
     const usedToday = state.dailyQuestionCount[dayKey()] ?? 0;
+
+    // With the paywall switched off there is no way to buy anything, so gating
+    // features would just break the app. Everything is unlocked until billing
+    // is connected — see src/constants/flags.ts.
+    const unlocked = !PAYWALL_ENABLED || isPro;
+
     return {
       ready,
       state,
       isPro,
-      questionsLeftToday: isPro ? Infinity : Math.max(0, FREE_QUESTIONS_PER_DAY - usedToday),
+      questionsLeftToday: unlocked ? Infinity : Math.max(0, FREE_QUESTIONS_PER_DAY - usedToday),
       can: (feature) => {
-        if (isPro) return feature !== 'hazard' || HAZARD_ENABLED;
+        if (unlocked) return feature !== 'hazard' || HAZARD_ENABLED;
         return false;
       },
       startTrial,
@@ -129,8 +136,10 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
  * Hazard Perception ships behind a flag (ADR-006): the clips are part of the
  * DVSA licence pack we do not have yet. Promising a paid feature that cannot be
  * used is a straight path to an App Review rejection.
+ *
+ * Re-exported from the flag module so existing imports keep working.
  */
-export const HAZARD_ENABLED = false;
+export const HAZARD_ENABLED = HAZARD_FLAG;
 
 export function useSubscription(): SubscriptionContextValue {
   const ctx = useContext(SubscriptionContext);
