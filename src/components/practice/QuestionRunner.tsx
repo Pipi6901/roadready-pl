@@ -342,7 +342,7 @@ function SummaryView({
       icon: 'target',
       iconColor: t.colors.onSurfaceAlt,
       bg: t.colors.sage100,
-      edge: t.colors.blue800,
+      edge: t.colors.onSurfaceAlt,
       value: `${accuracy}%`,
       label: 'Accuracy',
     },

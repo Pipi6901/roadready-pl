@@ -26,6 +26,10 @@ export interface Palette {
   /** Foreground (icons, letters) drawn ON sage/surfaceAlt fills. In light mode
    *  this equals blue800; in dark mode it must invert, or it goes unreadable. */
   onSurfaceAlt: string;
+  /** Foreground drawn ON the deep-blue brand fill (avatars, logo badge, topic
+   *  nodes). Light in BOTH themes — the fill stays dark either way, so this must
+   *  not follow textInverse, which flips to near-black in dark mode. */
+  onBlue: string;
 
   // Surfaces
   bg: string;
@@ -92,6 +96,7 @@ const light: Palette = {
   blue800: '#123A5C',
   blue900: '#0B2A44',
   onSurfaceAlt: '#123A5C',
+  onBlue: '#FFFFFF',
 
   bg: '#F7FAF8',
   surface: '#FFFFFF',
@@ -150,6 +155,7 @@ const dark: Palette = {
   blue800: '#16324B',
   blue900: '#0E2439',
   onSurfaceAlt: '#BFD8EC',
+  onBlue: '#FFFFFF',
 
   bg: '#101613',
   surface: '#1A231F',

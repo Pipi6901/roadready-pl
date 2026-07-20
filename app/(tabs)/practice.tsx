@@ -34,7 +34,7 @@ export default function PracticeScreen() {
       icon: 'check',
       label: `${mockAttempts} completed`,
       bg: t.colors.sage100,
-      fg: t.colors.blue800,
+      fg: t.colors.onSurfaceAlt,
     },
   ];
   if (!can('mock_test')) mockBadges.push(proBadge);

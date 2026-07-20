@@ -24,7 +24,7 @@ export default function MockSetupScreen() {
     {
       icon: 'list-checks',
       iconBg: t.colors.sage100,
-      iconColor: t.colors.blue800,
+      iconColor: t.colors.onSurfaceAlt,
       label: 'Questions',
       value: `${questionCount}`,
     },
@@ -71,7 +71,7 @@ export default function MockSetupScreen() {
               cardShadow(t, 12, 4, 0.2),
             ]}
           >
-            <Icon name="clipboard-check" size={38} color={t.colors.textInverse} />
+            <Icon name="clipboard-check" size={38} color={t.colors.onBlue} />
           </View>
         </View>
 

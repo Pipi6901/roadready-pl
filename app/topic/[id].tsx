@@ -152,7 +152,7 @@ export default function TopicDetailScreen() {
             {lessons.map(({ index, state }) => {
               const actionable = state === 'current';
               const badge = {
-                completed: { bg: t.colors.blue800, edge: t.colors.blue900, edgeWidth: 3, fg: t.colors.textInverse },
+                completed: { bg: t.colors.blue800, edge: t.colors.blue900, edgeWidth: 3, fg: t.colors.onBlue },
                 current: { bg: t.colors.sage100, edge: t.colors.accent, edgeWidth: 2, fg: t.colors.accentDark },
                 locked: { bg: t.colors.sage50, edge: t.colors.border, edgeWidth: 2, fg: t.colors.textMuted },
               }[state];

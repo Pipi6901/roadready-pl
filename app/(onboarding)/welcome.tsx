@@ -112,7 +112,7 @@ export default function WelcomeScreen() {
             elevation: 10,
           }}
         >
-          <Icon name="car-front" size={58} color={t.colors.textInverse} />
+          <Icon name="car-front" size={58} color={t.colors.onBlue} />
         </View>
       </View>
 

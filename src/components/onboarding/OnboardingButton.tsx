@@ -28,7 +28,7 @@ export function OnboardingButton({
   const palette =
     variant === 'accent'
       ? { bg: t.colors.accent, edge: t.colors.accentDark, fg: t.colors.textInverse, edgeWidth: 3 }
-      : { bg: t.colors.sage100, edge: t.colors.sage100, fg: t.colors.blue800, edgeWidth: 0 };
+      : { bg: t.colors.sage100, edge: t.colors.sage100, fg: t.colors.onSurfaceAlt, edgeWidth: 0 };
 
   return (
     <Pressable

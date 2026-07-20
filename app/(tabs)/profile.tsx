@@ -73,8 +73,8 @@ export default function ProfileScreen() {
       value: `${progress.accuracy}%`,
       label: 'Accuracy',
       bg: t.colors.sage100,
-      edge: t.colors.blue800,
-      fg: t.colors.blue800,
+      edge: t.colors.onSurfaceAlt,
+      fg: t.colors.onSurfaceAlt,
     },
   ];
 

@@ -42,7 +42,7 @@ export function TopicNode({ state, icon, name, mastered, total, onPress }: Topic
       bg: t.colors.nodeCompleted,
       edge: t.colors.blue900,
       edgeWidth: 4,
-      fg: t.colors.textInverse,
+      fg: t.colors.onBlue,
       iconName: 'check',
     },
     current: {

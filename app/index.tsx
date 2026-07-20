@@ -129,7 +129,7 @@ export default function SplashScreen() {
               elevation: 8,
             }}
           >
-            <Icon name="car-front" size={46} color={t.colors.textInverse} />
+            <Icon name="car-front" size={46} color={t.colors.onBlue} />
           </View>
         </View>
 

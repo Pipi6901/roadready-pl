@@ -41,7 +41,7 @@ export function Avatar({ name, size, radius, fontSize, edge = 3 }: AvatarProps) 
         borderBottomColor: t.colors.blue900,
       }}
     >
-      <Txt size={fontSize} weight="700" color={t.colors.textInverse}>
+      <Txt size={fontSize} weight="700" color={t.colors.onBlue}>
         {initials(name)}
       </Txt>
     </View>
