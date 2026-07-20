@@ -1,0 +1,74 @@
+<frame name="Language Selection" id=bptHH layout=vertical width=375 height=812 fill={"type": "gradient", "gradientType": "linear", "enabled": true, "rotation": 135, "size": {"height": 1}, "colors": [{"color": "$bg", "position": 0}, {"color": "$sage-100", "position": 1}]} x=8615 y=728 clip=True>
+  <icon name="Deco" id=lbRVe width=18 height=18 fill=$decoration-color icon=message-circle library=lucide x=330 y=90 layoutPosition=absolute rotation=10>
+  <icon name="Deco" id=LmVhf width=20 height=20 fill=$decoration-color icon=globe library=lucide x=25 y=15 layoutPosition=absolute rotation=-6.000000000000001>
+  <frame name="Status Bar" id=RdYuc padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=m2x0Td fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=lQ1ue fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Content" id=NM4SK layout=vertical gap=14 padding=[12, 20, 10, 20] width=fill_container height=fill_container clip=True>
+    <text name="Title" id=e9h0zy width=fill_container fill=$text-primary fontSize=22 fontWeight=700 textGrowth=fixed-width content=Choose your translation language>
+    <text name="Info Text" id=Ngdee width=fill_container fill=$text-secondary fontSize=13 fontWeight=normal textGrowth=fixed-width content=Questions will show in English + your chosen language>
+    <frame name="English Only Option" id=S7qd3 gap=12 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$sage-50 stroke=$accent-lime strokeWidth=2>
+      <icon name="EN Icon" id=E8WrC width=20 height=20 fill=$primary-800 icon=languages library=lucide>
+      <text name="EN Text" id=Tat1G fill=$text-primary fontSize=14 fontWeight=700 content=English only (no translation)>
+      <icon name="EN Check" id=FFiMd width=20 height=20 fill=$accent-lime-dark icon=circle-check library=lucide>
+    <frame name="Language Grid" id=mbS0e layout=vertical gap=10 width=fill_container height=fill_container clip=True>
+      <frame name="Grid Row 0" id=Q0PdKt gap=10 width=fill_container>
+        <frame name="🇵🇱 Polski Cell" id=nZQ20 layout=vertical gap=4 padding=8 justifyContent=center alignItems=center width=fill_container height=64 cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Flag" id=aMhMV layout=none width=28 height=20 cornerRadius=3 clip=True>
+            <rectangle name="" id=rQaJy width=28 height=10 fill=#FFFFFF x=0 y=0>
+            <rectangle name="" id=B0VOnZ width=28 height=10 fill=#DC143C x=0 y=10>
+          <text name="Lang Text" id=NqlQo width=fill_container fill=$text-primary fontSize=12 fontWeight=600 textAlign=center textGrowth=fixed-width content=Polski>
+        <frame name="🇵🇰 اردو Cell" id=JRNyE layout=vertical gap=4 padding=8 justifyContent=center alignItems=center width=fill_container height=64 cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Flag" id=FVXXf layout=none width=28 height=20 cornerRadius=3 clip=True>
+            <rectangle name="" id=x8Cp8 width=7 height=20 fill=#FFFFFF x=0 y=0>
+            <rectangle name="" id=VhNbi width=21 height=20 fill=#01411C x=7 y=0>
+            <ellipse name="" id=H2ZuzR width=8 height=8 fill=#FFFFFF x=15 y=6>
+            <ellipse name="" id=xNwtf width=8 height=8 fill=#01411C x=17 y=6>
+            <path name="" id=f5HVM width=4 height=4 fill=#FFFFFF x=22 y=8>
+          <text name="Lang Text" id=Amy77 width=fill_container fill=$text-primary fontSize=12 fontWeight=600 textAlign=center textGrowth=fixed-width content=Urdu>
+        <frame name="🇮🇳 ਪੰਜਾਬੀ Cell" id=wxUKE layout=vertical gap=4 padding=8 justifyContent=center alignItems=center width=fill_container height=64 cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Flag" id=sjOYt layout=none width=28 height=20 cornerRadius=3 clip=True>
+            <rectangle name="" id=tTqVh width=28 height=6.7 fill=#FF9933 x=0 y=0>
+            <rectangle name="" id=e1OKW width=28 height=6.6 fill=#FFFFFF x=0 y=6.7>
+            <rectangle name="" id=NWscV width=28 height=6.7 fill=#138808 x=0 y=13.3>
+            <ellipse name="" id=zHPVe width=4 height=4 fill=#000088 x=12 y=8>
+          <text name="Lang Text" id=rQrri width=fill_container fill=$text-primary fontSize=12 fontWeight=600 textAlign=center textGrowth=fixed-width content=Punjabi>
+      <frame name="Grid Row 1" id=N5SzH gap=10 width=fill_container>
+        <frame name="🇮🇳 हिन्दी Cell" id=h3r4V layout=vertical gap=4 padding=8 justifyContent=center alignItems=center width=fill_container height=64 cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Flag" id=b37jGH layout=none width=28 height=20 cornerRadius=3 clip=True>
+            <rectangle name="" id=eXL89 width=28 height=6.7 fill=#FF9933 x=0 y=0>
+            <rectangle name="" id=CXLtR width=28 height=6.6 fill=#FFFFFF x=0 y=6.7>
+            <rectangle name="" id=X5hgE width=28 height=6.7 fill=#138808 x=0 y=13.3>
+            <ellipse name="" id=csPMz width=4 height=4 fill=#000088 x=12 y=8>
+          <text name="Lang Text" id=r4Psnm width=fill_container fill=$text-primary fontSize=12 fontWeight=600 textAlign=center textGrowth=fixed-width content=हिन्दी>
+        <frame name="🇪🇸 Español Cell" id=lMO2o layout=vertical gap=4 padding=8 justifyContent=center alignItems=center width=fill_container height=64 cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Flag" id=pssKD layout=none width=28 height=20 cornerRadius=3 clip=True>
+            <rectangle name="" id=l13Wr width=28 height=5 fill=#AA151B x=0 y=0>
+            <rectangle name="" id=vkk7L width=28 height=10 fill=#F1BF00 x=0 y=5>
+            <rectangle name="" id=y6oj2v width=28 height=5 fill=#AA151B x=0 y=15>
+          <text name="Lang Text" id=zF2z8 width=fill_container fill=$text-primary fontSize=12 fontWeight=600 textAlign=center textGrowth=fixed-width content=Español>
+        <frame name="🌎 Español (LatAm) Cell" id=OeFXA layout=vertical gap=4 padding=8 justifyContent=center alignItems=center width=fill_container height=64 cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Flag" id=UUNyH layout=vertical justifyContent=center alignItems=center width=28 height=20 cornerRadius=10 fill=$sage-100>
+            <icon name="Globe Icon" id=Y9S6M width=15 height=15 fill=$primary-800 icon=earth library=lucide>
+          <text name="Lang Text" id=dtqIg width=fill_container fill=$text-primary fontSize=12 fontWeight=600 textAlign=center textGrowth=fixed-width content=Español (LatAm)>
+      <frame name="Grid Row 2" id=W8fAax gap=10 width=fill_container>
+        <frame name="🇵🇹 Português Cell" id=Zjorg layout=vertical gap=4 padding=8 justifyContent=center alignItems=center width=fill_container height=64 cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Flag" id=Sp3TB layout=none width=28 height=20 cornerRadius=3 clip=True>
+            <rectangle name="" id=chPes width=11 height=20 fill=#046A38 x=0 y=0>
+            <rectangle name="" id=PppdE width=17 height=20 fill=#DA291C x=11 y=0>
+            <ellipse name="" id=EAGzl width=8 height=8 fill=#FFCC00 x=7 y=6>
+          <text name="Lang Text" id=q7mNUO width=fill_container fill=$text-primary fontSize=12 fontWeight=600 textAlign=center textGrowth=fixed-width content=Português>
+        <frame name="🇧🇷 Português (BR) Cell" id=w3CpcZ layout=vertical gap=4 padding=8 justifyContent=center alignItems=center width=fill_container height=64 cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Flag" id=Gj4bM layout=none width=28 height=20 cornerRadius=3 clip=True>
+            <rectangle name="" id=GYz8D width=28 height=20 fill=#009739 x=0 y=0>
+            <rectangle name="" id=zPgH0 width=16 height=14 fill=#FEDD00 x=6 y=3>
+            <ellipse name="" id=L9DXh width=6 height=6 fill=#012169 x=11 y=7>
+          <text name="Lang Text" id=Jk553 width=fill_container fill=$text-primary fontSize=12 fontWeight=600 textAlign=center textGrowth=fixed-width content=Português (BR)>
+        <frame name="🇸🇦 العربية Cell" id=WwU3A layout=vertical gap=4 padding=8 justifyContent=center alignItems=center width=fill_container height=64 cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Flag" id=l22Qd layout=none width=28 height=20 cornerRadius=3 clip=True>
+            <rectangle name="" id=RcqXL width=28 height=20 fill=#006C35 x=0 y=0>
+            <rectangle name="" id=PXWki width=18 height=2 fill=#FFFFFF x=5 y=15>
+          <text name="Lang Text" id=l1vA4b width=fill_container fill=$text-primary fontSize=12 fontWeight=600 textAlign=center textGrowth=fixed-width content=العربية>
+  <frame name="Actions" id=P2Ep1k layout=vertical padding=[14, 20, 20, 20] width=fill_container>
+    <frame name="Continue Button" id=kRyz8 layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+      <text name="Continue Label" id=Ugsl2 fill=$text-inverse fontSize=15 fontWeight=700 content=Continue>

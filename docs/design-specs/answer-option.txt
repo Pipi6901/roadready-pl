@@ -1,0 +1,5 @@
+<frame name="Answer Option" id=Dv0Gz gap=12 padding=16 justifyContent=space_between alignItems=center width=335 cornerRadius=16 fill=$surface stroke=$border strokeWidth=1.5 x=152 y=-356 reusable=True>
+  <frame name="Text Col" id=iDluz layout=vertical gap=2 width=fill_container>
+    <text name="EN Text" id=aDbYJ width=fill_container fill=$text-primary fontSize=15 fontWeight=600 textGrowth=fixed-width content=A closing tag>
+    <text name="Translation Text" id=xL4lT width=fill_container fill=$text-secondary fontSize=12 fontWeight=normal textGrowth=fixed-width content=Un tag de cierre>
+  <icon name="Status Icon" id=BRkyG width=20 height=20 fill=$primary-600 icon=circle-check library=lucide x=0 y=0>

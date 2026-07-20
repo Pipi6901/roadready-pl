@@ -1,0 +1,71 @@
+<frame name="Topic Detail" id=PQJdR layout=vertical width=375 height=812 fill=$bg x=1790 y=-164 clip=True>
+  <frame name="Status Bar" id=RFluC padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=uCx3y fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=R0J6c fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Nav Bar" id=sSf06 padding=[0, 20] alignItems=center width=fill_container height=52>
+    <frame name="Back Button" id=E7nuM layout=vertical justifyContent=center alignItems=center width=36 height=36 cornerRadius=18 fill=$surface stroke=$border strokeWidth=1>
+      <icon name="Back Icon" id=gcSAq width=20 height=20 fill=$text-primary icon=chevron-left library=lucide>
+  <frame name="Content" id=D3wnP6 layout=vertical gap=24 padding=[8, 20, 24, 20] width=fill_container height=fill_container clip=True>
+    <frame name="Hero" id=ey8jk layout=vertical gap=10 alignItems=center width=fill_container>
+      <frame name="Topic Icon Box" id=y0rF5 layout=vertical justifyContent=center alignItems=center width=88 height=88 cornerRadius=28 fill=$primary-800 stroke=$primary-900 strokeWidth={"bottom": 4} effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4433", "offset": {"x": 0, "y": 4}, "blur": 12}>
+        <icon name="Topic Icon" id=asaaE width=42 height=42 fill=$text-inverse icon=car-front library=lucide>
+      <text name="Topic Name" id=Vh65O fill=$text-primary fontSize=24 fontWeight=700 content=Motorways>
+      <frame name="Progress Wrap" id=f7Tvz layout=vertical gap=6 alignItems=center width=220>
+        <frame name="Progress Bar" id=Fn9I3 width=fill_container height=8 cornerRadius=4 fill=$sage-100>
+          <frame name="Progress Fill" id=Yj2eR width=88 height=8 cornerRadius=4 fill=$success-lime>
+          <frame name="Progress Empty" id=jdOA3 width=fill_container height=8>
+        <text name="Progress Text" id=vIyuE fill=$text-secondary fontSize=12 fontWeight=normal content=8/20 questions mastered>
+    <frame name="Stats Row" id=V4mhd gap=12 width=fill_container>
+      <frame name="Accuracy Card" id=b8mykB layout=vertical gap=6 padding=14 width=fill_container cornerRadius=$radius-md fill=$sage-50 stroke=$sage-100 strokeWidth=1>
+        <frame name="Accuracy Top" id=ahnUA gap=6 alignItems=center>
+          <icon name="Accuracy Icon" id=oHdy6 width=16 height=16 fill=$primary-800 icon=target library=lucide>
+          <text name="Accuracy Label" id=fOJz6 fill=$text-secondary fontSize=12 fontWeight=normal content=Accuracy>
+        <text name="Accuracy Value" id=i2cRF fill=$text-primary fontSize=20 fontWeight=700 content=82%>
+      <frame name="Weak Card" id=nIxdg layout=vertical gap=6 padding=14 width=fill_container cornerRadius=$radius-md fill=$sage-50 stroke=$sage-100 strokeWidth=1>
+        <frame name="Weak Top" id=F1dJPN gap=6 alignItems=center>
+          <icon name="Weak Icon" id=Mhvwf width=16 height=16 fill=$error icon=trending-down library=lucide>
+          <text name="Weak Label" id=cQtzN fill=$text-secondary fontSize=12 fontWeight=normal content=Weakest topic>
+        <text name="Weak Value" id=x7Faqw fill=$text-primary fontSize=16 fontWeight=700 content=Overtaking>
+    <frame name="Lessons Section" id=P1K6E1 layout=vertical gap=12 width=fill_container height=fill_container>
+      <text name="Section Title" id=Lmh8X fill=$text-primary fontSize=16 fontWeight=700 content=Lessons>
+      <frame name="Lessons List" id=WlEGq layout=vertical gap=10 width=fill_container height=fill_container clip=True>
+        <frame name="Lesson 1 Row" id=HF2ge gap=12 padding=14 alignItems=center width=fill_container cornerRadius=$radius-md fill=$sage-50 stroke=$sage-100 strokeWidth=1>
+          <frame name="Badge" id=KHb91 layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=$primary-800 stroke=$primary-900 strokeWidth={"bottom": 3} effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4433", "offset": {"x": 0, "y": 2}, "blur": 6}>
+            <icon name="Badge Icon" id=FBKME width=16 height=16 fill=$text-inverse icon=check library=lucide>
+          <frame name="Text Col" id=CO5kF layout=vertical gap=2 width=fill_container>
+            <text name="Lesson Title" id=eXErI fill=$text-primary fontSize=14 fontWeight=600 content=Lesson 1>
+            <text name="Lesson Status" id=FG52T fill=$text-secondary fontSize=12 fontWeight=normal content=Completed>
+          <icon name="Chevron" id=gJtiW width=18 height=18 fill=$text-muted icon=chevron-right library=lucide>
+        <frame name="Lesson 2 Row" id=cRYkw gap=12 padding=14 alignItems=center width=fill_container cornerRadius=$radius-md fill=$sage-50 stroke=$sage-100 strokeWidth=1>
+          <frame name="Badge" id=B1rMc layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=$primary-800 stroke=$primary-900 strokeWidth={"bottom": 3} effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4433", "offset": {"x": 0, "y": 2}, "blur": 6}>
+            <icon name="Badge Icon" id=ddsHW width=16 height=16 fill=$text-inverse icon=check library=lucide>
+          <frame name="Text Col" id=a86Ifq layout=vertical gap=2 width=fill_container>
+            <text name="Lesson Title" id=P8tSm fill=$text-primary fontSize=14 fontWeight=600 content=Lesson 2>
+            <text name="Lesson Status" id=B6Y52W fill=$text-secondary fontSize=12 fontWeight=normal content=Completed>
+          <icon name="Chevron" id=qx7Sw width=18 height=18 fill=$text-muted icon=chevron-right library=lucide>
+        <frame name="Lesson 3 Row" id=c7cBcc gap=12 padding=14 alignItems=center width=fill_container cornerRadius=$radius-md fill=$sage-50 stroke=$sage-100 strokeWidth=1>
+          <frame name="Badge" id=R39l5 layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=$sage-100 stroke=$accent-lime strokeWidth=2 effect={"type": "shadow", "shadowType": "outer", "color": "#2679AD40", "offset": {"x": 0, "y": 2}, "blur": 8}>
+            <text name="Badge Number" id=ZvNiM fill=$accent-lime-dark fontSize=13 fontWeight=700 content=3>
+          <frame name="Text Col" id=EFVC2 layout=vertical gap=2 width=fill_container>
+            <text name="Lesson Title" id=i5jqjS fill=$text-primary fontSize=14 fontWeight=600 content=Lesson 3>
+            <text name="Lesson Status" id=HJt05 fill=$text-secondary fontSize=12 fontWeight=normal content=In progress>
+          <icon name="Chevron" id=jyDj4 width=18 height=18 fill=$text-muted icon=chevron-right library=lucide>
+        <frame name="Lesson 4 Row" id=ExWXq gap=12 padding=14 alignItems=center width=fill_container cornerRadius=$radius-md fill=$sage-50 stroke=$sage-100 strokeWidth=1>
+          <frame name="Badge" id=jhVIu layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=$sage-50 stroke=$border strokeWidth={"bottom": 2} effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 2}, "blur": 5}>
+            <text name="Badge Number" id=OcjRv fill=$text-muted fontSize=13 fontWeight=700 content=4>
+          <frame name="Text Col" id=bIwgc layout=vertical gap=2 width=fill_container>
+            <text name="Lesson Title" id=qrQlE fill=$text-primary fontSize=14 fontWeight=600 content=Lesson 4>
+            <text name="Lesson Status" id=h2dOb fill=$text-secondary fontSize=12 fontWeight=normal content=Not started>
+          <icon name="Chevron" id=akQXo width=18 height=18 fill=$text-muted icon=chevron-right library=lucide>
+        <frame name="Lesson 5 Row" id=fKYYe gap=12 padding=14 alignItems=center width=fill_container cornerRadius=$radius-md fill=$sage-50 stroke=$sage-100 strokeWidth=1>
+          <frame name="Badge" id=eOveJ layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=$sage-50 stroke=$border strokeWidth={"bottom": 2} effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 2}, "blur": 5}>
+            <text name="Badge Number" id=TYYE1 fill=$text-muted fontSize=13 fontWeight=700 content=5>
+          <frame name="Text Col" id=UnRQI layout=vertical gap=2 width=fill_container>
+            <text name="Lesson Title" id=ShbNo fill=$text-primary fontSize=14 fontWeight=600 content=Lesson 5>
+            <text name="Lesson Status" id=g8rFy fill=$text-secondary fontSize=12 fontWeight=normal content=Not started>
+          <icon name="Chevron" id=nAyN6 width=18 height=18 fill=$text-muted icon=chevron-right library=lucide>
+  <frame name="Actions" id=MjF58 layout=vertical gap=10 padding=[14, 20, 20, 20] width=fill_container fill=$bg stroke=$border strokeWidth={"top": 1}>
+    <frame name="Start Next Button" id=BoZxt layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+      <text name="Start Next Label" id=psfKH fill=$text-inverse fontSize=15 fontWeight=700 content=Start next lesson>
+    <frame name="Review Mistakes Button" id=uIyyq layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$sage-100>
+      <text name="Review Mistakes Label" id=a0JhmQ fill=$accent-lime-dark fontSize=15 fontWeight=700 content=Review mistakes>

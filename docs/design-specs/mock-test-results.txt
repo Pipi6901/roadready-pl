@@ -1,0 +1,79 @@
+<frame name="Mock Test Results" id=Hhmvl layout=vertical width=375 height=812 fill=$bg x=5430 y=728 clip=True>
+  <frame name="Status Bar" id=i7SZBf padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=Dunka fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=UwpiH fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Content" id=e2kGjW layout=vertical gap=14 padding=[10, 20, 4, 20] width=fill_container height=fill_container clip=True>
+    <frame name="Hero" id=a9NJh layout=vertical gap=8 padding=[2, 0, 0, 0] alignItems=center width=fill_container>
+      <text name="Score Big" id=BqoSL fill=$success-lime-dark fontSize=40 fontWeight=700 content=47/50>
+      <frame name="Status Pill" id=kDs1h gap=6 padding=[6, 14] alignItems=center cornerRadius=16 fill=$lime-50>
+        <icon name="Status Icon" id=qyWkj width=16 height=16 fill=$success-lime-dark icon=circle-check library=lucide>
+        <text name="Status Label" id=O95HY fill=$success-lime-dark fontSize=14 fontWeight=700 content=Passed!>
+      <text name="Pass Reminder" id=z3FfPe fill=$text-secondary fontSize=12 fontWeight=normal content=43/50 needed to pass>
+    <frame name="Topic Section" id=PO8Jw layout=vertical gap=7 width=fill_container>
+      <text name="Topic Title" id=e80WOo fill=$text-primary fontSize=15 fontWeight=700 content=Accuracy by topic>
+      <frame name="Road Signs Row" id=hizxN layout=vertical gap=4 width=fill_container>
+        <frame name="Label Row" id=s3Osx justifyContent=space_between width=fill_container>
+          <text name="Name" id=Ds1Ef fill=$text-primary fontSize=13 fontWeight=normal content=Road Signs>
+          <text name="Pct" id=Hisk4 fill=$text-primary fontSize=13 fontWeight=700 content=100%>
+        <frame name="Bar" id=I7b71 width=fill_container height=7 cornerRadius=4 fill=$sage-100>
+          <frame name="Bar Fill" id=BTvjR width=315 height=7 cornerRadius=4 fill=$success-lime>
+          <frame name="Bar Empty" id=IThjo width=fill_container height=7>
+      <frame name="Junctions Row" id=G1GpE layout=vertical gap=4 width=fill_container>
+        <frame name="Label Row" id=D1Y0p justifyContent=space_between width=fill_container>
+          <text name="Name" id=t3ffx fill=$text-primary fontSize=13 fontWeight=normal content=Junctions>
+          <text name="Pct" id=hPz0g fill=$text-primary fontSize=13 fontWeight=700 content=90%>
+        <frame name="Bar" id=IpOMB width=fill_container height=7 cornerRadius=4 fill=$sage-100>
+          <frame name="Bar Fill" id=VMLgG width=283 height=7 cornerRadius=4 fill=$success-lime>
+          <frame name="Bar Empty" id=onmON width=fill_container height=7>
+      <frame name="Motorways Row" id=iEmo9 layout=vertical gap=4 width=fill_container>
+        <frame name="Label Row" id=O83se justifyContent=space_between width=fill_container>
+          <text name="Name" id=d02jpa fill=$text-primary fontSize=13 fontWeight=normal content=Motorways>
+          <text name="Pct" id=q3l2a fill=$text-primary fontSize=13 fontWeight=700 content=100%>
+        <frame name="Bar" id=OJW4H width=fill_container height=7 cornerRadius=4 fill=$sage-100>
+          <frame name="Bar Fill" id=h5C5o width=315 height=7 cornerRadius=4 fill=$success-lime>
+          <frame name="Bar Empty" id=IENWc width=fill_container height=7>
+      <frame name="Hazard Awareness Row" id=IoDZm layout=vertical gap=4 width=fill_container>
+        <frame name="Label Row" id=hqvA4 justifyContent=space_between width=fill_container>
+          <text name="Name" id=AShzI fill=$text-primary fontSize=13 fontWeight=normal content=Hazard Awareness>
+          <text name="Pct" id=btMCl fill=$text-primary fontSize=13 fontWeight=700 content=90%>
+        <frame name="Bar" id=gPKHm width=fill_container height=7 cornerRadius=4 fill=$sage-100>
+          <frame name="Bar Fill" id=lho2J width=283 height=7 cornerRadius=4 fill=$success-lime>
+          <frame name="Bar Empty" id=QT8Sf width=fill_container height=7>
+      <frame name="Rules of the Road Row" id=boajT layout=vertical gap=4 width=fill_container>
+        <frame name="Label Row" id=VjG1D justifyContent=space_between width=fill_container>
+          <text name="Name" id=Lz505 fill=$text-primary fontSize=13 fontWeight=normal content=Rules of the Road>
+          <text name="Pct" id=WpRRb fill=$text-primary fontSize=13 fontWeight=700 content=90%>
+        <frame name="Bar" id=UA8Bc width=fill_container height=7 cornerRadius=4 fill=$sage-100>
+          <frame name="Bar Fill" id=qUciY width=283 height=7 cornerRadius=4 fill=$success-lime>
+          <frame name="Bar Empty" id=urSEx width=fill_container height=7>
+    <frame name="Mistakes Section" id=UcQuT layout=vertical gap=10 width=fill_container height=fill_container clip=True>
+      <text name="Mistakes Title" id=hvybv fill=$text-primary fontSize=15 fontWeight=700 content=Incorrect answers (3)>
+      <frame name="Mistakes List" id=X9XZT layout=vertical gap=8 width=fill_container>
+        <frame name="Mistake 6" id=pKTFC layout=vertical gap=10 padding=14 width=fill_container cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Top Row" id=BfTJr gap=10 width=fill_container>
+            <text name="Q Number" id=FVu7u fill=$error fontSize=13 fontWeight=700 content=Q6>
+            <text name="Q Text" id=nrhHC width=fill_container fill=$text-primary fontSize=13 fontWeight=normal textGrowth=fixed-width content=Hazard Awareness — spotting hazards>
+          <frame name="Review Row" id=xUtp7 gap=2 justifyContent=end alignItems=center width=fill_container>
+            <text name="Review Link" id=Wl5Uw fill=$primary-800 fontSize=12 fontWeight=700 content=Review>
+            <icon name="Review Chevron" id=kLweL width=14 height=14 fill=$primary-800 icon=chevron-right library=lucide>
+        <frame name="Mistake 22" id=HTJ2T layout=vertical gap=10 padding=14 width=fill_container cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Top Row" id=KYrof gap=10 width=fill_container>
+            <text name="Q Number" id=EYi0y fill=$error fontSize=13 fontWeight=700 content=Q22>
+            <text name="Q Text" id=EamKp width=fill_container fill=$text-primary fontSize=13 fontWeight=normal textGrowth=fixed-width content=Junctions — right of way rules>
+          <frame name="Review Row" id=o1Cw5W gap=2 justifyContent=end alignItems=center width=fill_container>
+            <text name="Review Link" id=ispQZ fill=$primary-800 fontSize=12 fontWeight=700 content=Review>
+            <icon name="Review Chevron" id=AWqYa width=14 height=14 fill=$primary-800 icon=chevron-right library=lucide>
+        <frame name="Mistake 40" id=NZ3L9 layout=vertical gap=10 padding=14 width=fill_container cornerRadius=$radius-md fill=$surface stroke=$border strokeWidth=1>
+          <frame name="Top Row" id=GeVFO gap=10 width=fill_container>
+            <text name="Q Number" id=nQaRx fill=$error fontSize=13 fontWeight=700 content=Q40>
+            <text name="Q Text" id=VWH7x width=fill_container fill=$text-primary fontSize=13 fontWeight=normal textGrowth=fixed-width content=Rules of the Road — motorway signals>
+          <frame name="Review Row" id=gDokL gap=2 justifyContent=end alignItems=center width=fill_container>
+            <text name="Review Link" id=V9ALF fill=$primary-800 fontSize=12 fontWeight=700 content=Review>
+            <icon name="Review Chevron" id=HVoDy width=14 height=14 fill=$primary-800 icon=chevron-right library=lucide>
+  <frame name="Actions" id=ZrSRa layout=vertical gap=8 padding=[14, 20, 20, 20] width=fill_container fill=$bg stroke=$border strokeWidth={"top": 1}>
+    <frame name="Review All Button" id=GvVA9 layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+      <text name="Review All Label" id=v2chUv fill=$text-inverse fontSize=15 fontWeight=700 content=Review All Mistakes>
+    <frame name="Try Again Button" id=Dm9vd layout=vertical padding=[13, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$sage-100>
+      <text name="Try Again Label" id=odqQT fill=$primary-800 fontSize=14 fontWeight=700 content=Try Again>
+    <frame name="Back Link" id=fXx5X layout=vertical padding=[6, 0] justifyContent=center alignItems=center width=fill_container>
+      <text name="Back Label" id=z6Taqa fill=$text-secondary fontSize=13 fontWeight=600 content=Back to Practice>

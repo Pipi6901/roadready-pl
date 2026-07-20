@@ -1,0 +1,59 @@
+<frame name="Dashboard" id=QEzQT layout=vertical width=375 height=812 fill=$bg x=880 y=-164 clip=True>
+  <frame name="Header Panel" id=HIhAX layout=vertical gap=16 padding=[0, 20, 22, 20] width=fill_container cornerRadius=[0, 0, 28, 28] fill=$sage-50 effect={"type": "shadow", "shadowType": "outer", "color": "#0000000F", "offset": {"x": 0, "y": 2}, "blur": 12}>
+    <frame name="Status Bar" id=g6VHY padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+      <text name="Time" id=c6HUSN fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+      <text name="Status Icons" id=GF8FS fill=$text-secondary fontSize=13 fontWeight=normal content=••• 🔋>
+    <frame name="Top Section" id=XhPYc layout=vertical gap=14 width=fill_container>
+      <text name="Greeting" id=m0UHt fill=$text-primary fontSize=22 fontWeight=700 content=Good morning, Alex>
+      <frame name="Stats Row" id=Ii61n gap=12 width=fill_container>
+        <frame name="Streak Pill" id=yKy4i gap=6 padding=[10, 14] alignItems=center width=fill_container cornerRadius=20 fill=$amber-50>
+          <icon name="Flame Icon" id=IP0vW width=18 height=18 fill=$amber icon=flame library=lucide>
+          <text name="Streak Text" id=n9OBL fill=$text-primary fontSize=13 fontWeight=600 content=5 day streak>
+        <frame name="XP Pill" id=Az4QD gap=6 padding=[10, 14] alignItems=center width=fill_container cornerRadius=20 fill=$amber-50>
+          <icon name="Star Icon" id=hkdEM width=18 height=18 fill=$amber icon=star library=lucide>
+          <text name="XP Text" id=xRqvf fill=$text-primary fontSize=13 fontWeight=600 content=1,240 XP>
+      <frame name="Streak Calendar" id=xu5ab justifyContent=space_between width=fill_container>
+        <frame name="Day M" id=zy5ro layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$amber stroke=$amber-dark strokeWidth={"bottom": 3} effect={"type": "shadow", "shadowType": "outer", "color": "#B9832E40", "offset": {"x": 0, "y": 2}, "blur": 5}>
+          <text name="Day Label" id=T3LA3v fill=#FFFFFF fontSize=11 fontWeight=600 content=M>
+        <frame name="Day T" id=gQaqq layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$amber stroke=$amber-dark strokeWidth={"bottom": 3} effect={"type": "shadow", "shadowType": "outer", "color": "#B9832E40", "offset": {"x": 0, "y": 2}, "blur": 5}>
+          <text name="Day Label" id=R8kOuF fill=#FFFFFF fontSize=11 fontWeight=600 content=T>
+        <frame name="Day W" id=h0Cv2X layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$amber stroke=$amber-dark strokeWidth={"bottom": 3} effect={"type": "shadow", "shadowType": "outer", "color": "#B9832E40", "offset": {"x": 0, "y": 2}, "blur": 5}>
+          <text name="Day Label" id=EbQnz fill=#FFFFFF fontSize=11 fontWeight=600 content=W>
+        <frame name="Day T" id=b5rp04 layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$amber stroke=$amber-dark strokeWidth={"bottom": 3} effect={"type": "shadow", "shadowType": "outer", "color": "#B9832E40", "offset": {"x": 0, "y": 2}, "blur": 5}>
+          <text name="Day Label" id=K3uzkI fill=#FFFFFF fontSize=11 fontWeight=600 content=T>
+        <frame name="Day F" id=Y77ZpP layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$amber stroke=$amber-dark strokeWidth={"bottom": 3} effect={"type": "shadow", "shadowType": "outer", "color": "#B9832E40", "offset": {"x": 0, "y": 2}, "blur": 5}>
+          <text name="Day Label" id=kH40e fill=#FFFFFF fontSize=11 fontWeight=600 content=F>
+        <frame name="Day S" id=BIabo layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$surface stroke=$border strokeWidth={"bottom": 2} effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 1}, "blur": 3}>
+          <text name="Day Label" id=EPNn7 fill=$text-muted fontSize=11 fontWeight=600 content=S>
+        <frame name="Day S" id=H7kcmj layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$surface stroke=$border strokeWidth={"bottom": 2} effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 1}, "blur": 3}>
+          <text name="Day Label" id=w8aGHP fill=$text-muted fontSize=11 fontWeight=600 content=S>
+  <frame name="Content" id=i21Nj layout=vertical gap=24 padding=[8, 20, 20, 20] width=fill_container height=fill_container>
+    <frame name="Continue Learning Section" id=Bjr6s layout=vertical gap=12 width=fill_container>
+      <text name="Section Title" id=oEF9a fill=$text-primary fontSize=16 fontWeight=700 content=Continue Learning>
+      <frame name="Topic Card" id=D2h9Wg layout=vertical gap=12 padding=16 width=fill_container cornerRadius=$radius-lg fill=$sage-50 stroke=$sage-100 strokeWidth=1>
+        <frame name="Card Top" id=srTve gap=12 alignItems=center width=fill_container>
+          <frame name="Icon Box" id=d0GShL layout=vertical justifyContent=center alignItems=center width=44 height=44 cornerRadius=$radius-sm fill=$sage-100 stroke=$sage-200 strokeWidth={"bottom": 3} effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4426", "offset": {"x": 0, "y": 2}, "blur": 6}>
+            <icon name="Topic Icon" id=c0HLcj width=22 height=22 fill=$primary-800 icon=traffic-cone library=lucide>
+          <text name="Topic Name" id=A7tMMa fill=$text-primary fontSize=16 fontWeight=600 content=Road Signs>
+        <frame name="Progress Bar" id=y7cqF width=fill_container height=8 cornerRadius=4 fill=$sage-100>
+          <frame name="Progress Fill" id=c9zRP width=187 height=8 cornerRadius=4 fill=$success-lime>
+          <frame name="Progress Empty" id=oc238 width=fill_container height=8>
+        <text name="Progress Text" id=w8LiMx fill=$text-secondary fontSize=13 fontWeight=normal content=12/20 lessons complete>
+        <frame name="Continue Button" id=PxZQx layout=vertical padding=[14, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+          <text name="Continue Label" id=uVYbx fill=$text-inverse fontSize=15 fontWeight=700 content=Continue>
+    <frame name="Daily Goal Section" id=dL5g0 layout=vertical gap=12 width=fill_container>
+      <text name="Section Title" id=PDd31 fill=$text-primary fontSize=16 fontWeight=700 content=Daily Goal>
+      <frame name="Daily Goal Card" id=zErBQ gap=16 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$sage-50 stroke=$sage-100 strokeWidth=1>
+        <frame name="Ring Container" id=z3Ffbk layout=none width=64 height=64>
+          <ellipse name="Ring Background" id=cgNxu width=64 height=64 fill=$sage-100 x=0 y=0 innerRadius=0.72>
+          <ellipse name="Ring Progress" id=XEAHz width=64 height=64 fill=$success-lime x=0 y=0 innerRadius=0.72>
+          <text name="Ring Label" id=Mtzr5 fill=$text-primary fontSize=14 fontWeight=700 content=2/5 x=20 y=24>
+        <frame name="Goal Text" id=t9coo layout=vertical gap=4 width=fill_container>
+          <text name="Goal Title" id=S1vkvQ fill=$text-primary fontSize=14 fontWeight=600 content=2/5 lessons done today>
+          <text name="Goal Subtext" id=qwUpQ width=fill_container fill=$text-secondary fontSize=12 fontWeight=normal textGrowth=fixed-width content=Complete 5 lessons today to keep your streak>
+      <frame name="Countdown Card" id=r0xJA gap=12 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$sage-100>
+        <icon name="Target Icon" id=iayIE width=24 height=24 fill=$primary-800 icon=target library=lucide>
+        <frame name="Countdown Text" id=tQpqI layout=vertical gap=2>
+          <text name="Countdown Title" id=IBarq fill=$text-primary fontSize=14 fontWeight=600 content=Your test is in 14 days>
+          <text name="Countdown Subtext" id=p1NGz fill=$text-secondary fontSize=12 fontWeight=normal content=You're 68% ready>
+  <ref name="Tab Bar Instance" id=II84p width=fill_container fill=$surface ref=NSQN0>

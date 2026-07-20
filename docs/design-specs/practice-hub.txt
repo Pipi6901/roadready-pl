@@ -1,0 +1,49 @@
+<frame name="Practice Hub" id=xOIq9 layout=vertical width=375 height=812 fill=$bg x=3610 y=728 clip=True>
+  <frame name="Status Bar" id=lHbgL padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=cPMRR fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=ZEEBQ fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Content" id=e5ZqFH layout=vertical gap=20 padding=[8, 20, 20, 20] width=fill_container height=fill_container clip=True>
+    <text name="Title" id=fWvG3 fill=$text-primary fontSize=26 fontWeight=700 content=Practice>
+    <frame name="Cards" id=PsZxI layout=vertical gap=14 width=fill_container height=fill_container clip=True>
+      <frame name="Mock Test Card" id=mPdW8 gap=14 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$sage-100 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 4}, "blur": 18}>
+        <frame name="Icon Box" id=gp8wV layout=vertical justifyContent=center alignItems=center width=56 height=56 cornerRadius=16 fill=$primary-800 stroke=$primary-900 strokeWidth={"bottom": 4}>
+          <icon name="Card Icon" id=a6ZBEz width=26 height=26 fill=$text-inverse icon=clipboard-check library=lucide>
+        <frame name="Text Col" id=MBaP5 layout=vertical gap=4 width=fill_container>
+          <text name="Card Title" id=f72FsX fill=$text-primary fontSize=16 fontWeight=700 content=Mock Test>
+          <text name="Card Sub" id=yS2MD width=fill_container fill=$text-secondary fontSize=12 fontWeight=normal textGrowth=fixed-width content=Simulate the real exam — 50 questions, 57 minutes>
+          <frame name="Card Badge" id=DCdJb gap=4 padding=[4, 10] alignItems=center cornerRadius=10 fill=$sage-100>
+            <icon name="Badge Icon" id=Yj9GN width=11 height=11 fill=$primary-800 icon=check library=lucide>
+            <text name="Badge Text" id=rWIgW fill=$primary-800 fontSize=11 fontWeight=700 content=3 completed>
+        <frame name="Chevron Circle" id=K22ACG layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$sage-50>
+          <icon name="Chevron" id=cc3JV width=18 height=18 fill=$text-muted icon=chevron-right library=lucide>
+      <frame name="Quick Quiz Card" id=e5IeMi gap=14 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$sage-100 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 4}, "blur": 18}>
+        <frame name="Icon Box" id=N04Ba4 layout=vertical justifyContent=center alignItems=center width=56 height=56 cornerRadius=16 fill=$amber stroke=$amber-dark strokeWidth={"bottom": 4}>
+          <icon name="Card Icon" id=rm6uy width=26 height=26 fill=$text-inverse icon=zap library=lucide>
+        <frame name="Text Col" id=pIwcX layout=vertical gap=4 width=fill_container>
+          <text name="Card Title" id=CMx9n fill=$text-primary fontSize=16 fontWeight=700 content=Quick Quiz>
+          <text name="Card Sub" id=ASqF2 width=fill_container fill=$text-secondary fontSize=12 fontWeight=normal textGrowth=fixed-width content=10 random questions — fast practice>
+        <frame name="Chevron Circle" id=CaKwY layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$sage-50>
+          <icon name="Chevron" id=mzZVR width=18 height=18 fill=$text-muted icon=chevron-right library=lucide>
+      <frame name="Hazard Perception Card" id=mmQ2K gap=14 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$sage-100 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 4}, "blur": 18}>
+        <frame name="Icon Box" id=TLuGb layout=vertical justifyContent=center alignItems=center width=56 height=56 cornerRadius=16 fill=$terracotta stroke=$terracotta-dark strokeWidth={"bottom": 4}>
+          <icon name="Card Icon" id=PHSMV width=26 height=26 fill=$text-inverse icon=video library=lucide>
+        <frame name="Text Col" id=iBu8v layout=vertical gap=4 width=fill_container>
+          <text name="Card Title" id=vqwJ9 fill=$text-primary fontSize=16 fontWeight=700 content=Hazard Perception>
+          <text name="Card Sub" id=tkcFm width=fill_container fill=$text-secondary fontSize=12 fontWeight=normal textGrowth=fixed-width content=Practice spotting hazards in video clips>
+          <frame name="Card Badge" id=TA7pG gap=4 padding=[4, 10] alignItems=center cornerRadius=10 fill=$terracotta-50>
+            <icon name="Badge Icon" id=p6LTg8 width=11 height=11 fill=$terracotta-dark icon=video library=lucide>
+            <text name="Badge Text" id=ccTrx fill=$terracotta-dark fontSize=11 fontWeight=700 content=12 clips available>
+        <frame name="Chevron Circle" id=KhGGs layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$sage-50>
+          <icon name="Chevron" id=d3vdq width=18 height=18 fill=$text-muted icon=chevron-right library=lucide>
+      <frame name="Your Weak Spots Card" id=w048sg gap=14 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$sage-100 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 4}, "blur": 18}>
+        <frame name="Icon Box" id=Yra4p layout=vertical justifyContent=center alignItems=center width=56 height=56 cornerRadius=16 fill=$success-lime stroke=$success-lime-dark strokeWidth={"bottom": 4}>
+          <icon name="Card Icon" id=lFNnD width=26 height=26 fill=$text-inverse icon=target library=lucide>
+        <frame name="Text Col" id=gMsdj layout=vertical gap=4 width=fill_container>
+          <text name="Card Title" id=pJ3Gp fill=$text-primary fontSize=16 fontWeight=700 content=Your Weak Spots>
+          <text name="Card Sub" id=obWP2 width=fill_container fill=$text-secondary fontSize=12 fontWeight=normal textGrowth=fixed-width content=Questions you got wrong — adaptive review>
+          <frame name="Card Badge" id=BNueM gap=4 padding=[4, 10] alignItems=center cornerRadius=10 fill=$lime-50>
+            <icon name="Badge Icon" id=LcapV width=11 height=11 fill=$success-lime-dark icon=target library=lucide>
+            <text name="Badge Text" id=K590J0 fill=$success-lime-dark fontSize=11 fontWeight=700 content=8 questions>
+        <frame name="Chevron Circle" id=rFCqj layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$sage-50>
+          <icon name="Chevron" id=A2W45 width=18 height=18 fill=$text-muted icon=chevron-right library=lucide>
+  <ref name="Tab Bar Instance" id=kRYx4 width=fill_container ref=NSQN0>

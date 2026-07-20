@@ -1,0 +1,82 @@
+<frame name="Country Selection" id=uW5wv layout=vertical width=375 height=812 fill={"type": "gradient", "gradientType": "linear", "enabled": true, "rotation": 135, "size": {"height": 1}, "colors": [{"color": "$bg", "position": 0}, {"color": "$sage-100", "position": 1}]} x=8160 y=728 clip=True>
+  <icon name="Deco" id=Zwxti width=18 height=18 fill=$decoration-color icon=navigation library=lucide x=340 y=80 layoutPosition=absolute rotation=-10>
+  <icon name="Deco" id=SS7P6 width=20 height=20 fill=$decoration-color icon=map-pin library=lucide x=320 y=20 layoutPosition=absolute rotation=8>
+  <frame name="Status Bar" id=gPgHe padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=Y2winY fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=jW3mb fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Content" id=zyj4U layout=vertical gap=16 padding=[12, 20, 10, 20] width=fill_container height=fill_container clip=True>
+    <text name="Title" id=c0cvvf width=fill_container fill=$text-primary fontSize=22 fontWeight=700 textGrowth=fixed-width content=Where are you taking your test?>
+    <frame name="Search Bar" id=c50ppv gap=8 padding=[12, 16] alignItems=center width=fill_container cornerRadius=$radius-button fill=$surface stroke=$border strokeWidth=1>
+      <icon name="Search Icon" id=b5KJI width=17 height=17 fill=$text-muted icon=search library=lucide>
+      <text name="Search Placeholder" id=zVjCF fill=$text-muted fontSize=14 fontWeight=normal content=Search countries>
+    <frame name="Country List" id=g5cQl layout=vertical gap=10 width=fill_container height=fill_container clip=True>
+      <frame name="UK Card" id=H03KD gap=12 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$accent-lime strokeWidth=2 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="UK Flag" id=H77f0L layout=none width=28 height=20 cornerRadius=3 fill=#0A2472 clip=True>
+          <rectangle name="H White" id=D6u5ql width=28 height=4 fill=#FFFFFF x=0 y=8>
+          <rectangle name="V White" id=NsPD2 width=4 height=20 fill=#FFFFFF x=12 y=0>
+          <rectangle name="H Red" id=Tz9Na width=28 height=2 fill=#C8102E x=0 y=9>
+          <rectangle name="V Red" id=r4kz1C width=2 height=20 fill=#C8102E x=13 y=0>
+        <frame name="Text Col" id=WwC7e layout=vertical gap=2 width=fill_container>
+          <text name="Country Name" id=zGaer fill=$text-primary fontSize=16 fontWeight=700 content=United Kingdom>
+          <text name="Country Sub" id=a78TD8 fill=$success-lime-dark fontSize=12 fontWeight=600 content=800 questions available>
+        <frame name="Default Badge" id=yIi7Z padding=[5, 10] cornerRadius=10 fill=$lime-50>
+          <text name="Default Text" id=elwms fill=$success-lime-dark fontSize=11 fontWeight=700 content=Default>
+      <frame name="United States Card" id=xwZr6 gap=12 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface opacity=0.7>
+        <frame name="US Flag" id=zzaRX layout=none width=28 height=20 cornerRadius=3 fill=#FFFFFF clip=True>
+          <rectangle name="Stripe 0" id=m6aV3l width=28 height=2 fill=#B22234 x=0 y=0>
+          <rectangle name="Stripe 1" id=dfF9p width=28 height=2 fill=#B22234 x=0 y=4>
+          <rectangle name="Stripe 2" id=t7BNWS width=28 height=2 fill=#B22234 x=0 y=8>
+          <rectangle name="Stripe 3" id=s4NC6 width=28 height=2 fill=#B22234 x=0 y=12>
+          <rectangle name="Stripe 4" id=u0zjjh width=28 height=2 fill=#B22234 x=0 y=16>
+          <rectangle name="Canton" id=AZzJ5 width=12 height=11 fill=#3C3B6E x=0 y=0>
+          <ellipse name="Star 0" id=xiPL7 width=1.6 height=1.6 fill=#FFFFFF x=3 y=3>
+          <ellipse name="Star 1" id=F62bOW width=1.6 height=1.6 fill=#FFFFFF x=7 y=3>
+          <ellipse name="Star 2" id=kyxw9 width=1.6 height=1.6 fill=#FFFFFF x=5 y=6>
+          <ellipse name="Star 3" id=L9ucx width=1.6 height=1.6 fill=#FFFFFF x=3 y=9>
+          <ellipse name="Star 4" id=qJsTA width=1.6 height=1.6 fill=#FFFFFF x=7 y=9>
+        <frame name="Text Col" id=c7Ui5 layout=vertical gap=2 width=fill_container>
+          <text name="Country Name" id=q4l32q fill=$text-muted fontSize=16 fontWeight=700 content=United States>
+          <text name="Country Sub" id=i0XqCw fill=$text-muted fontSize=12 fontWeight=normal content=Coming soon>
+        <icon name="Lock Icon" id=vE5Gx width=18 height=18 fill=$text-muted icon=lock library=lucide>
+      <frame name="Canada Card" id=QxTyh gap=12 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface opacity=0.7>
+        <frame name="CA Flag" id=B3Yxpx width=28 height=20 cornerRadius=3 clip=True>
+          <rectangle name="Red L" id=CJiRj width=7 height=20 fill=#D80621>
+          <frame name="White Band" id=Ol1Rs layout=vertical justifyContent=center alignItems=center width=14 height=20 fill=#FFFFFF>
+            <rectangle name="Leaf" id=wO6xz width=6 height=6 fill=#D80621 rotation=45>
+          <rectangle name="Red R" id=EDUc1 width=7 height=20 fill=#D80621>
+        <frame name="Text Col" id=J1JrMV layout=vertical gap=2 width=fill_container>
+          <text name="Country Name" id=f9wa4y fill=$text-muted fontSize=16 fontWeight=700 content=Canada>
+          <text name="Country Sub" id=K0QdkE fill=$text-muted fontSize=12 fontWeight=normal content=Coming soon>
+        <icon name="Lock Icon" id=v3PJsf width=18 height=18 fill=$text-muted icon=lock library=lucide>
+      <frame name="Australia Card" id=tHnMz gap=12 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface opacity=0.7>
+        <frame name="AU Flag" id=K60oD layout=none width=28 height=20 cornerRadius=3 fill=#00247D clip=True>
+          <ellipse name="Star 0" id=PQ5DD width=1.8 height=1.8 fill=#FFFFFF x=18 y=4>
+          <ellipse name="Star 1" id=gl1bb width=1.8 height=1.8 fill=#FFFFFF x=22 y=9>
+          <ellipse name="Star 2" id=ip3Gg width=1.8 height=1.8 fill=#FFFFFF x=17 y=14>
+          <ellipse name="Star 3" id=Dneph width=1.8 height=1.8 fill=#FFFFFF x=23 y=3>
+          <ellipse name="Star 4" id=gc9g5 width=1.8 height=1.8 fill=#FFFFFF x=20 y=15>
+          <rectangle name="Canton BG" id=mUkTb width=11 height=9 fill=#00247D x=0 y=0>
+          <rectangle name="Canton H" id=tnx9n width=11 height=2 fill=#FFFFFF x=0 y=3.5>
+          <rectangle name="Canton V" id=flnpa width=2 height=9 fill=#FFFFFF x=4.5 y=0>
+        <frame name="Text Col" id=D665L layout=vertical gap=2 width=fill_container>
+          <text name="Country Name" id=minXZ fill=$text-muted fontSize=16 fontWeight=700 content=Australia>
+          <text name="Country Sub" id=FduI8 fill=$text-muted fontSize=12 fontWeight=normal content=Coming soon>
+        <icon name="Lock Icon" id=KJr6F width=18 height=18 fill=$text-muted icon=lock library=lucide>
+      <frame name="Ireland Card" id=dyIw2 gap=12 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface opacity=0.7>
+        <frame name="IE Flag" id=trtg1 width=28 height=20 cornerRadius=3 clip=True>
+          <rectangle name="Green" id=ueXVM width=fill_container height=20 fill=#169B62>
+          <rectangle name="White" id=KJQbs width=fill_container height=20 fill=#FFFFFF>
+          <rectangle name="Orange" id=cgeZL width=fill_container height=20 fill=#FF883E>
+        <frame name="Text Col" id=B3LRfy layout=vertical gap=2 width=fill_container>
+          <text name="Country Name" id=jW5ju fill=$text-muted fontSize=16 fontWeight=700 content=Ireland>
+          <text name="Country Sub" id=PJAdn fill=$text-muted fontSize=12 fontWeight=normal content=Coming soon>
+        <icon name="Lock Icon" id=Nf15T width=18 height=18 fill=$text-muted icon=lock library=lucide>
+      <frame name="Germany Card" id=h3eDDK gap=12 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface opacity=0.7>
+        <frame name="DE Flag" id=ezxHR layout=vertical width=28 height=20 cornerRadius=3 clip=True>
+          <rectangle name="Black" id=CVcnP width=28 height=fill_container fill=#1A1A1A>
+          <rectangle name="Red" id=NgLch width=28 height=fill_container fill=#D00027>
+          <rectangle name="Gold" id=g4opd width=28 height=fill_container fill=#D4A017>
+        <frame name="Text Col" id=ln7qy layout=vertical gap=2 width=fill_container>
+          <text name="Country Name" id=HWgBF fill=$text-muted fontSize=16 fontWeight=700 content=Germany>
+          <text name="Country Sub" id=cXFYu fill=$text-muted fontSize=12 fontWeight=normal content=Coming soon>
+        <icon name="Lock Icon" id=fNs9O width=18 height=18 fill=$text-muted icon=lock library=lucide>

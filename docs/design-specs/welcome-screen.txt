@@ -1,0 +1,84 @@
+<frame name="Welcome Screen" id=r8qcb layout=vertical width=375 height=812 fill=$bg x=7705 y=728 clip=True>
+  <frame name="Illustration" id=A1Q2J layout=vertical justifyContent=center alignItems=center width=fill_container height=320 fill=$sage-50 clip=True>
+    <frame name="Dot Grid" id=MgYF4 layout=none width=375 height=320 x=0 y=0 layoutPosition=absolute>
+      <ellipse name="Grid Dot" id=hf80y width=3 height=3 fill=$primary-800 opacity=0.18 x=16 y=16>
+      <ellipse name="Grid Dot" id=eO59J width=3 height=3 fill=$primary-800 opacity=0.18 x=64 y=16>
+      <ellipse name="Grid Dot" id=saQN0 width=3 height=3 fill=$primary-800 opacity=0.18 x=112 y=16>
+      <ellipse name="Grid Dot" id=VI5HV width=3 height=3 fill=$primary-800 opacity=0.18 x=160 y=16>
+      <ellipse name="Grid Dot" id=wBeeo width=3 height=3 fill=$primary-800 opacity=0.18 x=208 y=16>
+      <ellipse name="Grid Dot" id=l6scw width=3 height=3 fill=$primary-800 opacity=0.18 x=256 y=16>
+      <ellipse name="Grid Dot" id=nFYQ8 width=3 height=3 fill=$primary-800 opacity=0.18 x=304 y=16>
+      <ellipse name="Grid Dot" id=AhrS8 width=3 height=3 fill=$primary-800 opacity=0.18 x=352 y=16>
+      <ellipse name="Grid Dot" id=hGjUj width=3 height=3 fill=$primary-800 opacity=0.18 x=16 y=60>
+      <ellipse name="Grid Dot" id=XcA46 width=3 height=3 fill=$primary-800 opacity=0.18 x=64 y=60>
+      <ellipse name="Grid Dot" id=sT0ch width=3 height=3 fill=$primary-800 opacity=0.18 x=112 y=60>
+      <ellipse name="Grid Dot" id=pDFN2 width=3 height=3 fill=$primary-800 opacity=0.18 x=160 y=60>
+      <ellipse name="Grid Dot" id=O1lahD width=3 height=3 fill=$primary-800 opacity=0.18 x=208 y=60>
+      <ellipse name="Grid Dot" id=yHUJY width=3 height=3 fill=$primary-800 opacity=0.18 x=256 y=60>
+      <ellipse name="Grid Dot" id=S1XStr width=3 height=3 fill=$primary-800 opacity=0.18 x=304 y=60>
+      <ellipse name="Grid Dot" id=OmDWb width=3 height=3 fill=$primary-800 opacity=0.18 x=352 y=60>
+      <ellipse name="Grid Dot" id=uIhw1 width=3 height=3 fill=$primary-800 opacity=0.18 x=16 y=104>
+      <ellipse name="Grid Dot" id=L2QL8c width=3 height=3 fill=$primary-800 opacity=0.18 x=64 y=104>
+      <ellipse name="Grid Dot" id=NLR8C width=3 height=3 fill=$primary-800 opacity=0.18 x=112 y=104>
+      <ellipse name="Grid Dot" id=VxWDU width=3 height=3 fill=$primary-800 opacity=0.18 x=160 y=104>
+      <ellipse name="Grid Dot" id=jhdzg width=3 height=3 fill=$primary-800 opacity=0.18 x=208 y=104>
+      <ellipse name="Grid Dot" id=vqRtY width=3 height=3 fill=$primary-800 opacity=0.18 x=256 y=104>
+      <ellipse name="Grid Dot" id=SHa06 width=3 height=3 fill=$primary-800 opacity=0.18 x=304 y=104>
+      <ellipse name="Grid Dot" id=zJovm width=3 height=3 fill=$primary-800 opacity=0.18 x=352 y=104>
+      <ellipse name="Grid Dot" id=T8TBB width=3 height=3 fill=$primary-800 opacity=0.18 x=16 y=148>
+      <ellipse name="Grid Dot" id=uS4hD width=3 height=3 fill=$primary-800 opacity=0.18 x=64 y=148>
+      <ellipse name="Grid Dot" id=PAajN width=3 height=3 fill=$primary-800 opacity=0.18 x=112 y=148>
+      <ellipse name="Grid Dot" id=zjcbe width=3 height=3 fill=$primary-800 opacity=0.18 x=160 y=148>
+      <ellipse name="Grid Dot" id=WQcye width=3 height=3 fill=$primary-800 opacity=0.18 x=208 y=148>
+      <ellipse name="Grid Dot" id=d6c3t width=3 height=3 fill=$primary-800 opacity=0.18 x=256 y=148>
+      <ellipse name="Grid Dot" id=Pb0ri width=3 height=3 fill=$primary-800 opacity=0.18 x=304 y=148>
+      <ellipse name="Grid Dot" id=tY5lJ width=3 height=3 fill=$primary-800 opacity=0.18 x=352 y=148>
+      <ellipse name="Grid Dot" id=YKjtj width=3 height=3 fill=$primary-800 opacity=0.18 x=16 y=192>
+      <ellipse name="Grid Dot" id=ok6sp width=3 height=3 fill=$primary-800 opacity=0.18 x=64 y=192>
+      <ellipse name="Grid Dot" id=Hi0RB width=3 height=3 fill=$primary-800 opacity=0.18 x=112 y=192>
+      <ellipse name="Grid Dot" id=uIh65 width=3 height=3 fill=$primary-800 opacity=0.18 x=160 y=192>
+      <ellipse name="Grid Dot" id=VL8px width=3 height=3 fill=$primary-800 opacity=0.18 x=208 y=192>
+      <ellipse name="Grid Dot" id=Tnc0x width=3 height=3 fill=$primary-800 opacity=0.18 x=256 y=192>
+      <ellipse name="Grid Dot" id=FLwDh width=3 height=3 fill=$primary-800 opacity=0.18 x=304 y=192>
+      <ellipse name="Grid Dot" id=MJol3 width=3 height=3 fill=$primary-800 opacity=0.18 x=352 y=192>
+      <ellipse name="Grid Dot" id=AUGqj width=3 height=3 fill=$primary-800 opacity=0.18 x=16 y=236>
+      <ellipse name="Grid Dot" id=oMqpJ width=3 height=3 fill=$primary-800 opacity=0.18 x=64 y=236>
+      <ellipse name="Grid Dot" id=ky1f7 width=3 height=3 fill=$primary-800 opacity=0.18 x=112 y=236>
+      <ellipse name="Grid Dot" id=y2EOAZ width=3 height=3 fill=$primary-800 opacity=0.18 x=160 y=236>
+      <ellipse name="Grid Dot" id=FsRfr width=3 height=3 fill=$primary-800 opacity=0.18 x=208 y=236>
+      <ellipse name="Grid Dot" id=csNZl width=3 height=3 fill=$primary-800 opacity=0.18 x=256 y=236>
+      <ellipse name="Grid Dot" id=pXNP3 width=3 height=3 fill=$primary-800 opacity=0.18 x=304 y=236>
+      <ellipse name="Grid Dot" id=ip1xM width=3 height=3 fill=$primary-800 opacity=0.18 x=352 y=236>
+      <ellipse name="Grid Dot" id=rwYro width=3 height=3 fill=$primary-800 opacity=0.18 x=16 y=280>
+      <ellipse name="Grid Dot" id=t5Vi1 width=3 height=3 fill=$primary-800 opacity=0.18 x=64 y=280>
+      <ellipse name="Grid Dot" id=r8d8G3 width=3 height=3 fill=$primary-800 opacity=0.18 x=112 y=280>
+      <ellipse name="Grid Dot" id=b76G1e width=3 height=3 fill=$primary-800 opacity=0.18 x=160 y=280>
+      <ellipse name="Grid Dot" id=J5M3e width=3 height=3 fill=$primary-800 opacity=0.18 x=208 y=280>
+      <ellipse name="Grid Dot" id=S7K2Ry width=3 height=3 fill=$primary-800 opacity=0.18 x=256 y=280>
+      <ellipse name="Grid Dot" id=I4gXzO width=3 height=3 fill=$primary-800 opacity=0.18 x=304 y=280>
+      <ellipse name="Grid Dot" id=oo69m width=3 height=3 fill=$primary-800 opacity=0.18 x=352 y=280>
+    <ellipse name="Ring 0" id=zMj0q width=190 height=190 fill=$sage-100 opacity=0.3 x=92.5 y=65 layoutPosition=absolute>
+    <ellipse name="Ring 1" id=bz1t1 width=150 height=150 fill=$sage-100 opacity=0.45 x=112.5 y=85 layoutPosition=absolute>
+    <frame name="Car Box" id=xPTzF layout=vertical justifyContent=center alignItems=center width=120 height=120 cornerRadius=36 fill=$primary-800 stroke=$primary-900 strokeWidth={"bottom": 5} effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4433", "offset": {"x": 0, "y": 5}, "blur": 18}>
+      <icon name="Car Icon" id=lWdTY width=58 height=58 fill=$text-inverse icon=car-front library=lucide>
+    <icon name="Extra Deco" id=wjmlr width=20 height=20 fill=$primary-800 icon=navigation library=lucide opacity=0.3 x=20 y=40 layoutPosition=absolute rotation=10>
+    <icon name="Extra Deco" id=c08aSd width=20 height=20 fill=$primary-800 icon=milestone library=lucide opacity=0.3 x=180 y=270 layoutPosition=absolute>
+    <icon name="Extra Deco" id=RK4Jj width=24 height=24 fill=$primary-800 icon=compass library=lucide opacity=0.3 x=330 y=150 layoutPosition=absolute rotation=8>
+    <icon name="Extra Deco" id=R8HiS width=22 height=22 fill=$primary-800 icon=shield-check library=lucide opacity=0.3 x=20 y=150 layoutPosition=absolute rotation=-8>
+    <icon name="Extra Deco" id=kcGzW width=20 height=20 fill=$primary-800 icon=route library=lucide opacity=0.3 x=150 y=30 layoutPosition=absolute>
+    <icon name="Deco 0" id=oIB5A width=26 height=26 fill=$primary-800 icon=signpost library=lucide opacity=0.35 x=60 y=70 layoutPosition=absolute rotation=-8>
+    <icon name="Deco 1" id=uEDyj width=24 height=24 fill=$primary-800 icon=octagon-alert library=lucide opacity=0.35 x=280 y=60 layoutPosition=absolute rotation=6.000000000000001>
+    <icon name="Deco 2" id=dKNGH width=24 height=24 fill=$primary-800 icon=tree-pine library=lucide opacity=0.35 x=40 y=220 layoutPosition=absolute>
+    <icon name="Deco 3" id=Y17gR width=26 height=26 fill=$primary-800 icon=map library=lucide opacity=0.35 x=300 y=220 layoutPosition=absolute rotation=8>
+  <frame name="Content" id=JLm4h layout=vertical gap=12 padding=[28, 28, 20, 28] alignItems=center width=fill_container height=fill_container clip=True>
+    <text name="Headline" id=igEWr width=300 fill=$text-primary fontSize=24 fontWeight=700 textAlign=center textGrowth=fixed-width content=Learn driving theory the smart way>
+    <text name="Subtext" id=ZyBHE width=280 fill=$text-secondary fontSize=14 fontWeight=normal textAlign=center textGrowth=fixed-width content=Bite-size lessons, instant feedback, track your progress>
+    <icon name="Lower Deco" id=cSI15 width=24 height=24 fill=$decoration-color icon=tree-pine library=lucide opacity=0.6 x=30 y=190 layoutPosition=absolute>
+    <icon name="Lower Deco" id=osaxj width=22 height=22 fill=$decoration-color icon=signpost library=lucide opacity=0.6 x=310 y=246 layoutPosition=absolute rotation=8>
+    <icon name="Lower Deco" id=J6UfNj width=22 height=22 fill=$decoration-color icon=car-front library=lucide opacity=0.6 x=300 y=150 layoutPosition=absolute>
+    <icon name="Lower Deco" id=FbLoq width=18 height=18 fill=$decoration-color icon=sprout library=lucide opacity=0.6 x=40 y=270 layoutPosition=absolute>
+  <frame name="Actions" id=S0Wety layout=vertical gap=14 padding=[14, 28, 28, 28] width=fill_container>
+    <frame name="Get Started Button" id=w0TrY layout=vertical padding=[16, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+      <text name="Get Started Label" id=lI4XW fill=$text-inverse fontSize=16 fontWeight=700 content=Get Started>
+    <frame name="Login Link" id=exPVK layout=vertical padding=[6, 0] justifyContent=center alignItems=center width=fill_container>
+      <text name="Login Label" id=BdGVa fill=$primary-800 fontSize=14 fontWeight=600 content=I already have an account>

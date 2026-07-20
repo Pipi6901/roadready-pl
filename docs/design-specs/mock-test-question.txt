@@ -1,0 +1,26 @@
+<frame name="Mock Test Question" id=zYRLn layout=vertical width=375 height=812 fill=$bg x=4520 y=728 clip=True>
+  <frame name="Top Bar" id=alPIz padding=[16, 20, 10, 20] justifyContent=space_between alignItems=center width=fill_container>
+    <text name="Question Counter" id=aFB1M fill=$text-primary fontSize=14 fontWeight=700 content=Question 12 of 50>
+    <frame name="Timer Pill" id=aO1zL gap=5 padding=[6, 10] alignItems=center cornerRadius=14 fill=$sage-100>
+      <icon name="Timer Icon" id=JWHZx width=14 height=14 fill=$primary-800 icon=timer library=lucide>
+      <text name="Timer Text" id=y46SO fill=$primary-800 fontSize=13 fontWeight=700 content=42:18>
+    <icon name="Flag Icon" id=cXfw7 width=20 height=20 fill=$text-secondary icon=flag library=lucide>
+  <frame name="Progress Line" id=VxoQc width=fill_container height=4 fill=$sage-100>
+    <frame name="Progress Line Fill" id=FlOUd width=90 height=4 fill=$accent-lime>
+  <frame name="Content" id=jokxL layout=vertical gap=16 padding=20 width=fill_container height=fill_container clip=True>
+    <frame name="Question Text Col" id=BSCpW layout=vertical gap=6 width=fill_container>
+      <text name="Question EN" id=u7ep6 width=fill_container fill=$text-primary fontSize=19 fontWeight=700 textGrowth=fixed-width content=What is the national speed limit for cars on a motorway?>
+      <text name="Question Translation" id=R3KeX width=fill_container fill=$text-secondary fontSize=13 fontWeight=normal textGrowth=fixed-width content=¿Cuál es el límite de velocidad nacional para coches en autopista?>
+    <frame name="Options" id=xZYc4 layout=vertical gap=10 width=fill_container>
+      <ref name="Option 50 mph" id=q0whc1 width=fill_container ref=Dv0Gz>
+      <ref name="Option 60 mph" id=qSkJk width=fill_container ref=Dv0Gz>
+      <ref name="Option 70 mph" id=CoYXc width=fill_container ref=Dv0Gz>
+      <ref name="Option 80 mph" id=hSGxS width=fill_container ref=Dv0Gz>
+  <frame name="Nav Actions" id=a3BS9s layout=vertical gap=8 padding=[14, 20, 20, 20] width=fill_container>
+    <frame name="Btn Row" id=jjo1Z gap=10 width=fill_container>
+      <frame name="Previous Button" id=mMzDP layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$sage-100>
+        <text name="Previous Label" id=rRw0a fill=$primary-800 fontSize=15 fontWeight=700 content=Previous>
+      <frame name="Next Button" id=X6QJq layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+        <text name="Next Label" id=YRinx fill=$text-inverse fontSize=15 fontWeight=700 content=Next>
+    <frame name="Finish Row" id=zO4JR layout=vertical padding=[6, 0] justifyContent=center alignItems=center width=fill_container>
+      <text name="Finish Label" id=dYiw5 fill=$text-secondary fontSize=13 fontWeight=600 content=Finish Test>

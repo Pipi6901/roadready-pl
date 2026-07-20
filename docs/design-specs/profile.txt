@@ -1,0 +1,87 @@
+<frame name="Profile" id=IzDTc layout=vertical width=375 height=812 fill=$bg x=6340 y=728 clip=True>
+  <frame name="Status Bar" id=I1DbRL padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=UX60n fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=hrmFE fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Top Bar" id=V1MJq padding=[8, 20, 4, 20] justifyContent=space_between alignItems=center width=fill_container>
+    <text name="Title" id=v0n5WK fill=$text-primary fontSize=26 fontWeight=700 content=Profile>
+    <frame name="Settings Button" id=HNVdu layout=vertical justifyContent=center alignItems=center width=38 height=38 cornerRadius=19 fill=$sage-100>
+      <icon name="Gear Icon" id=xUjeg width=19 height=19 fill=$primary-800 icon=settings library=lucide>
+  <frame name="Content" id=lA08P layout=vertical gap=22 padding=[16, 20, 20, 20] width=fill_container height=fill_container clip=True>
+    <frame name="Hero Panel" id=lg82a layout=vertical gap=20 padding=20 width=fill_container cornerRadius=$radius-lg fill=$sage-50 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 4}, "blur": 18}>
+      <frame name="Avatar Section" id=qElIi layout=vertical gap=8 alignItems=center width=fill_container>
+        <frame name="Avatar Wrap" id=lMyJu layout=none width=100 height=100>
+          <ellipse name="Burst Dot 0" id=sZQJd width=7 height=7 fill=$amber x=102.5 y=46.5>
+          <ellipse name="Burst Dot 1" id=aEPNP width=5 height=5 fill=$accent-lime x=92.80495168499706 y=80.4159741283785>
+          <ellipse name="Burst Dot 2" id=Ntzq1 width=7 height=7 fill=$amber x=63.804951684997064 y=99.7591649125286>
+          <ellipse name="Burst Dot 3" id=rJTr8 width=5 height=5 fill=$accent-lime x=30.19504831500295 y=100.7591649125286>
+          <ellipse name="Burst Dot 4" id=Qhhze width=7 height=7 fill=$amber x=1.1950483150029498 y=79.41597412837851>
+          <ellipse name="Burst Dot 5" id=gJHl4 width=5 height=5 fill=$accent-lime x=-8.5 y=47.50000000000001>
+          <ellipse name="Burst Dot 6" id=VN8Ll width=7 height=7 fill=$amber x=1.1950483150029427 y=13.584025871621513>
+          <ellipse name="Burst Dot 7" id=JkCQY width=5 height=5 fill=$accent-lime x=30.195048315002936 y=-5.759164912528597>
+          <ellipse name="Burst Dot 8" id=gswq6 width=7 height=7 fill=$amber x=63.804951684997036 y=-6.759164912528604>
+          <ellipse name="Burst Dot 9" id=DOB69 width=5 height=5 fill=$accent-lime x=92.80495168499705 y=14.584025871621492>
+          <frame name="Avatar" id=Z2aFH layout=vertical justifyContent=center alignItems=center width=80 height=80 cornerRadius=26 fill=$primary-800 stroke=$primary-900 strokeWidth={"bottom": 4} x=10 y=10 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4433", "offset": {"x": 0, "y": 4}, "blur": 12}>
+            <text name="Initials" id=wBnOF fill=$text-inverse fontSize=26 fontWeight=700 content=AK>
+        <text name="Name" id=si2Z0 fill=$text-primary fontSize=19 fontWeight=700 content=Alex Kim>
+        <text name="Subtitle" id=lZw4J fill=$text-secondary fontSize=12 fontWeight=normal content=Learning since Jan 2026>
+      <frame name="Stats Grid" id=NZnCZ gap=10 width=fill_container>
+        <frame name="Total XP Cell" id=q21db layout=vertical gap=6 padding=12 alignItems=center width=fill_container cornerRadius=$radius-md fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 10}>
+          <frame name="Icon Circle" id=JcdWQ layout=vertical justifyContent=center alignItems=center width=30 height=30 cornerRadius=15 fill=$amber-50 stroke=$amber strokeWidth={"bottom": 2}>
+            <icon name="Icon" id=cmkGv width=15 height=15 fill=$amber-dark icon=star library=lucide>
+          <text name="Value" id=UmEzK fill=$text-primary fontSize=15 fontWeight=700 content=1,240>
+          <text name="Label" id=prSis fill=$text-secondary fontSize=10 fontWeight=normal textAlign=center content=Total XP>
+        <frame name="Day streak Cell" id=P5urau layout=vertical gap=6 padding=12 alignItems=center width=fill_container cornerRadius=$radius-md fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 10}>
+          <frame name="Icon Circle" id=rLKZQ layout=vertical justifyContent=center alignItems=center width=30 height=30 cornerRadius=15 fill=$amber-50 stroke=$amber strokeWidth={"bottom": 2}>
+            <icon name="Icon" id=pT7OU width=15 height=15 fill=$amber-dark icon=flame library=lucide>
+          <text name="Value" id=Rq0nm fill=$text-primary fontSize=15 fontWeight=700 content=5>
+          <text name="Label" id=MktGy fill=$text-secondary fontSize=10 fontWeight=normal textAlign=center content=Day streak>
+        <frame name="Mastered Cell" id=iAv3J layout=vertical gap=6 padding=12 alignItems=center width=fill_container cornerRadius=$radius-md fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 10}>
+          <frame name="Icon Circle" id=I2tpg layout=vertical justifyContent=center alignItems=center width=30 height=30 cornerRadius=15 fill=$lime-50 stroke=$success-lime strokeWidth={"bottom": 2}>
+            <icon name="Icon" id=f8Ajxw width=15 height=15 fill=$success-lime-dark icon=check library=lucide>
+          <text name="Value" id=je7Fq fill=$text-primary fontSize=15 fontWeight=700 content=312>
+          <text name="Label" id=HyRdc fill=$text-secondary fontSize=10 fontWeight=normal textAlign=center content=Mastered>
+        <frame name="Accuracy Cell" id=xj8lE layout=vertical gap=6 padding=12 alignItems=center width=fill_container cornerRadius=$radius-md fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 10}>
+          <frame name="Icon Circle" id=J7IDNl layout=vertical justifyContent=center alignItems=center width=30 height=30 cornerRadius=15 fill=$sage-100 stroke=$primary-800 strokeWidth={"bottom": 2}>
+            <icon name="Icon" id=Tgspy width=15 height=15 fill=$primary-800 icon=target library=lucide>
+          <text name="Value" id=MA753 fill=$text-primary fontSize=15 fontWeight=700 content=87%>
+          <text name="Label" id=OirYg fill=$text-secondary fontSize=10 fontWeight=normal textAlign=center content=Accuracy>
+    <frame name="Countdown Card" id=OekoJ gap=12 padding=16 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$sage-100 strokeWidth=1 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 12}>
+      <frame name="Ring Container" id=S5zxU layout=none width=44 height=44>
+        <ellipse name="Ring Background" id=ZAaA8 width=44 height=44 fill=$sage-100 x=0 y=0 innerRadius=0.72>
+        <ellipse name="Ring Progress" id=f0s1In width=44 height=44 fill=$accent-lime x=0 y=0 innerRadius=0.72>
+        <text name="Ring Label" id=WZMIS fill=$text-primary fontSize=10 fontWeight=700 content=68% x=8 y=15>
+      <frame name="Countdown Text" id=rKelo layout=vertical gap=2>
+        <text name="Countdown Title" id=P8Q5J fill=$text-primary fontSize=14 fontWeight=600 content=Your test is in 14 days>
+        <text name="Countdown Subtext" id=wh1BF fill=$text-secondary fontSize=12 fontWeight=normal content=You're 68% ready>
+    <frame name="Achievements Section" id=TkeBc layout=vertical gap=12 width=fill_container height=fill_container clip=True>
+      <frame name="Ach Title Row" id=L1sLO justifyContent=space_between alignItems=center width=fill_container>
+        <text name="Ach Title" id=hybgU fill=$text-primary fontSize=16 fontWeight=700 content=Achievements>
+        <frame name="Count Badge" id=e4HtRm padding=[4, 10] cornerRadius=10 fill=$amber-50>
+          <text name="Count Text" id=cI4nt fill=$amber-dark fontSize=11 fontWeight=700 content=3 / 4 earned>
+      <frame name="Ach Grid" id=TSZUP gap=12 width=fill_container>
+        <frame name="First Lesson Col" id=r2lIx layout=vertical gap=6 alignItems=center width=fill_container>
+          <frame name="Badge Wrap" id=DLqb2 layout=none width=68 height=68>
+            <frame name="Badge" id=FvM8b layout=vertical justifyContent=center alignItems=center width=60 height=60 cornerRadius=22 fill=$primary-800 stroke=$primary-900 strokeWidth={"bottom": 4} x=4 y=4 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4426", "offset": {"x": 0, "y": 3}, "blur": 10}>
+              <icon name="Badge Icon" id=oQkKm width=26 height=26 fill=$text-inverse icon=trophy library=lucide>
+            <frame name="Check Badge" id=ZRWcD layout=vertical justifyContent=center alignItems=center width=20 height=20 cornerRadius=10 fill=$surface stroke=$primary-800 strokeWidth=2 x=48 y=-2>
+              <icon name="Check Icon" id=r5hTzs width=11 height=11 fill=$primary-800 icon=check library=lucide>
+          <text name="Badge Label" id=BKBQB width=fill_container fill=$text-primary fontSize=10 fontWeight=normal textAlign=center textGrowth=fixed-width content=First Lesson>
+        <frame name="7-Day Streak Col" id=yvOf0 layout=vertical gap=6 alignItems=center width=fill_container>
+          <frame name="Badge Wrap" id=w8RcB layout=none width=68 height=68>
+            <frame name="Badge" id=d8FU5 layout=vertical justifyContent=center alignItems=center width=60 height=60 cornerRadius=22 fill=$amber stroke=$amber-dark strokeWidth={"bottom": 4} x=4 y=4 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4426", "offset": {"x": 0, "y": 3}, "blur": 10}>
+              <icon name="Badge Icon" id=JwnQe width=26 height=26 fill=$text-inverse icon=flame library=lucide>
+            <frame name="Check Badge" id=D5EJPu layout=vertical justifyContent=center alignItems=center width=20 height=20 cornerRadius=10 fill=$surface stroke=$amber strokeWidth=2 x=48 y=-2>
+              <icon name="Check Icon" id=bNnxl width=11 height=11 fill=$amber icon=check library=lucide>
+          <text name="Badge Label" id=Re1eb width=fill_container fill=$text-primary fontSize=10 fontWeight=normal textAlign=center textGrowth=fixed-width content=5-Day Streak>
+        <frame name="100 Questions Col" id=R7K9L7 layout=vertical gap=6 alignItems=center width=fill_container>
+          <frame name="Badge Wrap" id=jXqi0 layout=none width=68 height=68>
+            <frame name="Badge" id=fv8xi layout=vertical justifyContent=center alignItems=center width=60 height=60 cornerRadius=22 fill=$success-lime stroke=$success-lime-dark strokeWidth={"bottom": 4} x=4 y=4 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4426", "offset": {"x": 0, "y": 3}, "blur": 10}>
+              <icon name="Badge Icon" id=ineTt width=26 height=26 fill=$text-inverse icon=book-open-check library=lucide>
+            <frame name="Check Badge" id=jTfWY layout=vertical justifyContent=center alignItems=center width=20 height=20 cornerRadius=10 fill=$surface stroke=$success-lime strokeWidth=2 x=48 y=-2>
+              <icon name="Check Icon" id=RV01c width=11 height=11 fill=$success-lime icon=check library=lucide>
+          <text name="Badge Label" id=gTGyO width=fill_container fill=$text-primary fontSize=10 fontWeight=normal textAlign=center textGrowth=fixed-width content=100 Questions>
+        <frame name="Mock Passed Col" id=wbWO3 layout=vertical gap=6 alignItems=center width=fill_container>
+          <frame name="Badge" id=g7Uf5 layout=vertical justifyContent=center alignItems=center width=60 height=60 cornerRadius=22 fill=$sage-50 stroke=$border strokeWidth=2 opacity=0.9>
+            <icon name="Badge Icon" id=ru8C0 width=22 height=22 fill=$text-muted icon=lock library=lucide>
+          <text name="Badge Label" id=dBSU8 width=fill_container fill=$text-muted fontSize=10 fontWeight=normal textAlign=center textGrowth=fixed-width content=Mock Passed>
+  <ref name="Tab Bar Instance" id=GkLGr width=fill_container ref=NSQN0>

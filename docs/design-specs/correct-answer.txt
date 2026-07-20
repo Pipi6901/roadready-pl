@@ -1,0 +1,45 @@
+<frame name="Correct Answer" id=UpiuX layout=vertical width=375 height=812 fill=$bg x=2700 y=-164 clip=True>
+  <frame name="Top Bar" id=Efrge padding=[16, 20, 10, 20] justifyContent=space_between alignItems=center width=fill_container>
+    <icon name="Close Icon" id=sUu0C width=22 height=22 fill=$text-secondary icon=x library=lucide>
+    <frame name="Progress Dots" id=eMFp3 gap=6 alignItems=center>
+      <frame name="Dot 1" id=Ha6Rc width=8 height=8 cornerRadius=4 fill=$accent-lime>
+      <frame name="Dot 2" id=ee15v width=8 height=8 cornerRadius=4 fill=$accent-lime>
+      <frame name="Dot 3" id=GvTH0 width=10 height=10 cornerRadius=5 fill=$accent-lime>
+      <frame name="Dot 4" id=s704sw width=8 height=8 cornerRadius=4 fill=$border>
+      <frame name="Dot 5" id=GRCQ8 width=8 height=8 cornerRadius=4 fill=$border>
+      <frame name="Dot 6" id=p1JC6 width=8 height=8 cornerRadius=4 fill=$border>
+    <icon name="Flag Icon" id=jBFol width=20 height=20 fill=$text-secondary icon=flag library=lucide>
+  <frame name="Progress Line" id=weYnd width=fill_container height=4 fill=$sage-100>
+    <frame name="Progress Line Fill" id=ciMgc width=188 height=4 fill=$success-lime>
+  <frame name="Content" id=JHnuI layout=vertical gap=16 padding=20 width=fill_container height=fill_container clip=True>
+    <frame name="Question Row" id=jTVhJ gap=10 width=fill_container>
+      <frame name="Question Text Col" id=f0D2CC layout=vertical gap=6 width=fill_container>
+        <text name="Question EN" id=AchbQ width=fill_container fill=$text-primary fontSize=20 fontWeight=700 textGrowth=fixed-width content=What does this sign mean?>
+        <text name="Question Translation" id=PmFH3 width=fill_container fill=$text-secondary fontSize=14 fontWeight=normal textGrowth=fixed-width content=¿Qué significa esta señal?>
+      <frame name="Speaker Button" id=LqDIX layout=vertical justifyContent=center alignItems=center width=40 height=40 cornerRadius=20 fill=$sage-100>
+        <icon name="Speaker Icon" id=Tc3Cm width=18 height=18 fill=$primary-800 icon=volume-2 library=lucide>
+    <frame name="Image Card" id=Xly62 layout=vertical justifyContent=center alignItems=center width=fill_container height=170 cornerRadius=$radius-lg fill=$sage-50 clip=True>
+      <frame name="Sign Shape" id=QF5qA layout=vertical justifyContent=center alignItems=center width=110 height=110 cornerRadius=24 fill=$text-inverse stroke=$accent-lime strokeWidth=4 rotation=45>
+        <icon name="Sign Icon" id=q7HIP width=48 height=48 fill=$primary-800 icon=rotate-cw library=lucide rotation=-45>
+    <frame name="Hint Row" id=aN6hA gap=6 alignItems=center width=fill_container>
+      <icon name="Info Icon" id=inzHs width=15 height=15 fill=$text-muted icon=info library=lucide>
+      <text name="Hint Text" id=E45AG fill=$text-muted fontSize=12 fontWeight=normal content=Tap the correct answer>
+    <frame name="Options" id=vJT4U layout=vertical gap=10 width=fill_container>
+      <ref name="Option Crossroads ahead" id=S8oDg width=fill_container ref=Dv0Gz>
+      <ref name="Option Roundabout ahead" id=qhwuy width=fill_container fill=$lime-50 stroke=$success-lime-dark strokeWidth=2 ref=Dv0Gz>
+      <ref name="Option Two-way traffic" id=ePQ33 width=fill_container ref=Dv0Gz>
+      <ref name="Option Road narrows" id=ZymN4 width=fill_container ref=Dv0Gz>
+  <frame name="Feedback Sheet" id=YkuBo layout=vertical gap=12 padding=[10, 20, 28, 20] width=fill_container cornerRadius=[28, 28, 0, 0] fill=$surface effect={"type": "shadow", "shadowType": "outer", "color": "#0000001A", "offset": {"x": 0, "y": -4}, "blur": 20}>
+    <frame name="Grabber" id=DHvdH width=40 height=4 cornerRadius=2 fill=$border>
+    <frame name="Header Row" id=W0kYl justifyContent=space_between alignItems=center width=fill_container>
+      <frame name="Title Group" id=J8Dt35 gap=8 alignItems=center>
+        <icon name="Correct Icon" id=jaBmJ width=26 height=26 fill=$success-lime-dark icon=circle-check library=lucide>
+        <text name="Feedback Title" id=OYZiV fill=$success-lime-dark fontSize=19 fontWeight=700 content=Correct!>
+      <frame name="XP Badge" id=PYEsx gap=4 padding=[6, 12] alignItems=center cornerRadius=14 fill=$amber-50>
+        <icon name="XP Icon" id=WqR3y width=14 height=14 fill=$amber icon=zap library=lucide>
+        <text name="XP Text" id=ploFD fill=$amber-dark fontSize=13 fontWeight=700 content=+10 XP>
+    <frame name="Explanation Col" id=v6w8wN layout=vertical gap=4 width=fill_container>
+      <text name="Explanation EN" id=JQfxC width=fill_container fill=$text-primary fontSize=14 fontWeight=normal textGrowth=fixed-width content=A roundabout ahead sign warns drivers to slow down and give way to traffic already on the roundabout.>
+      <text name="Explanation Translation" id=rkJVB width=fill_container fill=$text-secondary fontSize=12 fontWeight=normal textGrowth=fixed-width content=Una señal de rotonda advierte a los conductores que reduzcan la velocidad y cedan el paso.>
+    <frame name="Continue Button" id=ERkyG layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+      <text name="Continue Label" id=MA4uv fill=$text-inverse fontSize=15 fontWeight=700 content=Continue>

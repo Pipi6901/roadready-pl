@@ -1,0 +1,73 @@
+<frame name="Lesson Complete" id=P5LeF layout=vertical width=375 height=812 fill=$bg x=3610 y=-164 clip=True>
+  <frame name="Status Bar" id=dtWWo padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=Ez54X fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=ffLhB fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Confetti Layer" id=B94K4 layout=none width=375 height=160 x=0 y=44 layoutPosition=absolute clip=True>
+    <ellipse name="Confetti 0" id=VXPzv width=10 height=10 fill=$warning x=30 y=20>
+    <ellipse name="Confetti 1" id=AKHwu width=8 height=8 fill=$sage-100 x=300 y=40>
+    <ellipse name="Confetti 2" id=ZQ7Zs width=7 height=7 fill=$accent-lime x=60 y=110>
+    <ellipse name="Confetti 3" id=q8GFL width=6 height=6 fill=$error x=250 y=15>
+    <ellipse name="Confetti 4" id=lvOzA width=9 height=9 fill=$warning x=330 y=120>
+    <ellipse name="Confetti 5" id=L56qH width=8 height=8 fill=$sage-100 x=15 y=170>
+    <ellipse name="Confetti 6" id=rufEk width=6 height=6 fill=$accent-lime x=340 y=190>
+    <ellipse name="Confetti 7" id=OMfIY width=6 height=6 fill=$sage-100 x=200 y=5>
+    <ellipse name="Confetti 8" id=eKXdi width=7 height=7 fill=$warning x=100 y=200>
+  <frame name="Content" id=xUGbi layout=vertical gap=20 padding=[0, 24, 20, 24] alignItems=center width=fill_container height=574 clip=True>
+    <frame name="Hero" id=z2BcFC layout=none width=140 height=140>
+      <frame name="Sunburst" id=iKDEL layout=none width=140 height=140 x=0 y=0>
+        <ellipse name="Burst Dot 0" id=S0EP7S width=7 height=7 fill=$amber x=132.5 y=66.5>
+        <ellipse name="Burst Dot 1" id=UXSKX width=5 height=5 fill=$accent-lime x=124.65767664977295 y=100.5>
+        <ellipse name="Burst Dot 2" id=m5xhQ width=5 height=5 fill=$amber x=100.5 y=124.65767664977295>
+        <ellipse name="Burst Dot 3" id=NltHr width=7 height=7 fill=$accent-lime x=66.5 y=132.5>
+        <ellipse name="Burst Dot 4" id=DjhSZ width=5 height=5 fill=$amber x=34.500000000000014 y=124.65767664977295>
+        <ellipse name="Burst Dot 5" id=D6fdI width=5 height=5 fill=$accent-lime x=10.342323350227048 y=100.5>
+        <ellipse name="Burst Dot 6" id=A8E0f width=7 height=7 fill=$amber x=0.5 y=66.50000000000001>
+        <ellipse name="Burst Dot 7" id=p1AeaU width=5 height=5 fill=$accent-lime x=10.342323350227055 y=34.49999999999999>
+        <ellipse name="Burst Dot 8" id=S6VVB width=5 height=5 fill=$amber x=34.49999999999997 y=10.342323350227062>
+        <ellipse name="Burst Dot 9" id=zVfgk width=7 height=7 fill=$accent-lime x=66.49999999999999 y=0.5>
+        <ellipse name="Burst Dot 10" id=LSi2p width=5 height=5 fill=$amber x=100.5 y=10.342323350227055>
+        <ellipse name="Burst Dot 11" id=Y1P3a width=5 height=5 fill=$accent-lime x=124.65767664977292 y=34.49999999999997>
+      <frame name="Badge Circle" id=zUHfn layout=vertical justifyContent=center alignItems=center width=120 height=120 cornerRadius=60 fill=$sage-100 stroke=$accent-lime strokeWidth=4 x=10 y=10 effect={"type": "shadow", "shadowType": "outer", "color": "#0E3B2C26", "offset": {"x": 0, "y": 4}, "blur": 12}>
+      <icon name="Trophy Icon" id=WUgwv width=60 height=60 fill=$primary-800 icon=trophy library=lucide x=40 y=40>
+      <icon name="Sparkle 1" id=XsPJL width=22 height=22 fill=$amber icon=sparkles library=lucide x=0 y=0>
+      <icon name="Sparkle 2" id=K4fiA7 width=18 height=18 fill=$accent-lime icon=sparkles library=lucide x=112 y=14>
+    <frame name="Text Col" id=orWIa layout=vertical gap=8 alignItems=center width=fill_container>
+      <text name="Title" id=trRLH fill=$text-primary fontSize=24 fontWeight=700 textAlign=center content=Lesson complete!>
+      <text name="Subtitle" id=H0bx0L width=260 fill=$text-secondary fontSize=14 fontWeight=normal textAlign=center textGrowth=fixed-width content=You're one step closer to reaching your goals!>
+    <frame name="Achievements Row" id=O8r5dj gap=8>
+      <frame name="Perfect Pill" id=VrpqV gap=6 padding=[8, 14] alignItems=center cornerRadius=20 fill=$amber-50>
+        <icon name="Perfect Icon" id=FBWSq width=15 height=15 fill=$amber icon=star library=lucide>
+        <text name="Perfect Label" id=NZFD4 fill=$amber-dark fontSize=13 fontWeight=700 content=Perfect score!>
+      <frame name="Streak Pill" id=KXPYq gap=6 padding=[8, 14] alignItems=center cornerRadius=20 fill=$amber-50>
+        <icon name="Streak Icon" id=U8oJ00 width=15 height=15 fill=$amber-dark icon=flame library=lucide>
+        <text name="Streak Label" id=s3qkYp fill=$amber-dark fontSize=13 fontWeight=700 content=6 day streak>
+    <frame name="Stats Row" id=s23wi gap=10 width=fill_container>
+      <frame name="Exercises Chip" id=RkpWM layout=vertical gap=4 padding=12 alignItems=center width=fill_container cornerRadius=$radius-md fill=$surface stroke=$sage-100 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 10}>
+        <frame name="Icon Circle" id=A8KIo layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=#f0f7e9ff stroke=$success-lime strokeWidth={"bottom": 2}>
+          <icon name="Chip Icon" id=uwRvg width=14 height=14 fill=$success-lime-dark icon=check library=lucide>
+        <text name="Chip Value" id=L1hsD fill=$text-primary fontSize=17 fontWeight=700 content=12>
+        <text name="Chip Label" id=N4U4rR fill=$text-secondary fontSize=11 fontWeight=normal content=Exercises>
+      <frame name="XP earned Chip" id=XVE7b layout=vertical gap=4 padding=12 alignItems=center width=fill_container cornerRadius=$radius-md fill=$surface stroke=$sage-100 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 10}>
+        <frame name="Icon Circle" id=LLMv9 layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=$amber-50 stroke=$amber strokeWidth={"bottom": 2}>
+          <icon name="Chip Icon" id=eAZ4B width=14 height=14 fill=$amber icon=zap library=lucide>
+        <text name="Chip Value" id=a2HxB fill=$text-primary fontSize=17 fontWeight=700 content=120>
+        <text name="Chip Label" id=ImztL fill=$text-secondary fontSize=11 fontWeight=normal content=XP earned>
+      <frame name="Accuracy Chip" id=OHtq9 layout=vertical gap=4 padding=12 alignItems=center width=fill_container cornerRadius=$radius-md fill=$surface stroke=$sage-100 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 10}>
+        <frame name="Icon Circle" id=jYavW layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=$sage-100 stroke=$primary-800 strokeWidth={"bottom": 2}>
+          <icon name="Chip Icon" id=WUaKc width=14 height=14 fill=$primary-800 icon=target library=lucide>
+        <text name="Chip Value" id=GBwmj fill=$text-primary fontSize=17 fontWeight=700 content=100%>
+        <text name="Chip Label" id=G1EOT fill=$text-secondary fontSize=11 fontWeight=normal content=Accuracy>
+    <frame name="Daily Goal Row" id=z0dvrW layout=vertical gap=8 width=fill_container>
+      <frame name="Label Row" id=toQe0 justifyContent=space_between width=fill_container>
+        <text name="Goal Label" id=mC5fQ fill=$text-secondary fontSize=12 fontWeight=600 content=Daily goal>
+        <text name="Goal Value" id=l6qe9 fill=$text-secondary fontSize=12 fontWeight=600 content=120/200 XP>
+      <frame name="Goal Bar" id=DHJT2 width=fill_container height=8 cornerRadius=4 fill=$sage-100>
+        <frame name="Goal Bar Fill" id=de1NP width=201 height=8 cornerRadius=4 fill=$success-lime>
+        <frame name="Goal Bar Empty" id=c8XIeP width=fill_container height=8>
+  <frame name="Actions" id=R4CS7 layout=vertical gap=10 padding=[14, 24, 24, 24] width=fill_container>
+    <frame name="Continue Next Button" id=zO5zv layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+      <text name="Continue Next Label" id=LLCjD fill=$text-inverse fontSize=15 fontWeight=700 content=Continue to next lesson>
+    <frame name="Review Mistakes Button" id=sAJ0m layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$sage-100>
+      <text name="Review Mistakes Label" id=Hrqpz fill=$accent-lime-dark fontSize=15 fontWeight=700 content=Review mistakes>
+    <frame name="Back To Topics Button" id=affVH layout=vertical padding=[10, 0] justifyContent=center alignItems=center width=fill_container>
+      <text name="Back To Topics Label" id=bq5lE fill=$text-secondary fontSize=14 fontWeight=600 content=Back to topics>

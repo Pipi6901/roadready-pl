@@ -1,0 +1,30 @@
+<frame name="Hazard Perception Clip" id=l4cy7d layout=vertical width=375 height=812 fill=$bg x=5885 y=728 clip=True>
+  <frame name="Status Bar" id=uL8FO padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=MBzt3 fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=qrxgL fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Nav Bar" id=l9FK21 padding=[6, 20, 10, 20] justifyContent=space_between alignItems=center width=fill_container>
+    <icon name="Close Icon" id=LN2nv width=22 height=22 fill=$text-secondary icon=x library=lucide>
+    <text name="Nav Title" id=noCXH fill=$text-primary fontSize=16 fontWeight=700 content=Hazard Perception>
+    <text name="Clip Counter" id=mQdS6 fill=$text-secondary fontSize=12 fontWeight=600 content=Clip 3 of 15>
+  <frame name="Content" id=E4GiXh layout=vertical gap=18 padding=[6, 20, 20, 20] width=fill_container height=fill_container clip=True>
+    <frame name="Video Player" id=ebN9i layout=vertical justifyContent=center alignItems=center width=fill_container height=230 cornerRadius=$radius-lg fill=$primary-900 clip=True>
+      <frame name="Play Button" id=CeVrk layout=vertical justifyContent=center alignItems=center width=60 height=60 cornerRadius=30 fill=#FFFFFF33>
+        <icon name="Play Icon" id=uzF0h width=26 height=26 fill=$text-inverse icon=play library=lucide>
+      <frame name="Scrubber" id=QjDSF width=335 height=3 fill=#FFFFFF33 x=0 y=224 layoutPosition=absolute>
+        <frame name="Scrubber Fill" id=K2Yha width=130 height=3 fill=$accent-lime>
+    <frame name="Instruction Row" id=zJLG6 gap=10 padding=14 alignItems=center width=fill_container cornerRadius=$radius-md fill=$sage-50 stroke=$sage-100 strokeWidth=1>
+      <icon name="Instruction Icon" id=SvIF6 width=18 height=18 fill=$primary-800 icon=hand library=lucide>
+      <text name="Instruction Text" id=aKCLJ width=fill_container fill=$text-primary fontSize=13 fontWeight=600 textGrowth=fixed-width content=Tap when you spot a developing hazard>
+    <frame name="Score Card" id=SNfoj layout=vertical gap=10 padding=16 width=fill_container cornerRadius=$radius-lg fill=$lime-50 stroke=$sage-100 strokeWidth=1>
+      <frame name="Score Top" id=bgiJX gap=8 alignItems=center width=fill_container>
+        <icon name="Score Icon" id=eieNi width=20 height=20 fill=$success-lime-dark icon=circle-check library=lucide>
+        <text name="Score Title" id=j3BRu fill=$success-lime-dark fontSize=15 fontWeight=700 content=Good reaction!>
+      <text name="Score Sub" id=OnTk0 fill=$text-secondary fontSize=12 fontWeight=normal content=You spotted the hazard right on time>
+      <frame name="Timing Bar" id=xdALZ width=fill_container height=8 cornerRadius=4 fill=$sage-100>
+        <frame name="Timing Fill" id=TvcoB width=230 height=8 cornerRadius=4 fill=$success-lime>
+        <frame name="Timing Empty" id=csmCw width=fill_container height=8>
+  <frame name="Actions" id=npQBQ layout=vertical gap=8 padding=[14, 20, 20, 20] width=fill_container>
+    <frame name="Next Clip Button" id=oguoj layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+      <text name="Next Clip Label" id=u8IUU fill=$text-inverse fontSize=15 fontWeight=700 content=Next Clip>
+    <frame name="Back Link" id=Y4Pgw layout=vertical padding=[6, 0] justifyContent=center alignItems=center width=fill_container>
+      <text name="Back Label" id=fRJ5n fill=$text-secondary fontSize=13 fontWeight=600 content=Back to Practice>

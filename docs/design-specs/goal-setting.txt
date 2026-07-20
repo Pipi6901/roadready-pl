@@ -1,0 +1,117 @@
+<frame name="Goal Setting" id=KyNvL layout=vertical width=375 height=812 fill={"type": "gradient", "gradientType": "linear", "enabled": true, "rotation": 135, "size": {"height": 1}, "colors": [{"color": "$bg", "position": 0}, {"color": "$sage-100", "position": 1}]} x=9070 y=728 clip=True>
+  <icon name="Deco" id=yqi1h width=20 height=20 fill=$decoration-color icon=party-popper library=lucide x=20 y=80 layoutPosition=absolute rotation=-10>
+  <icon name="Deco" id=GcWX3 width=20 height=20 fill=$decoration-color icon=alarm-clock library=lucide x=330 y=20 layoutPosition=absolute rotation=8>
+  <frame name="Status Bar" id=MATZF padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=qntdm fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=jVVHY fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Content" id=UzjvG layout=vertical gap=16 padding=[12, 20, 10, 20] width=fill_container height=fill_container clip=True>
+    <text name="Title" id=HaZn1 fill=$text-primary fontSize=22 fontWeight=700 content=When is your test?>
+    <frame name="Calendar Card" id=zoYI8 layout=vertical gap=12 padding=16 width=fill_container cornerRadius=$radius-lg fill=$surface effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+      <frame name="Header Badge" id=pXIyj gap=6 padding=[4, 10] alignItems=center cornerRadius=10 fill=$lime-50>
+        <icon name="Badge Icon" id=Y1D7H width=12 height=12 fill=$success-lime-dark icon=target library=lucide>
+        <text name="Badge Text" id=lM59d fill=$success-lime-dark fontSize=10 fontWeight=700 letterSpacing=0.5 content=EXAM DATE>
+      <frame name="Cal Header" id=rNuY0 justifyContent=space_between alignItems=center width=fill_container>
+        <frame name="Prev Circle" id=DP1b1 layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$sage-50>
+          <icon name="Prev Icon" id=vZT8i width=18 height=18 fill=$text-secondary icon=chevron-left library=lucide>
+        <text name="Month Label" id=Z4m1RB fill=$text-primary fontSize=15 fontWeight=700 content=August 2026>
+        <frame name="Next Circle" id=z45Jj1 layout=vertical justifyContent=center alignItems=center width=28 height=28 cornerRadius=14 fill=$sage-50>
+          <icon name="Next Icon" id=sl2mI width=18 height=18 fill=$text-secondary icon=chevron-right library=lucide>
+      <frame name="Weekday Row" id=Cf78L gap=4 width=fill_container>
+        <text name="WD" id=ngpSk fill=$text-muted fontSize=11 fontWeight=700 textAlign=center content=M>
+        <text name="WD" id=pm13m fill=$text-muted fontSize=11 fontWeight=700 textAlign=center content=T>
+        <text name="WD" id=bf88x fill=$text-muted fontSize=11 fontWeight=700 textAlign=center content=W>
+        <text name="WD" id=dLFrZ fill=$text-muted fontSize=11 fontWeight=700 textAlign=center content=T>
+        <text name="WD" id=juDKo fill=$text-muted fontSize=11 fontWeight=700 textAlign=center content=F>
+        <text name="WD" id=UOJjA fill=$text-muted fontSize=11 fontWeight=700 textAlign=center content=S>
+        <text name="WD" id=CjYq1 fill=$text-muted fontSize=11 fontWeight=700 textAlign=center content=S>
+      <frame name="Week 0" id=xvoHl gap=4 width=fill_container>
+        <frame name="Day blank" id=d0dsQ layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+        <frame name="Day blank" id=xGdtQ layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+        <frame name="Day blank" id=GftoS layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+        <frame name="Day blank" id=u4tnAs layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+        <frame name="Day blank" id=WDRHk layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+        <frame name="Day 1" id=XXpwu layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=xuvdP fill=$text-secondary fontSize=13 content=1>
+        <frame name="Day 2" id=c5T1x layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=IMkMJ fill=$text-secondary fontSize=13 content=2>
+      <frame name="Week 1" id=cx2WC gap=4 width=fill_container>
+        <frame name="Day 3" id=ZUX8w layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000 stroke=$primary-800 strokeWidth=1.5>
+          <text name="Day Num" id=bZvSf fill=$primary-800 fontSize=13 fontWeight=700 content=3>
+        <frame name="Day 4" id=uW4HZ layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=KTBjp fill=$text-primary fontSize=13 content=4>
+        <frame name="Day 5" id=o9oSy5 layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=NNGVw fill=$text-primary fontSize=13 content=5>
+        <frame name="Day 6" id=Hrjcd layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=XSlhy fill=$text-primary fontSize=13 content=6>
+        <frame name="Day 7" id=QBpHs layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=FlxTC fill=$text-primary fontSize=13 content=7>
+        <frame name="Day 8" id=kBF7n layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=q92rIQ fill=$text-secondary fontSize=13 content=8>
+        <frame name="Day 9" id=jh1Pu layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=yo57E fill=$text-secondary fontSize=13 content=9>
+      <frame name="Week 2" id=ZODe0 gap=4 width=fill_container>
+        <frame name="Day 10" id=VPtgk layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=de6Bb fill=$text-primary fontSize=13 content=10>
+        <frame name="Day 11" id=BDtkp layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=P4uO6 fill=$text-primary fontSize=13 content=11>
+        <frame name="Day 12" id=D7Bxa layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=FQBoR fill=$text-primary fontSize=13 content=12>
+        <frame name="Day 13" id=YCMIl layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=oBpR9 fill=$text-primary fontSize=13 content=13>
+        <frame name="Day 14" id=P7sP6 layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=XPT2l fill=$text-primary fontSize=13 content=14>
+        <frame name="Day 15" id=C54dv4 layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=Vej32 fill=$text-secondary fontSize=13 content=15>
+        <frame name="Day 16" id=bvSph layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=bjUCf fill=$text-secondary fontSize=13 content=16>
+      <frame name="Week 3" id=gR2Ki gap=4 width=fill_container>
+        <frame name="Day 17" id=KQJuK layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=$accent-lime stroke=$accent-lime-dark strokeWidth={"bottom": 3} effect={"type": "shadow", "shadowType": "outer", "color": "#2679AD40", "offset": {"x": 0, "y": 2}, "blur": 8}>
+          <text name="Day Num" id=AnSrP fill=$text-inverse fontSize=13 fontWeight=700 content=17>
+        <frame name="Day 18" id=A0yPdH layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=YHzYN fill=$text-primary fontSize=13 content=18>
+        <frame name="Day 19" id=jsubB layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=Beiss fill=$text-primary fontSize=13 content=19>
+        <frame name="Day 20" id=l2qLjL layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=ACy1O fill=$text-primary fontSize=13 content=20>
+        <frame name="Day 21" id=Qv7Wu layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=g62Ff fill=$text-primary fontSize=13 content=21>
+        <frame name="Day 22" id=ttvOJ layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=tRqMm fill=$text-secondary fontSize=13 content=22>
+        <frame name="Day 23" id=XM7ZP layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=FRsPD fill=$text-secondary fontSize=13 content=23>
+      <frame name="Week 4" id=vWSPy gap=4 width=fill_container>
+        <frame name="Day 24" id=RVz43 layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=j0F9vB fill=$text-primary fontSize=13 content=24>
+        <frame name="Day 25" id=xWpn6 layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=rAAUu fill=$text-primary fontSize=13 content=25>
+        <frame name="Day 26" id=rFESC layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=dt6Yw fill=$text-primary fontSize=13 content=26>
+        <frame name="Day 27" id=n8G0x1 layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=QCMPc fill=$text-primary fontSize=13 content=27>
+        <frame name="Day 28" id=ijpJv layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=F3qoT fill=$text-primary fontSize=13 content=28>
+        <frame name="Day 29" id=cOcEX layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=BXjLN fill=$text-secondary fontSize=13 content=29>
+        <frame name="Day 30" id=BqANL layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=jchm7 fill=$text-secondary fontSize=13 content=30>
+      <frame name="Week 5" id=uUKZf gap=4 width=fill_container>
+        <frame name="Day 31" id=ujLet layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+          <text name="Day Num" id=T4QFx fill=$text-primary fontSize=13 content=31>
+        <frame name="Day blank" id=FGF54 layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+        <frame name="Day blank" id=SofEH layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+        <frame name="Day blank" id=wo2oW layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+        <frame name="Day blank" id=IWwxl layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+        <frame name="Day blank" id=pOICe layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+        <frame name="Day blank" id=VwBsp layout=vertical justifyContent=center alignItems=center width=fill_container height=34 cornerRadius=10 fill=#00000000>
+    <frame name="Info Banner" id=GjhS8 gap=10 padding=14 alignItems=center width=fill_container cornerRadius=$radius-md fill=$lime-50>
+      <icon name="Info Icon" id=HTcfd width=18 height=18 fill=$success-lime-dark icon=sparkles library=lucide>
+      <text name="Info Text" id=kShvP width=fill_container fill=$success-lime-dark fontSize=13 fontWeight=600 textGrowth=fixed-width content=14 days to go — we'll build your study plan>
+    <frame name="Skip Option" id=H5crE4 gap=6 padding=[6, 0] justifyContent=center alignItems=center width=fill_container>
+      <icon name="Skip Icon" id=Plcue width=14 height=14 fill=$text-muted icon=calendar-x library=lucide>
+      <text name="Skip Text" id=I7UQT fill=$text-muted fontSize=13 fontWeight=600 content=I don't have a date yet>
+    <icon name="Filler Deco" id=z5iF71 width=22 height=22 fill=$decoration-color icon=car-front library=lucide opacity=0.5 x=320 y=400 layoutPosition=absolute>
+  <frame name="Actions" id=KEubj layout=vertical gap=8 padding=[14, 20, 20, 20] width=fill_container>
+    <frame name="Set Goal Button" id=qSgmb layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+      <text name="Set Goal Label" id=Egs5N fill=$text-inverse fontSize=15 fontWeight=700 content=Set my goal>
+    <frame name="Skip Button" id=OBKKG layout=vertical padding=[13, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$sage-100>
+      <text name="Skip Label" id=T7COj fill=$primary-800 fontSize=14 fontWeight=700 content=Skip for now>

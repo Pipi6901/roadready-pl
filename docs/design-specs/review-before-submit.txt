@@ -1,0 +1,133 @@
+<frame name="Review Before Submit" id=oouOb layout=vertical width=375 height=812 fill=$bg x=4975 y=728 clip=True>
+  <frame name="Status Bar" id=QpRhQ padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=o25PC fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=ftWhf fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Nav Bar" id=sHE3I gap=12 padding=[0, 20] alignItems=center width=fill_container height=52>
+    <frame name="Back Button" id=H76uEq layout=vertical justifyContent=center alignItems=center width=36 height=36 cornerRadius=18 fill=$surface stroke=$border strokeWidth=1>
+      <icon name="Back Icon" id=LV8ek width=20 height=20 fill=$text-primary icon=chevron-left library=lucide>
+    <text name="Nav Title" id=YvuBd fill=$text-primary fontSize=17 fontWeight=700 content=Review Answers>
+  <frame name="Content" id=p5TgI layout=vertical gap=14 padding=[12, 20, 10, 20] width=fill_container height=fill_container clip=True>
+    <frame name="Legend" id=xqanO gap=14 width=fill_container>
+      <frame name="Answered Legend" id=fRtuw gap=5 alignItems=center>
+        <frame name="Dot" id=ei5qW width=10 height=10 cornerRadius=5 fill=$success-lime>
+        <text name="Label" id=a6Ng1 fill=$text-secondary fontSize=11 fontWeight=normal content=Answered>
+      <frame name="Not answered Legend" id=o7mYoW gap=5 alignItems=center>
+        <frame name="Dot" id=OLyic width=10 height=10 cornerRadius=5 fill=$sage-100>
+        <text name="Label" id=nVAfI fill=$text-secondary fontSize=11 fontWeight=normal content=Not answered>
+      <frame name="Flagged Legend" id=wcSQO gap=5 alignItems=center>
+        <frame name="Dot" id=FhtyD width=10 height=10 cornerRadius=5 fill=$amber>
+        <text name="Label" id=oSzsk fill=$text-secondary fontSize=11 fontWeight=normal content=Flagged>
+    <frame name="Grid" id=J0Jny layout=vertical gap=8 width=fill_container height=fill_container clip=True>
+      <frame name="Grid Row 0" id=Q8G7d gap=8 width=fill_container>
+        <frame name="Q1" id=R1dfS6 layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=a9645 fill=$success-lime-dark fontSize=13 fontWeight=700 content=1>
+        <frame name="Q2" id=HVV5R layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=KXtPA fill=$success-lime-dark fontSize=13 fontWeight=700 content=2>
+        <frame name="Q3" id=BnJid layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=TmfF7 fill=$success-lime-dark fontSize=13 fontWeight=700 content=3>
+        <frame name="Q4" id=CHmB4 layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$amber strokeWidth=2>
+          <text name="Num" id=EGIXX fill=$success-lime-dark fontSize=13 fontWeight=700 content=4>
+        <frame name="Q5" id=gQ0wS layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=Qw30f fill=$success-lime-dark fontSize=13 fontWeight=700 content=5>
+      <frame name="Grid Row 1" id=fiOy8 gap=8 width=fill_container>
+        <frame name="Q6" id=OhlZV layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$sage-50 stroke=$border strokeWidth=1.5>
+          <text name="Num" id=hKkeV fill=$text-muted fontSize=13 fontWeight=700 content=6>
+        <frame name="Q7" id=AgMRD layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=O9adnI fill=$success-lime-dark fontSize=13 fontWeight=700 content=7>
+        <frame name="Q8" id=SxK6Y layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=yjjqF fill=$success-lime-dark fontSize=13 fontWeight=700 content=8>
+        <frame name="Q9" id=gHDgz layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=jhjDN fill=$success-lime-dark fontSize=13 fontWeight=700 content=9>
+        <frame name="Q10" id=t6bNS layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=B1dPNi fill=$success-lime-dark fontSize=13 fontWeight=700 content=10>
+      <frame name="Grid Row 2" id=xE8Co gap=8 width=fill_container>
+        <frame name="Q11" id=w2vyfy layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$amber strokeWidth=2>
+          <text name="Num" id=V20bb fill=$success-lime-dark fontSize=13 fontWeight=700 content=11>
+        <frame name="Q12" id=qF35O layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=be7Le fill=$success-lime-dark fontSize=13 fontWeight=700 content=12>
+        <frame name="Q13" id=RZKlf layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=g2Efi fill=$success-lime-dark fontSize=13 fontWeight=700 content=13>
+        <frame name="Q14" id=kMFbj layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$sage-50 stroke=$border strokeWidth=1.5>
+          <text name="Num" id=klNQS fill=$text-muted fontSize=13 fontWeight=700 content=14>
+        <frame name="Q15" id=M4yNhn layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=DLt75 fill=$success-lime-dark fontSize=13 fontWeight=700 content=15>
+      <frame name="Grid Row 3" id=qVj7y gap=8 width=fill_container>
+        <frame name="Q16" id=hxBnZ layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=UuT5f fill=$success-lime-dark fontSize=13 fontWeight=700 content=16>
+        <frame name="Q17" id=eG6Od layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=eYhWi fill=$success-lime-dark fontSize=13 fontWeight=700 content=17>
+        <frame name="Q18" id=I9I2z layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$amber strokeWidth=2>
+          <text name="Num" id=HcJZ5 fill=$success-lime-dark fontSize=13 fontWeight=700 content=18>
+        <frame name="Q19" id=w5MEd8 layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=NIPNB fill=$success-lime-dark fontSize=13 fontWeight=700 content=19>
+        <frame name="Q20" id=lxGUn layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=u8rHY fill=$success-lime-dark fontSize=13 fontWeight=700 content=20>
+      <frame name="Grid Row 4" id=y6KHh gap=8 width=fill_container>
+        <frame name="Q21" id=N5zXs layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=QZEwt fill=$success-lime-dark fontSize=13 fontWeight=700 content=21>
+        <frame name="Q22" id=Va5Am layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$sage-50 stroke=$border strokeWidth=1.5>
+          <text name="Num" id=p0lTnM fill=$text-muted fontSize=13 fontWeight=700 content=22>
+        <frame name="Q23" id=KybBI layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=UlRin fill=$success-lime-dark fontSize=13 fontWeight=700 content=23>
+        <frame name="Q24" id=Hc5V0 layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=mx0xa fill=$success-lime-dark fontSize=13 fontWeight=700 content=24>
+        <frame name="Q25" id=ASMy9 layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$amber strokeWidth=2>
+          <text name="Num" id=udTBw fill=$success-lime-dark fontSize=13 fontWeight=700 content=25>
+      <frame name="Grid Row 5" id=vWJRE gap=8 width=fill_container>
+        <frame name="Q26" id=TEY69 layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=o3waJ fill=$success-lime-dark fontSize=13 fontWeight=700 content=26>
+        <frame name="Q27" id=RREbF layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=f49PEt fill=$success-lime-dark fontSize=13 fontWeight=700 content=27>
+        <frame name="Q28" id=BHcDA layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=d45Uda fill=$success-lime-dark fontSize=13 fontWeight=700 content=28>
+        <frame name="Q29" id=FaESp layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=Ch6ox fill=$success-lime-dark fontSize=13 fontWeight=700 content=29>
+        <frame name="Q30" id=K3lTP layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$sage-50 stroke=$border strokeWidth=1.5>
+          <text name="Num" id=I4lwI fill=$text-muted fontSize=13 fontWeight=700 content=30>
+      <frame name="Grid Row 6" id=c4tkK gap=8 width=fill_container>
+        <frame name="Q31" id=dh8Q8 layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=AoiSi fill=$success-lime-dark fontSize=13 fontWeight=700 content=31>
+        <frame name="Q32" id=LB9de layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$amber strokeWidth=2>
+          <text name="Num" id=D7m6L fill=$success-lime-dark fontSize=13 fontWeight=700 content=32>
+        <frame name="Q33" id=p2Q6J layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=L5zwkX fill=$success-lime-dark fontSize=13 fontWeight=700 content=33>
+        <frame name="Q34" id=Gh9oc layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=bwvlL fill=$success-lime-dark fontSize=13 fontWeight=700 content=34>
+        <frame name="Q35" id=VlJqZ layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=smp5s fill=$success-lime-dark fontSize=13 fontWeight=700 content=35>
+      <frame name="Grid Row 7" id=XODVA gap=8 width=fill_container>
+        <frame name="Q36" id=bRU29 layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=jXdaa fill=$success-lime-dark fontSize=13 fontWeight=700 content=36>
+        <frame name="Q37" id=EZKul layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=R8NcD fill=$success-lime-dark fontSize=13 fontWeight=700 content=37>
+        <frame name="Q38" id=kaXtn layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=eYqMe fill=$success-lime-dark fontSize=13 fontWeight=700 content=38>
+        <frame name="Q39" id=okXFs layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=dd9IG fill=$success-lime-dark fontSize=13 fontWeight=700 content=39>
+        <frame name="Q40" id=wTPUb layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$sage-50 stroke=$border strokeWidth=1.5>
+          <text name="Num" id=kj2ak fill=$text-muted fontSize=13 fontWeight=700 content=40>
+      <frame name="Grid Row 8" id=kdYwi gap=8 width=fill_container>
+        <frame name="Q41" id=ycaHL layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=hEiK3 fill=$success-lime-dark fontSize=13 fontWeight=700 content=41>
+        <frame name="Q42" id=i9TrB layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=ba5yb fill=$success-lime-dark fontSize=13 fontWeight=700 content=42>
+        <frame name="Q43" id=A8YZm8 layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=lIkQP fill=$success-lime-dark fontSize=13 fontWeight=700 content=43>
+        <frame name="Q44" id=zLomH layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$amber strokeWidth=2>
+          <text name="Num" id=NW6ye fill=$success-lime-dark fontSize=13 fontWeight=700 content=44>
+        <frame name="Q45" id=HI05L layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=yGQoi fill=$success-lime-dark fontSize=13 fontWeight=700 content=45>
+      <frame name="Grid Row 9" id=zBeWG gap=8 width=fill_container>
+        <frame name="Q46" id=EuMio layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=lHODi fill=$success-lime-dark fontSize=13 fontWeight=700 content=46>
+        <frame name="Q47" id=UIjTA layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$sage-50 stroke=$border strokeWidth=1.5>
+          <text name="Num" id=rylrs fill=$text-muted fontSize=13 fontWeight=700 content=47>
+        <frame name="Q48" id=H3Jgq layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=HNeTD fill=$success-lime-dark fontSize=13 fontWeight=700 content=48>
+        <frame name="Q49" id=krzHV layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=Ku10W fill=$success-lime-dark fontSize=13 fontWeight=700 content=49>
+        <frame name="Q50" id=lkA6L layout=vertical justifyContent=center alignItems=center width=fill_container height=44 cornerRadius=12 fill=$lime-50 stroke=$success-lime strokeWidth=1.5>
+          <text name="Num" id=yCphd fill=$success-lime-dark fontSize=13 fontWeight=700 content=50>
+  <frame name="Actions" id=wclZ1 layout=vertical padding=[14, 20, 20, 20] width=fill_container fill=$bg stroke=$border strokeWidth={"top": 1}>
+    <frame name="Submit Test Button" id=RniRv layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+      <text name="Submit Test Label" id=qrEn4 fill=$text-inverse fontSize=15 fontWeight=700 content=Submit Test>

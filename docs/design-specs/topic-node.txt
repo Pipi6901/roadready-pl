@@ -1,0 +1,2 @@
+<frame name="Topic Node" id=FfujH layout=vertical justifyContent=center alignItems=center width=72 height=72 cornerRadius=24 fill=$primary-100 stroke=$primary-300 strokeWidth=2 x=0 y=-356 reusable=True>
+  <icon name="Main Icon" id=Frcje width=30 height=30 fill=$primary-600 icon=signpost library=lucide>

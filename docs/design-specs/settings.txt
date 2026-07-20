@@ -1,0 +1,125 @@
+<frame name="Settings" id=OmRSd layout=vertical width=375 height=812 fill=$bg x=6795 y=728 clip=True>
+  <frame name="Status Bar" id=A7dW0h padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=y8Wy0 fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=F2Dm4 fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Nav Bar" id=NNTn1 gap=12 padding=[0, 20] alignItems=center width=fill_container height=52>
+    <frame name="Back Button" id=a0YtG layout=vertical justifyContent=center alignItems=center width=36 height=36 cornerRadius=18 fill=$surface stroke=$border strokeWidth=1>
+      <icon name="Back Icon" id=j4hZx7 width=20 height=20 fill=$text-primary icon=chevron-left library=lucide>
+    <text name="Nav Title" id=nYjhI fill=$text-primary fontSize=17 fontWeight=700 content=Settings>
+  <frame name="Scroll" id=a3EJZi layout=vertical width=fill_container height=fill_container clip=True>
+    <frame name="Content" id=yeo6A layout=vertical gap=22 padding=[8, 20, 40, 20] width=fill_container>
+      <frame name="Mini Profile Card" id=qffjC gap=12 padding=14 alignItems=center width=fill_container cornerRadius=$radius-lg fill=$surface effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="Mini Avatar" id=at2V2 layout=vertical justifyContent=center alignItems=center width=48 height=48 cornerRadius=16 fill=$primary-800 stroke=$primary-900 strokeWidth={"bottom": 3}>
+          <text name="Mini Initials" id=uUVKP fill=$text-inverse fontSize=15 fontWeight=700 content=AK>
+        <frame name="Mini Text" id=B0k2w layout=vertical gap=2 width=fill_container>
+          <text name="Mini Name" id=U8lAG6 fill=$text-primary fontSize=15 fontWeight=700 content=Alex Kim>
+          <text name="Mini Email" id=vvfzd fill=$text-secondary fontSize=12 fontWeight=normal content=alex@example.com>
+        <icon name="Mini Chevron" id=Iap1f width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+      <frame name="Section Header" id=NkWRX gap=6 alignItems=center>
+        <icon name="Section Icon" id=mXpzg width=13 height=13 fill=$primary-800 icon=user library=lucide>
+        <text name="Section Label" id=Z1GoYy fill=$text-muted fontSize=12 fontWeight=700 letterSpacing=0.5 content=ACCOUNT>
+      <frame name="ACCOUNT Card" id=osAjm layout=vertical width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="Email Row" id=rasu7 gap=10 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+          <text name="Row Label" id=szFXj fill=$text-primary fontSize=14 fontWeight=normal content=Email>
+          <text name="Row Value" id=E28AO fill=$text-secondary fontSize=13 fontWeight=normal content=alex@example.com>
+          <icon name="Chevron" id=F4b3G width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+        <frame name="Change Password Row" id=hs12v gap=10 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+          <text name="Row Label" id=XqJGn fill=$text-primary fontSize=14 fontWeight=normal content=Change Password>
+          <icon name="Chevron" id=gWyOJ width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+        <frame name="Delete Account Row" id=cy6qr gap=10 padding=16 alignItems=center width=fill_container stroke=$border>
+          <text name="Row Label" id=jpA6W fill=$error fontSize=14 fontWeight=normal content=Delete Account>
+          <icon name="Chevron" id=UfuRG width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+      <frame name="Section Header" id=CVA7e gap=6 alignItems=center>
+        <icon name="Section Icon" id=O1cx6 width=13 height=13 fill=$primary-800 icon=map-pin library=lucide>
+        <text name="Section Label" id=ZE2bV fill=$text-muted fontSize=12 fontWeight=700 letterSpacing=0.5 content=COUNTRY>
+      <frame name="COUNTRY Card" id=k8RWa layout=vertical width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="Country Row" id=cc9cQ gap=10 padding=16 alignItems=center width=fill_container stroke=$border>
+          <text name="Row Label" id=CfLkj fill=$text-primary fontSize=14 fontWeight=normal content=Country>
+          <text name="Row Value" id=IJtTO fill=$text-secondary fontSize=13 fontWeight=normal content=United Kingdom 🇬🇧>
+          <icon name="Chevron" id=f50cZ width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+      <frame name="Section Header" id=a27tz gap=6 alignItems=center>
+        <icon name="Section Icon" id=n84I9 width=13 height=13 fill=$primary-800 icon=languages library=lucide>
+        <text name="Section Label" id=P0lVpw fill=$text-muted fontSize=12 fontWeight=700 letterSpacing=0.5 content=LANGUAGE>
+      <frame name="LANGUAGE Card" id=L2Fgst layout=vertical width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="Translation language Row" id=HaDBQ gap=10 padding=16 alignItems=center width=fill_container stroke=$border>
+          <text name="Row Label" id=rQicv fill=$text-primary fontSize=14 fontWeight=normal content=Translation language>
+          <text name="Row Value" id=NRBF2 fill=$text-secondary fontSize=13 fontWeight=normal content=Español>
+          <icon name="Chevron" id=yMBel width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+      <frame name="Section Header" id=J0line gap=6 alignItems=center>
+        <icon name="Section Icon" id=V9vGAD width=13 height=13 fill=$amber-dark icon=calendar-clock library=lucide>
+        <text name="Section Label" id=KRmOK fill=$text-muted fontSize=12 fontWeight=700 letterSpacing=0.5 content=EXAM DATE>
+      <frame name="EXAM DATE Card" id=Mqgyr layout=vertical width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="Test date Row" id=pXs14 gap=10 padding=16 alignItems=center width=fill_container stroke=$border>
+          <text name="Row Label" id=z9RvNH fill=$text-primary fontSize=14 fontWeight=normal content=Test date>
+          <text name="Row Value" id=poR9s fill=$text-secondary fontSize=13 fontWeight=normal content=14 days away>
+          <icon name="Chevron" id=mEYfL width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+      <frame name="Section Header" id=vSprh gap=6 alignItems=center>
+        <icon name="Section Icon" id=mZeQT width=13 height=13 fill=$amber-dark icon=bell library=lucide>
+        <text name="Section Label" id=E2keo fill=$text-muted fontSize=12 fontWeight=700 letterSpacing=0.5 content=NOTIFICATIONS>
+      <frame name="NOTIFICATIONS Card" id=BOi2Q layout=vertical width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="Daily reminder Row" id=svpNy gap=10 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+          <text name="Row Label" id=w4C7z fill=$text-primary fontSize=14 fontWeight=normal content=Daily reminder>
+          <frame name="Toggle Track" id=Gzrjs layout=none width=40 height=22 cornerRadius=11 fill=$accent-lime>
+            <frame name="Toggle Knob" id=K6pzA width=18 height=18 cornerRadius=9 fill=$surface x=20 y=2>
+        <frame name="Reminder time Row" id=Ds7a4 gap=10 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+          <text name="Row Label" id=h876G8 fill=$text-primary fontSize=14 fontWeight=normal content=Reminder time>
+          <text name="Row Value" id=ykEao fill=$text-secondary fontSize=13 fontWeight=normal content=8:00 PM>
+          <icon name="Chevron" id=YPdVJ width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+        <frame name="Question of the Day Row" id=r9rppT gap=10 padding=16 alignItems=center width=fill_container stroke=$border>
+          <text name="Row Label" id=Ghr6Z fill=$text-primary fontSize=14 fontWeight=normal content=Question of the Day>
+          <frame name="Toggle Track" id=u161y layout=none width=40 height=22 cornerRadius=11 fill=$accent-lime>
+            <frame name="Toggle Knob" id=CTifL width=18 height=18 cornerRadius=9 fill=$surface x=20 y=2>
+      <frame name="Section Header" id=ariro gap=6 alignItems=center>
+        <icon name="Section Icon" id=pDfaO width=13 height=13 fill=$success-lime-dark icon=download library=lucide>
+        <text name="Section Label" id=U0UPGr fill=$text-muted fontSize=12 fontWeight=700 letterSpacing=0.5 content=OFFLINE>
+      <frame name="OFFLINE Card" id=ifCEc layout=vertical width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="Downloaded content Row" id=n3skgX gap=10 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+          <text name="Row Label" id=kPsPP fill=$text-primary fontSize=14 fontWeight=normal content=Downloaded content>
+          <text name="Row Value" id=zq3hK fill=$text-secondary fontSize=13 fontWeight=normal content=3 topics (45 MB)>
+        <frame name="Download Row" id=zZB6Z layout=vertical gap=4 padding=16 width=fill_container stroke=$border strokeWidth={"top": 1}>
+          <text name="Download Label" id=k4j8P fill=$primary-800 fontSize=14 fontWeight=600 content=Download all content for offline use>
+          <text name="Download Sub" id=DyReW fill=$text-secondary fontSize=12 fontWeight=normal content=Approx. 180 MB>
+      <frame name="Section Header" id=qE3gI gap=6 alignItems=center>
+        <icon name="Section Icon" id=I4a2s9 width=13 height=13 fill=$amber-dark icon=gem library=lucide>
+        <text name="Section Label" id=ORK8G fill=$text-muted fontSize=12 fontWeight=700 letterSpacing=0.5 content=SUBSCRIPTION>
+      <frame name="SUBSCRIPTION Card" id=N5h2tM layout=vertical width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="Current plan Row" id=pNmm2 gap=10 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+          <text name="Row Label" id=Nc7bz fill=$text-primary fontSize=14 fontWeight=normal content=Current plan>
+          <text name="Row Value" id=u7TAA1 fill=$text-secondary fontSize=13 fontWeight=normal content=Pro Monthly · £4.99>
+          <icon name="Chevron" id=H9tuP width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+        <frame name="Renewal date Row" id=lyOLc gap=10 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+          <text name="Row Label" id=tBzec fill=$text-primary fontSize=14 fontWeight=normal content=Renewal date>
+          <text name="Row Value" id=vzld8 fill=$text-secondary fontSize=13 fontWeight=normal content=17 Aug 2026>
+          <icon name="Chevron" id=uzjVR width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+        <frame name="Manage Subscription Row" id=bKt67 gap=10 padding=16 alignItems=center width=fill_container stroke=$border>
+          <text name="Row Label" id=P6NnE fill=$text-primary fontSize=14 fontWeight=normal content=Manage Subscription>
+          <icon name="Chevron" id=N9Gja width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+      <frame name="Section Header" id=byj43 gap=6 alignItems=center>
+        <icon name="Section Icon" id=cY2Ou width=13 height=13 fill=$primary-800 icon=volume-2 library=lucide>
+        <text name="Section Label" id=IEnRg fill=$text-muted fontSize=12 fontWeight=700 letterSpacing=0.5 content=AUDIO>
+      <frame name="AUDIO Card" id=Q2dw8A layout=vertical width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="Voice Speed Row" id=zCkXF layout=vertical gap=10 padding=16 width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+          <text name="Slider Label" id=kQ494 fill=$text-primary fontSize=14 fontWeight=normal content=Voice speed>
+          <frame name="Slider Track" id=rTQ8b layout=none width=fill_container height=6 cornerRadius=3 fill=$sage-100>
+            <frame name="Slider Fill" id=H9uQzF width=180 height=6 cornerRadius=3 fill=$success-lime x=0 y=0>
+            <frame name="Slider Handle" id=sr7ik width=18 height=18 cornerRadius=9 fill=$surface stroke=$accent-lime-dark strokeWidth=2 x=172 y=-6>
+        <frame name="Auto-read questions Row" id=IdfH7 gap=10 padding=16 alignItems=center width=fill_container stroke=$border>
+          <text name="Row Label" id=mJjON fill=$text-primary fontSize=14 fontWeight=normal content=Auto-read questions>
+          <frame name="Toggle Track" id=pr5gA layout=none width=40 height=22 cornerRadius=11 fill=$border>
+            <frame name="Toggle Knob" id=n5pjkS width=18 height=18 cornerRadius=9 fill=$surface x=2 y=2>
+      <frame name="Section Header" id=Erneg gap=6 alignItems=center>
+        <icon name="Section Icon" id=Wu31W width=13 height=13 fill=$text-muted icon=info library=lucide>
+        <text name="Section Label" id=dHt0p fill=$text-muted fontSize=12 fontWeight=700 letterSpacing=0.5 content=ABOUT>
+      <frame name="ABOUT Card" id=qRRFz layout=vertical width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+        <frame name="App version Row" id=EGzKD gap=10 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+          <text name="Row Label" id=DHMgI fill=$text-primary fontSize=14 fontWeight=normal content=App version>
+          <text name="Row Value" id=s7ZLm fill=$text-secondary fontSize=13 fontWeight=normal content=1.4.2>
+        <frame name="Terms of Service Row" id=JMRQ2 gap=10 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+          <text name="Row Label" id=bHUFM fill=$text-primary fontSize=14 fontWeight=normal content=Terms of Service>
+          <icon name="Chevron" id=wL72N width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+        <frame name="Privacy Policy Row" id=RUnN1 gap=10 padding=16 alignItems=center width=fill_container stroke=$border>
+          <text name="Row Label" id=cCoUJ fill=$text-primary fontSize=14 fontWeight=normal content=Privacy Policy>
+          <icon name="Chevron" id=SsUxn width=16 height=16 fill=$text-muted icon=chevron-right library=lucide>
+      <text name="Legal Note" id=sXu6F width=fill_container fill=$text-muted fontSize=11 fontWeight=normal lineHeight=1.4 textGrowth=fixed-width content=Contains public sector information licensed under the Open Government Licence v3.0. © Crown Copyright.>
+      <frame name="Log Out Button" id=jVtKT layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$error-50>
+        <text name="Log Out Label" id=X3eL7 fill=$error fontSize=15 fontWeight=700 content=Log Out>

@@ -1,0 +1,37 @@
+<frame name="Mock Test Setup" id=nekI9 layout=vertical width=375 height=812 fill=$bg x=4065 y=728 clip=True>
+  <frame name="Status Bar" id=M1IYvE padding=[0, 20] justifyContent=space_between alignItems=center width=fill_container height=44>
+    <text name="Time" id=dfpMS fill=$text-primary fontSize=15 fontWeight=600 content=9:41>
+    <text name="Status Icons" id=xJRy1 fill=$text-primary fontSize=13 fontWeight=normal content=••• 🔋>
+  <frame name="Nav Bar" id=sAThW gap=12 padding=[0, 20] alignItems=center width=fill_container height=52>
+    <frame name="Back Button" id=zc4VZ layout=vertical justifyContent=center alignItems=center width=36 height=36 cornerRadius=18 fill=$surface stroke=$border strokeWidth=1>
+      <icon name="Back Icon" id=Zxpib width=20 height=20 fill=$text-primary icon=chevron-left library=lucide>
+    <text name="Nav Title" id=v9pQH fill=$text-primary fontSize=17 fontWeight=700 content=Mock Test>
+  <frame name="Content" id=u7YNv layout=vertical gap=24 padding=[16, 20, 20, 20] width=fill_container height=fill_container clip=True>
+    <frame name="Hero" id=uFa5s layout=vertical gap=10 alignItems=center width=fill_container>
+      <frame name="Icon Box" id=V7CVbU layout=vertical justifyContent=center alignItems=center width=80 height=80 cornerRadius=26 fill=$primary-800 stroke=$primary-900 strokeWidth={"bottom": 4} effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4433", "offset": {"x": 0, "y": 4}, "blur": 12}>
+        <icon name="Hero Icon" id=o8pHk width=38 height=38 fill=$text-inverse icon=clipboard-check library=lucide>
+    <frame name="Info Card" id=pQt1k gap=10 padding=14 alignItems=center width=fill_container cornerRadius=$radius-md fill=$sage-50 stroke=$sage-100 effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4412", "offset": {"x": 0, "y": 3}, "blur": 14}>
+      <icon name="Info Icon" id=hqQYc width=18 height=18 fill=$primary-800 icon=info library=lucide>
+      <text name="Info Text" id=FOhWI width=fill_container fill=$text-primary fontSize=13 fontWeight=600 textGrowth=fixed-width content=This simulates the real DVSA theory test>
+    <frame name="Params Card" id=B3Q25 layout=vertical width=fill_container cornerRadius=$radius-lg fill=$surface stroke=$border effect={"type": "shadow", "shadowType": "outer", "color": "#0B2A4414", "offset": {"x": 0, "y": 4}, "blur": 16}>
+      <frame name="Questions Row" id=IdqtI gap=12 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+        <frame name="Icon Circle" id=W3wdS layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=$sage-100>
+          <icon name="Row Icon" id=H9o5yw width=16 height=16 fill=$primary-800 icon=list-checks library=lucide>
+        <text name="Row Label" id=zkOJH fill=$text-primary fontSize=14 fontWeight=normal content=Questions>
+        <text name="Row Value" id=BAjPG fill=$text-primary fontSize=14 fontWeight=700 content=50>
+      <frame name="Time limit Row" id=E2GIHF gap=12 padding=16 alignItems=center width=fill_container stroke=$border strokeWidth={"bottom": 1}>
+        <frame name="Icon Circle" id=qBjlt layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=$amber-50>
+          <icon name="Row Icon" id=R1h0L width=16 height=16 fill=$amber-dark icon=timer library=lucide>
+        <text name="Row Label" id=Yxgc9 fill=$text-primary fontSize=14 fontWeight=normal content=Time limit>
+        <text name="Row Value" id=oegNL fill=$text-primary fontSize=14 fontWeight=700 content=57 min>
+      <frame name="Pass mark Row" id=T4oUQC gap=12 padding=16 alignItems=center width=fill_container stroke=$border>
+        <frame name="Icon Circle" id=P2RpFw layout=vertical justifyContent=center alignItems=center width=32 height=32 cornerRadius=16 fill=$lime-50>
+          <icon name="Row Icon" id=agNM3 width=16 height=16 fill=$success-lime-dark icon=flag library=lucide>
+        <text name="Row Label" id=E1zCt fill=$text-primary fontSize=14 fontWeight=normal content=Pass mark>
+        <text name="Row Value" id=pdsSP fill=$text-primary fontSize=14 fontWeight=700 content=43 / 50>
+    <frame name="Lang Row" id=N3Ux0 gap=6 alignItems=center width=fill_container>
+      <icon name="Lang Icon" id=h7Dcy width=14 height=14 fill=$text-muted icon=languages library=lucide>
+      <text name="Lang Text" id=C3WqT fill=$text-muted fontSize=12 fontWeight=normal content=Questions shown in English + Spanish>
+  <frame name="Actions" id=u0oDSO layout=vertical padding=[14, 20, 20, 20] width=fill_container>
+    <frame name="Start Test Button" id=jl4ka layout=vertical padding=[15, 0] justifyContent=center alignItems=center width=fill_container cornerRadius=$radius-button fill=$accent-lime effect={"type": "shadow", "shadowType": "outer", "color": "$accent-lime-dark", "offset": {"x": 0, "y": 3}}>
+      <text name="Start Test Label" id=Uf7ep fill=$text-inverse fontSize=15 fontWeight=700 content=Start Test>

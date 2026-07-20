@@ -1,0 +1,13 @@
+<frame name="TabBar" id=NSQN0 justifyContent=space_around alignItems=center width=375 height=64 fill=$surface stroke=$border strokeWidth={"top": 1} x=0 y=-164 reusable=True>
+  <frame name="Home Tab" id=b0F0Lg layout=vertical gap=2 justifyContent=center alignItems=center width=fill_container height=fill_container>
+    <icon name="Home Icon" id=HstPP width=24 height=24 fill=$accent-lime-dark icon=house library=lucide>
+    <text name="Home Label" id=UFZ4g fill=$accent-lime-dark fontSize=11 fontWeight=600 content=Home>
+  <frame name="Learn Tab" id=TVshO layout=vertical gap=2 justifyContent=center alignItems=center width=fill_container height=fill_container>
+    <icon name="Learn Icon" id=W6ESa width=24 height=24 fill=$text-muted icon=book-open library=lucide>
+    <text name="Learn Label" id=CQEFo fill=$text-muted fontSize=11 fontWeight=normal content=Learn>
+  <frame name="Practice Tab" id=Nr6jH layout=vertical gap=2 justifyContent=center alignItems=center width=fill_container height=fill_container>
+    <icon name="Practice Icon" id=JTBLk width=24 height=24 fill=$text-muted icon=timer library=lucide>
+    <text name="Practice Label" id=Tkpom fill=$text-muted fontSize=11 fontWeight=normal content=Practice>
+  <frame name="Profile Tab" id=xl6tD layout=vertical gap=2 justifyContent=center alignItems=center width=fill_container height=fill_container>
+    <icon name="Profile Icon" id=ESMs0 width=24 height=24 fill=$text-muted icon=user library=lucide>
+    <text name="Profile Label" id=mUj3y fill=$text-muted fontSize=11 fontWeight=normal content=Profile>
