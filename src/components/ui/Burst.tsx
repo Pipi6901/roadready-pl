@@ -48,9 +48,13 @@ export function Burst({ active, count = 10, colors, size = 5, distance = 30 }: B
       easing: Easing.out(Easing.cubic),
       useNativeDriver: false,
     }).start(({ finished }) => {
-      anim.removeListener(id);
       if (finished) setParticles([]);
     });
+
+    // Also runs if the component unmounts (or `active` re-fires) before the
+    // animation finishes — the `.start()` callback above only fires on
+    // natural completion, not on an early unmount.
+    return () => anim.removeListener(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 

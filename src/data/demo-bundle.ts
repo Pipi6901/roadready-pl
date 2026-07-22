@@ -40,7 +40,7 @@ const UNITED_KINGDOM: Country = {
   mockTest: {
     questionCount: 50,
     timeLimitMinutes: 57,
-    passMark: 43,
+    passMark: 47,
   },
   currency: 'GBP',
 };
@@ -234,7 +234,7 @@ const TOPICS: Topic[] = [
     slug: 'hazard-awareness',
     icon: 'triangle-alert',
     sortOrder: 4,
-    questionCount: 3,
+    questionCount: 4,
   },
   {
     id: 'vehicle-safety',
@@ -242,7 +242,7 @@ const TOPICS: Topic[] = [
     slug: 'vehicle-safety',
     icon: 'shield-check',
     sortOrder: 5,
-    questionCount: 3,
+    questionCount: 4,
   },
   {
     id: 'rules-of-the-road',
@@ -672,6 +672,24 @@ const QUESTIONS: Question[] = [
     subtopic: 'Tiredness',
     sourceRef: 'Highway Code rule 91',
   },
+  {
+    id: 'q-hazard-awareness-04',
+    topicId: 'hazard-awareness',
+    type: 'single_choice',
+    text: 'What is the recommended minimum time gap to leave from the vehicle in front in good conditions?',
+    options: [
+      { id: 'A', text: 'One second' },
+      { id: 'B', text: 'Two seconds' },
+      { id: 'C', text: 'Four seconds' },
+      { id: 'D', text: 'Ten seconds' },
+    ],
+    correctOptionId: 'B',
+    explanation:
+      'The two-second rule gives a rough, speed-scaled gap without doing maths on the move. In the wet, or when towing, at least double it to four seconds.',
+    mediaId: null,
+    subtopic: 'Following distance',
+    sourceRef: 'Highway Code rule 126',
+  },
 
   /* --- Vehicle Safety --------------------------------------------------- */
   {
@@ -727,6 +745,24 @@ const QUESTIONS: Question[] = [
     mediaId: null,
     subtopic: 'Drink driving',
     sourceRef: 'Highway Code rule 95',
+  },
+  {
+    id: 'q-vehicle-safety-04',
+    topicId: 'vehicle-safety',
+    type: 'single_choice',
+    text: 'You are carrying a child under three years old in the front seat of your car. What must you use?',
+    options: [
+      { id: 'A', text: 'A normal adult seatbelt only' },
+      { id: 'B', text: 'An appropriate child restraint' },
+      { id: 'C', text: 'No restraint is required for short journeys' },
+      { id: 'D', text: 'A booster cushion only' },
+    ],
+    correctOptionId: 'B',
+    explanation:
+      'Adult belts are shaped for adult proportions, so if the car is too small to fit a correctly sized child seat, that child legally cannot travel in the front at all — the seat is not optional.',
+    mediaId: null,
+    subtopic: 'Passenger safety',
+    sourceRef: 'Highway Code rule 99',
   },
 
   /* --- Rules of the Road ------------------------------------------------ */

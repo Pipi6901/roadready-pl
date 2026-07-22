@@ -11,6 +11,20 @@ import { useProgress } from '@/store/ProgressProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { DisplayQuestion } from '@/types/content';
 
+/** How many of the worst-performing questions to draw a random session from.
+ *  Wide enough that a big backlog still rotates, narrow enough that a session
+ *  never dilutes into questions that are barely wrong. */
+const REVIEW_POOL_SIZE = 30;
+
+function shuffledIds(ids: string[]): string[] {
+  const copy = [...ids];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 /**
  * Weak Spots — the card scenario over the review queue.
  *
@@ -26,15 +40,30 @@ export default function WeakSpotsScreen() {
 
   const backToPractice = () => router.replace('/practice');
 
-  // Snapshot on mount: answering rewrites reviewQueue, and the list must not
-  // reshuffle under the user mid-session.
+  // Snapshot once progress has actually loaded — not on the very first
+  // render, which can land before persisted state finishes reading from
+  // storage (progress.ready still false, reviewQueue still empty). Freezing
+  // on that premature value showed "no mistakes" forever for the rest of the
+  // session, even once real data arrived a moment later. Recomputing when
+  // `ready` flips to true fixes that, while still not reshuffling further
+  // once the session is actually underway — answering rewrites reviewQueue,
+  // and the list must not shift under the user mid-session.
+  //
+  // reviewQueue is sorted worst-first; always slicing the first 10 meant a
+  // backlog bigger than that never got past its worst 10 — anything ranked
+  // 11th or lower was practically stuck, since nothing before it ever fully
+  // clears in one pass. Instead, draw a random 10 from the worst 30 each
+  // time, so repeat visits surface different mistakes rather than the same
+  // ones forever, while still staying weighted toward the genuinely weak end.
   const questions = React.useMemo<DisplayQuestion[]>(() => {
-    const ids = questionId ? [questionId] : progress.reviewQueue.slice(0, QUICK_QUIZ_SIZE);
+    const ids = questionId
+      ? [questionId]
+      : shuffledIds(progress.reviewQueue.slice(0, REVIEW_POOL_SIZE)).slice(0, QUICK_QUIZ_SIZE);
     return ids
       .map((id) => getQuestion(id))
       .filter((q): q is DisplayQuestion => !!q);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionId]);
+  }, [questionId, progress.ready]);
 
   if (!questions.length) {
     return (

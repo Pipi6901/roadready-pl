@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -17,12 +17,20 @@ export default function MockResultsScreen() {
   const router = useRouter();
   const { country, getTopic, getQuestion } = useContent();
   const progress = useProgress();
+  const { achievement } = useLocalSearchParams<{ achievement?: string }>();
 
   const attempt = progress.state.mockAttempts[0];
 
   React.useEffect(() => {
     if (!attempt) router.replace('/mock/setup');
   }, [attempt, router]);
+
+  // Surface the celebration once the results screen itself has landed,
+  // rather than racing it during the replace() from useSubmitMock.
+  React.useEffect(() => {
+    if (achievement) router.push({ pathname: '/(modals)/achievement', params: { ids: achievement } });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [achievement]);
 
   if (!attempt) return <Screen />;
 

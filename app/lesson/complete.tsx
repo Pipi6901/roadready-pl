@@ -31,7 +31,9 @@ export default function LessonCompleteScreen() {
   const t = useTheme();
   const router = useRouter();
   const progress = useProgress();
-  const params = useLocalSearchParams<{ topicId?: string; total?: string; correct?: string; xp?: string }>();
+  const params = useLocalSearchParams<{
+    topicId?: string; total?: string; correct?: string; xp?: string; achievement?: string;
+  }>();
 
   const total = Number(params.total ?? 0);
   const correct = Number(params.correct ?? 0);
@@ -39,6 +41,15 @@ export default function LessonCompleteScreen() {
   const accuracy = total ? Math.round((correct / total) * 100) : 0;
   const perfect = total > 0 && correct === total;
   const hasReview = progress.reviewQueue.length > 0;
+
+  // Surface the celebration once this screen itself has landed, rather than
+  // racing it during the replace() that brought the learner here.
+  React.useEffect(() => {
+    if (params.achievement) {
+      router.push({ pathname: '/(modals)/achievement', params: { ids: params.achievement } });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.achievement]);
 
   const confettiTone: Record<string, string> = {
     warning: t.colors.warning,

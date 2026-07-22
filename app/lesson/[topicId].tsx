@@ -104,13 +104,18 @@ export default function LessonScreen() {
   const handleSelect = (optionId: string) => {
     if (answered || !question) return;
     const correct = optionId === question.correctOptionId;
+    const isFirstAttempt = !(question.id in firstAttempt);
 
     setSelectedId(optionId);
     setAnswered(true);
     setFirstAttempt((prev) => (question.id in prev ? prev : { ...prev, [question.id]: correct }));
     setAttemptCounts((prev) => ({ ...prev, [question.id]: (prev[question.id] ?? 0) + 1 }));
 
-    progress.recordAnswer(question.id, correct);
+    // XP is only paid out on a question's first attempt — completeLesson()'s
+    // displayed total is first-attempt-only too, so a correct retry (after an
+    // earlier wrong answer) must not silently inflate the real balance beyond
+    // what the lesson-complete screen shows.
+    progress.recordAnswer(question.id, correct, { awardXp: isFirstAttempt });
     subscription.countQuestion();
     void Haptics.notificationAsync(
       correct ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error,
@@ -149,7 +154,7 @@ export default function LessonScreen() {
 
       if (nextQueue.length === 0) {
         const finalCorrect = Object.values(firstAttempt).filter(Boolean).length;
-        const { xp } = progress.completeLesson(topicId, finalCorrect);
+        const { xp, newAchievements } = progress.completeLesson(topicId, finalCorrect);
         router.replace({
           pathname: '/lesson/complete',
           params: {
@@ -157,6 +162,7 @@ export default function LessonScreen() {
             total: String(questions.length),
             correct: String(finalCorrect),
             xp: String(xp),
+            ...(newAchievements.length ? { achievement: newAchievements.join(',') } : {}),
           },
         });
         return;

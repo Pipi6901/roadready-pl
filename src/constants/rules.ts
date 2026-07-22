@@ -42,4 +42,34 @@ export const ACHIEVEMENT_META: Record<string, { title: string; description: stri
     description: 'Pass a full mock test',
     icon: 'clipboard-check',
   },
+  'streak-14': {
+    title: 'Two-Week Streak',
+    description: 'Practise fourteen days in a row',
+    icon: 'crown',
+  },
+  'xp-500': {
+    title: '500 XP Club',
+    description: 'Earn 500 total XP',
+    icon: 'gem',
+  },
+  'topic-master': {
+    title: 'Topic Master',
+    description: 'Finish every lesson in a topic',
+    icon: 'list-checks',
+  },
+  'road-ready': {
+    title: 'Road Ready',
+    description: 'Finish every lesson in every topic',
+    icon: 'car-front',
+  },
+  'fifty-correct': {
+    title: 'Half Century',
+    description: 'Answer 50 questions correctly',
+    icon: 'check-check',
+  },
+  'mock-x3': {
+    title: 'Mock Test Regular',
+    description: 'Complete three mock tests',
+    icon: 'timer',
+  },
 };

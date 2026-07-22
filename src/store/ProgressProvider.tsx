@@ -73,9 +73,9 @@ interface ProgressContextValue {
   topicStats: (topicId: string) => TopicStats;
   allTopicStats: () => TopicStats[];
   nextTopicId: string | null;
-  recordAnswer: (questionId: string, correct: boolean) => void;
+  recordAnswer: (questionId: string, correct: boolean, options?: { awardXp?: boolean }) => void;
   completeLesson: (topicId: string, correctCount: number) => { xp: number; newAchievements: string[] };
-  recordMockAttempt: (attempt: MockAttempt) => void;
+  recordMockAttempt: (attempt: MockAttempt) => { newAchievements: string[] };
   reset: () => void;
 }
 
@@ -83,20 +83,51 @@ const ProgressContext = createContext<ProgressContextValue | null>(null);
 
 const dayKey = (d: Date = new Date()) => d.toISOString().slice(0, 10);
 
+/** Whether every lesson in a topic has been completed, per topicStats' own math. */
+function isTopicComplete(s: ProgressState, topicId: string): boolean {
+  const total = DEMO_BUNDLE.questions.filter((q) => q.topicId === topicId).length;
+  if (total === 0) return false;
+  const totalLessons = Math.max(1, Math.ceil(total / LESSON_SIZE));
+  const completedLessons = Math.min(s.lessons[topicId] ?? 0, totalLessons);
+  return completedLessons >= totalLessons;
+}
+
 const ACHIEVEMENTS: { id: string; test: (s: ProgressState) => boolean }[] = [
   { id: 'first-lesson', test: (s) => Object.values(s.lessons).reduce((a, b) => a + b, 0) >= 1 },
   { id: 'streak-5', test: (s) => s.streakDays >= 5 },
   { id: 'questions-100', test: (s) => Object.values(s.questions).filter((q) => q.mastered).length >= 100 },
   { id: 'mock-passed', test: (s) => s.mockAttempts.some((m) => m.passed) },
+  { id: 'streak-14', test: (s) => s.streakDays >= 14 },
+  { id: 'xp-500', test: (s) => s.totalXp >= 500 },
+  { id: 'topic-master', test: (s) => DEMO_BUNDLE.topics.some((t) => isTopicComplete(s, t.id)) },
+  { id: 'road-ready', test: (s) => DEMO_BUNDLE.topics.every((t) => isTopicComplete(s, t.id)) },
+  { id: 'fifty-correct', test: (s) => Object.values(s.questions).reduce((a, q) => a + q.correct, 0) >= 50 },
+  { id: 'mock-x3', test: (s) => s.mockAttempts.length >= 3 },
 ];
 
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<ProgressState>(EMPTY);
   const [ready, setReady] = useState(false);
+  // The single source of truth every mutator (recordAnswer, completeLesson,
+  // recordMockAttempt) reads its `prev` from and writes its `next` back to,
+  // instead of the setState updater form. They need to compose reliably when
+  // called back-to-back in the same tick (e.g. useSubmitMock loops
+  // recordAnswer many times then calls recordMockAttempt immediately) —
+  // React's updater form doesn't guarantee it's run by the time the next
+  // caller needs the result, and this effect alone is too late for that,
+  // since it only fires after the commit that follows. It still matters as a
+  // catch-all for state set outside these mutators, like the initial load()
+  // below.
+  const stateRef = React.useRef(state);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
 
   useEffect(() => {
     load<ProgressState>(KEYS.progress, EMPTY).then((s) => {
-      setState({ ...EMPTY, ...s });
+      const loaded = { ...EMPTY, ...s };
+      stateRef.current = loaded;
+      setState(loaded);
       setReady(true);
     });
   }, []);
@@ -107,26 +138,43 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const recordAnswer = useCallback(
-    (questionId: string, correct: boolean) => {
-      setState((prev) => {
-        const existing = prev.questions[questionId] ?? {
-          attempts: 0, correct: 0, streak: 0, mastered: false, inReview: false, lastAnsweredAt: '',
-        };
-        const streak = correct ? existing.streak + 1 : 0;
-        const updated: QuestionProgress = {
-          attempts: existing.attempts + 1,
-          correct: existing.correct + (correct ? 1 : 0),
-          streak,
-          mastered: streak >= 2,
-          inReview: correct ? (streak >= 2 ? false : existing.inReview) : true,
-          lastAnsweredAt: new Date().toISOString(),
-        };
-        return persist({
-          ...prev,
-          totalXp: prev.totalXp + (correct ? XP_PER_CORRECT : 0),
-          questions: { ...prev.questions, [questionId]: updated },
-        });
-      });
+    (questionId: string, correct: boolean, options?: { awardXp?: boolean }) => {
+      // Retries (e.g. the lesson screen's requeue-on-wrong) still update
+      // mastery/streak/review, but must not pay out XP a second time for a
+      // question that already had its one shot — completeLesson()'s displayed
+      // total only counts first attempts, so awarding here has to match.
+      const awardXp = options?.awardXp ?? true;
+
+      // Reads/writes stateRef synchronously (not the setState updater form)
+      // for the same reason as completeLesson/recordMockAttempt: callers like
+      // useSubmitMock fire many recordAnswer calls in a tight loop followed
+      // immediately by recordMockAttempt in the same tick. If recordAnswer
+      // only queued a functional update, recordMockAttempt's own stateRef
+      // read (via a useEffect that hasn't flushed yet) would still be
+      // pre-loop and clobber all of it — mixing the two update styles is
+      // exactly what caused that bug, so every mutator here has to agree on
+      // one.
+      const prev = stateRef.current;
+      const existing = prev.questions[questionId] ?? {
+        attempts: 0, correct: 0, streak: 0, mastered: false, inReview: false, lastAnsweredAt: '',
+      };
+      const streak = correct ? existing.streak + 1 : 0;
+      const updated: QuestionProgress = {
+        attempts: existing.attempts + 1,
+        correct: existing.correct + (correct ? 1 : 0),
+        streak,
+        mastered: streak >= 2,
+        inReview: correct ? (streak >= 2 ? false : existing.inReview) : true,
+        lastAnsweredAt: new Date().toISOString(),
+      };
+      const next: ProgressState = {
+        ...prev,
+        totalXp: prev.totalXp + (correct && awardXp ? XP_PER_CORRECT : 0),
+        questions: { ...prev.questions, [questionId]: updated },
+      };
+
+      stateRef.current = next;
+      setState(persist(next));
     },
     [persist],
   );
@@ -134,38 +182,36 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const completeLesson = useCallback(
     (topicId: string, correctCount: number) => {
       const xp = correctCount * XP_PER_CORRECT;
-      const newAchievements: string[] = [];
+      const prev = stateRef.current;
+      const today = dayKey();
+      const yesterday = dayKey(new Date(Date.now() - 86_400_000));
+      const todayEntry = prev.daily[today] ?? { lessons: 0, xp: 0 };
 
-      setState((prev) => {
-        const today = dayKey();
-        const yesterday = dayKey(new Date(Date.now() - 86_400_000));
-        const todayEntry = prev.daily[today] ?? { lessons: 0, xp: 0 };
+      // Streak advances the first time the daily goal is met.
+      const lessonsToday = todayEntry.lessons + 1;
+      let streakDays = prev.streakDays;
+      let streakLastDate = prev.streakLastDate;
+      if (lessonsToday >= DAILY_GOAL_LESSONS && streakLastDate !== today) {
+        streakDays = streakLastDate === yesterday ? streakDays + 1 : 1;
+        streakLastDate = today;
+      }
 
-        // Streak advances the first time the daily goal is met.
-        const lessonsToday = todayEntry.lessons + 1;
-        let streakDays = prev.streakDays;
-        let streakLastDate = prev.streakLastDate;
-        if (lessonsToday >= DAILY_GOAL_LESSONS && streakLastDate !== today) {
-          streakDays = streakLastDate === yesterday ? streakDays + 1 : 1;
-          streakLastDate = today;
-        }
+      const next: ProgressState = {
+        ...prev,
+        totalXp: prev.totalXp,
+        streakDays,
+        streakLastDate,
+        lessons: { ...prev.lessons, [topicId]: (prev.lessons[topicId] ?? 0) + 1 },
+        daily: { ...prev.daily, [today]: { lessons: lessonsToday, xp: todayEntry.xp + xp } },
+      };
 
-        const next: ProgressState = {
-          ...prev,
-          totalXp: prev.totalXp,
-          streakDays,
-          streakLastDate,
-          lessons: { ...prev.lessons, [topicId]: (prev.lessons[topicId] ?? 0) + 1 },
-          daily: { ...prev.daily, [today]: { lessons: lessonsToday, xp: todayEntry.xp + xp } },
-        };
+      const newAchievements = ACHIEVEMENTS.filter(
+        (a) => !next.achievements.includes(a.id) && a.test(next),
+      ).map((a) => a.id);
+      next.achievements = [...next.achievements, ...newAchievements];
 
-        for (const a of ACHIEVEMENTS) {
-          if (!next.achievements.includes(a.id) && a.test(next)) newAchievements.push(a.id);
-        }
-        next.achievements = [...next.achievements, ...newAchievements];
-
-        return persist(next);
-      });
+      stateRef.current = next;
+      setState(persist(next));
 
       return { xp, newAchievements };
     },
@@ -174,17 +220,27 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
   const recordMockAttempt = useCallback(
     (attempt: MockAttempt) => {
-      setState((prev) => {
-        const next = { ...prev, mockAttempts: [attempt, ...prev.mockAttempts].slice(0, 20) };
-        const gained = ACHIEVEMENTS.filter((a) => !next.achievements.includes(a.id) && a.test(next)).map((a) => a.id);
-        next.achievements = [...next.achievements, ...gained];
-        return persist(next);
-      });
+      const prev = stateRef.current;
+      const next = { ...prev, mockAttempts: [attempt, ...prev.mockAttempts].slice(0, 20) };
+      const newAchievements = ACHIEVEMENTS.filter(
+        (a) => !next.achievements.includes(a.id) && a.test(next),
+      ).map((a) => a.id);
+      next.achievements = [...next.achievements, ...newAchievements];
+
+      stateRef.current = next;
+      setState(persist(next));
+
+      return { newAchievements };
     },
     [persist],
   );
 
   const reset = useCallback(() => {
+    // Must clear stateRef too — every mutator reads its `prev` from there,
+    // not from `state`. Skipping this let an in-flight recordAnswer/
+    // completeLesson (e.g. from a lesson screen that hadn't unmounted yet)
+    // read the stale pre-reset ref and write the "reset" progress right back.
+    stateRef.current = EMPTY;
     setState(persist(EMPTY));
   }, [persist]);
 

@@ -33,7 +33,10 @@ export function useSubmitMock(): () => void {
       if (chosen) progress.recordAnswer(question.id, chosen === question.correctOptionId);
     }
 
-    progress.recordMockAttempt(attempt);
-    router.replace('/mock/results');
+    const { newAchievements } = progress.recordMockAttempt(attempt);
+    router.replace({
+      pathname: '/mock/results',
+      params: newAchievements.length ? { achievement: newAchievements.join(',') } : {},
+    });
   }, [country.mockTest, progress, router]);
 }

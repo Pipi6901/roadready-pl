@@ -13,7 +13,11 @@ import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 
 /** Order of the achievement grid — mirrors the unlock order in ProgressProvider. */
-const ACHIEVEMENT_IDS = ['first-lesson', 'streak-5', 'questions-100', 'mock-passed'] as const;
+const ACHIEVEMENT_IDS = [
+  'first-lesson', 'streak-5', 'mock-passed', 'fifty-correct',
+  'streak-14', 'topic-master', 'xp-500', 'mock-x3',
+  'questions-100', 'road-ready',
+] as const;
 
 /** Decorative sunburst around the avatar — mockup "Burst Dot 0..9". */
 const BURST_DOTS = Array.from({ length: 10 }, (_, i) => ({
@@ -84,6 +88,12 @@ export default function ProfileScreen() {
     'streak-5': { bg: t.colors.amber, edge: t.colors.amberDark },
     'questions-100': { bg: t.colors.success, edge: t.colors.successDark },
     'mock-passed': { bg: t.colors.accent, edge: t.colors.accentDark },
+    'streak-14': { bg: t.colors.amber, edge: t.colors.amberDark },
+    'xp-500': { bg: t.colors.blue800, edge: t.colors.blue900 },
+    'topic-master': { bg: t.colors.success, edge: t.colors.successDark },
+    'road-ready': { bg: t.colors.accent, edge: t.colors.accentDark },
+    'fifty-correct': { bg: t.colors.blue800, edge: t.colors.blue900 },
+    'mock-x3': { bg: t.colors.success, edge: t.colors.successDark },
   };
 
   const earnedCount = ACHIEVEMENT_IDS.filter((id) => progress.state.achievements.includes(id)).length;
@@ -255,7 +265,7 @@ export default function ProfileScreen() {
               </View>
             </Row>
 
-            <Row style={{ gap: 12, alignItems: 'flex-start' }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', rowGap: 16, columnGap: 12 }}>
               {ACHIEVEMENT_IDS.map((id) => {
                 const meta = ACHIEVEMENT_META[id];
                 const earned = progress.state.achievements.includes(id);
@@ -270,7 +280,7 @@ export default function ProfileScreen() {
                         ? `${meta.title}, earned. ${meta.description}`
                         : `${meta.title}, locked. ${meta.description}`
                     }
-                    style={{ flex: 1, alignItems: 'center', gap: 6 }}
+                    style={{ width: '22%', alignItems: 'center', gap: 6 }}
                   >
                     <View style={{ width: 68, height: 68, alignItems: 'center', justifyContent: 'center' }}>
                       <View
@@ -328,7 +338,7 @@ export default function ProfileScreen() {
                   </View>
                 );
               })}
-            </Row>
+            </View>
           </View>
         </View>
       </ScreenScroll>

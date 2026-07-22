@@ -17,13 +17,29 @@ const BURST = Array.from({ length: 12 }, (_, i) => ({
 const BURST_RADIUS = 66;
 const BURST_BOX = 140;
 
-/** New achievement card — ТЗ 8.6. Presented as a transparent modal. */
+/**
+ * New achievement card — ТЗ 8.6. Presented as a transparent modal.
+ *
+ * `ids` is a comma-separated list: completing a lesson/mock can clear more
+ * than one achievement at once (e.g. a topic's only lesson earns both
+ * "First Lesson" and "Topic Master" the same moment), and each one deserves
+ * its own celebration screen rather than only the first surviving.
+ */
 export default function AchievementModal() {
   const t = useTheme();
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id?: string }>();
+  const { ids } = useLocalSearchParams<{ ids?: string }>();
+  const [index, setIndex] = React.useState(0);
 
+  const list = React.useMemo(() => (ids ? ids.split(',').filter(Boolean) : []), [ids]);
+  const id = list[index];
   const meta = (id ? ACHIEVEMENT_META[id] : undefined) ?? FALLBACK;
+  const isLast = index >= list.length - 1;
+
+  const advance = () => {
+    if (isLast) router.back();
+    else setIndex((i) => i + 1);
+  };
 
   return (
     <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -90,7 +106,7 @@ export default function AchievementModal() {
 
         <View style={{ gap: 8, alignItems: 'center' }}>
           <Txt size={13} weight="700" color={t.colors.amberDark} accessibilityRole="header">
-            ACHIEVEMENT UNLOCKED
+            ACHIEVEMENT UNLOCKED{list.length > 1 ? ` (${index + 1}/${list.length})` : ''}
           </Txt>
           <Txt size={24} weight="700" align="center">
             {meta.title}
@@ -100,7 +116,7 @@ export default function AchievementModal() {
           </Txt>
         </View>
 
-        <Button label="Nice!" icon="party-popper" onPress={() => router.back()} />
+        <Button label={isLast ? 'Nice!' : 'Next'} icon="party-popper" onPress={advance} />
       </View>
     </View>
   );
