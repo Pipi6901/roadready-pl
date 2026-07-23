@@ -61,6 +61,7 @@ export default function PracticeScreen() {
             icon="clipboard-check"
             iconBg={t.colors.blue800}
             iconEdge={t.colors.blue900}
+            iconSize={64}
             title="Mock Test"
             subtitle={`Simulate the real exam — ${questionCount} questions, ${timeLimitMinutes} minutes`}
             badges={mockBadges}
@@ -68,7 +69,7 @@ export default function PracticeScreen() {
           />
 
           <PracticeCard
-            icon="zap"
+            icon="list-checks"
             iconBg={t.colors.amber}
             iconEdge={t.colors.amberDark}
             title="Quick Quiz"
@@ -100,7 +101,7 @@ export default function PracticeScreen() {
           />
 
           <PracticeCard
-            icon="target"
+            icon="trending-down"
             iconBg={t.colors.success}
             iconEdge={t.colors.successDark}
             title="Your Weak Spots"

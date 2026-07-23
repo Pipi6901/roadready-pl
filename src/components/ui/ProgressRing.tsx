@@ -1,3 +1,4 @@
+import { useIsFocused } from 'expo-router';
 import React from 'react';
 import { Animated, Easing, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
@@ -43,8 +44,15 @@ export function ProgressRing({
   const [renderedPct, setRenderedPct] = React.useState(0);
   const [displayCount, setDisplayCount] = React.useState(0);
   const [burstActive, setBurstActive] = React.useState(false);
+  // Screens like Home/Profile/Topics stay mounted across tab switches, so a
+  // mount-only effect would only ever play the fill once. Re-keying off
+  // focus replays it every time the ring's tab becomes active again, same as
+  // a fresh mount would.
+  const isFocused = useIsFocused();
 
   React.useEffect(() => {
+    if (!isFocused) return;
+
     progress.setValue(0);
     setRenderedPct(0);
     if (clampedCurrent !== undefined) setDisplayCount(0);
@@ -71,7 +79,7 @@ export function ProgressRing({
 
     return () => progress.removeListener(listenerId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pct, clampedCurrent, max]);
+  }, [pct, clampedCurrent, max, isFocused]);
 
   const strokeDashoffset = circumference * (1 - renderedPct);
   const displayLabel = clampedCurrent !== undefined && max !== undefined ? `${displayCount}/${max}` : label;

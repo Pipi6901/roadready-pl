@@ -19,12 +19,24 @@ const ACHIEVEMENT_IDS = [
   'questions-100', 'road-ready',
 ] as const;
 
-/** Decorative sunburst around the avatar — mockup "Burst Dot 0..9". */
-const BURST_DOTS = Array.from({ length: 10 }, (_, i) => ({
-  angle: (i * 36 * Math.PI) / 180,
-  size: i % 2 === 0 ? 7 : 5,
-}));
-const BURST_RADIUS = 56;
+/**
+ * Decorative confetti around the avatar — started as the mockup's perfectly
+ * even 10-dot "Burst Dot 0..9" sunburst, which reads as generated (exact 36°
+ * spacing, alternating size/colour like a clock face). Hand-placed offsets
+ * per dot instead: irregular angles, radii and sizes, mixed colours — same
+ * ingredients, no machine symmetry.
+ */
+const BURST_DOTS = [
+  { angle: -8, radius: 60, size: 8, color: 'amber' },
+  { angle: 34, radius: 48, size: 5, color: 'accent' },
+  { angle: 72, radius: 58, size: 6, color: 'success' },
+  { angle: 111, radius: 44, size: 9, color: 'accent' },
+  { angle: 152, radius: 62, size: 5, color: 'amber' },
+  { angle: 194, radius: 50, size: 7, color: 'success' },
+  { angle: 233, radius: 60, size: 5, color: 'amber' },
+  { angle: 268, radius: 46, size: 8, color: 'accent' },
+  { angle: 307, radius: 58, size: 6, color: 'amber' },
+] as const;
 const BURST_BOX = 116;
 
 function monthYear(iso: string): string {
@@ -140,20 +152,24 @@ export default function ProfileScreen() {
           >
             <View style={{ alignItems: 'center', gap: 8 }}>
               <View style={{ width: BURST_BOX, height: BURST_BOX, alignItems: 'center', justifyContent: 'center' }}>
-                {BURST_DOTS.map((dot, i) => (
-                  <View
-                    key={i}
-                    style={{
-                      position: 'absolute',
-                      width: dot.size,
-                      height: dot.size,
-                      borderRadius: dot.size / 2,
-                      backgroundColor: i % 2 === 0 ? t.colors.amber : t.colors.accent,
-                      left: BURST_BOX / 2 + Math.cos(dot.angle) * BURST_RADIUS - dot.size / 2,
-                      top: BURST_BOX / 2 + Math.sin(dot.angle) * BURST_RADIUS - dot.size / 2,
-                    }}
-                  />
-                ))}
+                {BURST_DOTS.map((dot, i) => {
+                  const rad = (dot.angle * Math.PI) / 180;
+                  const dotColor = { amber: t.colors.amber, accent: t.colors.accent, success: t.colors.success }[dot.color];
+                  return (
+                    <View
+                      key={i}
+                      style={{
+                        position: 'absolute',
+                        width: dot.size,
+                        height: dot.size,
+                        borderRadius: dot.size / 2,
+                        backgroundColor: dotColor,
+                        left: BURST_BOX / 2 + Math.cos(rad) * dot.radius - dot.size / 2,
+                        top: BURST_BOX / 2 + Math.sin(rad) * dot.radius - dot.size / 2,
+                      }}
+                    />
+                  );
+                })}
                 <Avatar name={displayName} size={80} radius={26} fontSize={26} edge={4} />
               </View>
 

@@ -12,7 +12,6 @@ import { LessonTopBar } from '@/components/learning/LessonTopBar';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, Txt } from '@/components/ui/primitives';
 import { PAYWALL_ENABLED } from '@/constants/flags';
-import { XP_PER_CORRECT } from '@/constants/rules';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
@@ -28,7 +27,9 @@ export default function LessonScreen() {
   const t = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { topicId } = useLocalSearchParams<{ topicId: string }>();
+  const { topicId, lessonIndex: requestedLessonIndex } = useLocalSearchParams<{
+    topicId: string; lessonIndex?: string;
+  }>();
   const content = useContent();
   const progress = useProgress();
   const subscription = useSubscription();
@@ -36,7 +37,17 @@ export default function LessonScreen() {
 
   // Frozen at mount: completeLesson() bumps completedLessons and would otherwise
   // swap the question set out from under the learner on the last card.
-  const [lessonIndex] = React.useState(() => progress.topicStats(topicId).completedLessons);
+  //
+  // An explicit `lessonIndex` param (from "Practise again" on a finished
+  // topic) overrides the default of "the next unlocked lesson" — without it,
+  // a completed topic's completedLessons already equals totalLessons, so the
+  // default would slice past the end of the topic's questions and land on
+  // the empty "No lessons left" state instead of replaying anything.
+  const [lessonIndex] = React.useState(() => {
+    const requested = requestedLessonIndex !== undefined ? Number(requestedLessonIndex) : NaN;
+    if (Number.isInteger(requested) && requested >= 0) return requested;
+    return progress.topicStats(topicId).completedLessons;
+  });
   const questions = React.useMemo(
     () => content.lessonQuestions(topicId, lessonIndex),
     [content, topicId, lessonIndex],
@@ -56,6 +67,11 @@ export default function LessonScreen() {
   const [firstAttempt, setFirstAttempt] = React.useState<Record<string, boolean>>({});
   // How many times each question has been attempted, to cap retries at one.
   const [attemptCounts, setAttemptCounts] = React.useState<Record<string, number>>({});
+  // XP actually paid out for the answer currently on screen — see handleSelect.
+  const [awardedXp, setAwardedXp] = React.useState(0);
+  // Running total of XP actually paid out this lesson (a ref, not state — it
+  // only needs to be read once, at completion, not re-rendered on).
+  const sessionXpRef = React.useRef(0);
   const [flagged, setFlagged] = React.useState<Record<string, boolean>>({});
   const [sheetHeight, setSheetHeight] = React.useState(0);
   // Permanently-cleared count so far, for the progress dots.
@@ -104,18 +120,22 @@ export default function LessonScreen() {
   const handleSelect = (optionId: string) => {
     if (answered || !question) return;
     const correct = optionId === question.correctOptionId;
-    const isFirstAttempt = !(question.id in firstAttempt);
 
     setSelectedId(optionId);
     setAnswered(true);
     setFirstAttempt((prev) => (question.id in prev ? prev : { ...prev, [question.id]: correct }));
     setAttemptCounts((prev) => ({ ...prev, [question.id]: (prev[question.id] ?? 0) + 1 }));
 
-    // XP is only paid out on a question's first attempt — completeLesson()'s
-    // displayed total is first-attempt-only too, so a correct retry (after an
-    // earlier wrong answer) must not silently inflate the real balance beyond
-    // what the lesson-complete screen shows.
-    progress.recordAnswer(question.id, correct, { awardXp: isFirstAttempt });
+    // recordAnswer is the single source of truth for whether XP is actually
+    // paid (it's a one-time-ever reward per question, tracked globally — see
+    // xpAwarded in ProgressProvider). The "+N XP" pill and the lesson-complete
+    // total both have to reflect exactly this, not an assumption based on
+    // first-attempt-within-this-session correctness, or a retry (or a
+    // replayed/already-mastered lesson) would show a bonus that never lands
+    // in the real balance.
+    const xpEarned = progress.recordAnswer(question.id, correct);
+    setAwardedXp(xpEarned);
+    sessionXpRef.current += xpEarned;
     subscription.countQuestion();
     void Haptics.notificationAsync(
       correct ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error,
@@ -154,7 +174,7 @@ export default function LessonScreen() {
 
       if (nextQueue.length === 0) {
         const finalCorrect = Object.values(firstAttempt).filter(Boolean).length;
-        const { xp, newAchievements } = progress.completeLesson(topicId, finalCorrect);
+        const { xp, newAchievements } = progress.completeLesson(topicId, sessionXpRef.current);
         router.replace({
           pathname: '/lesson/complete',
           params: {
@@ -349,7 +369,7 @@ export default function LessonScreen() {
         correctAnswerTranslation={
           correctOption ? question.translation?.options[correctOption.id] : null
         }
-        xp={XP_PER_CORRECT}
+        xp={awardedXp}
         onContinue={handleContinue}
         bottomInset={insets.bottom}
         onLayout={setSheetHeight}

@@ -24,12 +24,15 @@ interface PracticeCardProps {
   disabled?: boolean;
   onPress?: () => void;
   accessibilityHint?: string;
+  /** Icon box side length. Bumping this on one card in a list gives it a
+   *  "primary action" weight without touching colour or shape language. */
+  iconSize?: number;
 }
 
 /** One row of the Practice Hub — mockup frames "Mock Test Card" and siblings. */
 export function PracticeCard({
   icon, iconBg, iconEdge, title, subtitle, badges = [], disabled = false, onPress,
-  accessibilityHint,
+  accessibilityHint, iconSize = 56,
 }: PracticeCardProps) {
   const t = useTheme();
 
@@ -62,8 +65,8 @@ export function PracticeCard({
     >
       <View
         style={{
-          width: 56,
-          height: 56,
+          width: iconSize,
+          height: iconSize,
           borderRadius: 16,
           alignItems: 'center',
           justifyContent: 'center',
@@ -72,7 +75,7 @@ export function PracticeCard({
           borderBottomColor: iconEdge,
         }}
       >
-        <Icon name={icon} size={26} color={t.colors.textInverse} />
+        <Icon name={icon} size={Math.round(iconSize * 0.46)} color={t.colors.textInverse} />
       </View>
 
       <View style={{ flex: 1, gap: 4 }}>

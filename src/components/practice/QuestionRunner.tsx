@@ -5,7 +5,6 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { BilingualText } from '@/components/BilingualText';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
-import { XP_PER_CORRECT } from '@/constants/rules';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -42,6 +41,14 @@ export function QuestionRunner({
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [correctCount, setCorrectCount] = React.useState(0);
   const [done, setDone] = React.useState(false);
+  // XP for the answer currently on screen, and the running total for the
+  // session — both come from recordAnswer's return value, since XP is a
+  // one-time-ever reward per question (see xpAwarded in ProgressProvider).
+  // Replaying a quiz or weak-spots session over already-mastered questions
+  // must not keep paying out, so neither figure can be derived from
+  // `correctCount * XP_PER_CORRECT` — that would silently let XP be farmed.
+  const [xpEarned, setXpEarned] = React.useState(0);
+  const [sessionXp, setSessionXp] = React.useState(0);
 
   const question = questions[index];
   const revealed = selectedId !== null;
@@ -67,7 +74,9 @@ export function QuestionRunner({
     setSelectedId(optionId);
     const correct = optionId === question.correctOptionId;
     if (correct) setCorrectCount((n) => n + 1);
-    progress.recordAnswer(question.id, correct);
+    const earned = progress.recordAnswer(question.id, correct);
+    setXpEarned(earned);
+    setSessionXp((s) => s + earned);
   };
 
   const advance = () => {
@@ -80,6 +89,7 @@ export function QuestionRunner({
     setIndex(0);
     setSelectedId(null);
     setCorrectCount(0);
+    setSessionXp(0);
     setDone(false);
     onRestart?.();
   };
@@ -91,6 +101,7 @@ export function QuestionRunner({
         subtitle={summarySubtitle}
         answered={questions.length}
         correct={correctCount}
+        xpEarned={sessionXp}
         onRestart={onRestart ? restart : undefined}
         restartLabel={restartLabel}
         onExit={onExit}
@@ -200,6 +211,7 @@ export function QuestionRunner({
       {revealed ? (
         <FeedbackSheet
           correct={!!answeredCorrectly}
+          xp={xpEarned}
           explanation={question.explanation}
           explanationTranslation={question.translation?.explanation}
           onContinue={advance}
@@ -213,13 +225,16 @@ export function QuestionRunner({
 
 interface FeedbackSheetProps {
   correct: boolean;
+  /** XP actually paid for this answer — 0 if the question had already earned
+   *  its one-time reward before (see xpAwarded in ProgressProvider). */
+  xp: number;
   explanation: string;
   explanationTranslation?: string | null;
   onContinue: () => void;
 }
 
 /** Mockup frames "Feedback Sheet" from Correct Answer / Incorrect Answer. */
-function FeedbackSheet({ correct, explanation, explanationTranslation, onContinue }: FeedbackSheetProps) {
+function FeedbackSheet({ correct, xp, explanation, explanationTranslation, onContinue }: FeedbackSheetProps) {
   const t = useTheme();
 
   return (
@@ -260,7 +275,7 @@ function FeedbackSheet({ correct, explanation, explanationTranslation, onContinu
           </Txt>
         </Row>
 
-        {correct ? (
+        {correct && xp > 0 ? (
           <Row
             style={{
               gap: 4,
@@ -272,7 +287,7 @@ function FeedbackSheet({ correct, explanation, explanationTranslation, onContinu
           >
             <Icon name="zap" size={14} color={t.colors.amber} />
             <Txt size={13} weight="700" color={t.colors.amberDark}>
-              +{XP_PER_CORRECT} XP
+              +{xp} XP
             </Txt>
           </Row>
         ) : null}
@@ -308,6 +323,8 @@ interface SummaryViewProps {
   subtitle: string;
   answered: number;
   correct: number;
+  /** Actual XP paid out this session — see xpEarned/sessionXp above. */
+  xpEarned: number;
   onRestart?: () => void;
   restartLabel: string;
   onExit: () => void;
@@ -316,7 +333,7 @@ interface SummaryViewProps {
 
 /** Reuses the "Lesson Complete" layout: hero badge, stat chips, actions. */
 function SummaryView({
-  title, subtitle, answered, correct, onRestart, restartLabel, onExit, exitLabel,
+  title, subtitle, answered, correct, xpEarned, onRestart, restartLabel, onExit, exitLabel,
 }: SummaryViewProps) {
   const t = useTheme();
   const accuracy = answered ? Math.round((correct / answered) * 100) : 0;
@@ -335,7 +352,7 @@ function SummaryView({
       iconColor: t.colors.amber,
       bg: t.colors.amber50,
       edge: t.colors.amber,
-      value: `${correct * XP_PER_CORRECT}`,
+      value: `${xpEarned}`,
       label: 'XP earned',
     },
     {

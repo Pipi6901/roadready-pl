@@ -80,7 +80,7 @@ export function FeedbackSheet({
           </Txt>
         </Row>
 
-        {correct ? (
+        {correct && xp > 0 ? (
           <Row
             accessible
             accessibilityLabel={`Plus ${xp} experience points`}

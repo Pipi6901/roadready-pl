@@ -12,6 +12,11 @@ export interface QuestionProgress {
   mastered: boolean;
   inReview: boolean;
   lastAnsweredAt: string;
+  /** Whether XP has ever been paid out for this question. Once true, it
+   *  stays true forever — otherwise replaying a lesson, quiz or weak-spots
+   *  session over already-mastered questions would let XP (and achievements
+   *  like "500 XP Club") be farmed without limit. */
+  xpAwarded: boolean;
 }
 
 export interface MockAttempt {
@@ -73,8 +78,9 @@ interface ProgressContextValue {
   topicStats: (topicId: string) => TopicStats;
   allTopicStats: () => TopicStats[];
   nextTopicId: string | null;
-  recordAnswer: (questionId: string, correct: boolean, options?: { awardXp?: boolean }) => void;
-  completeLesson: (topicId: string, correctCount: number) => { xp: number; newAchievements: string[] };
+  /** Returns the XP actually paid out for this answer (0 if none — see xpAwarded). */
+  recordAnswer: (questionId: string, correct: boolean) => number;
+  completeLesson: (topicId: string, sessionXp: number) => { xp: number; newAchievements: string[] };
   recordMockAttempt: (attempt: MockAttempt) => { newAchievements: string[] };
   reset: () => void;
 }
@@ -138,13 +144,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const recordAnswer = useCallback(
-    (questionId: string, correct: boolean, options?: { awardXp?: boolean }) => {
-      // Retries (e.g. the lesson screen's requeue-on-wrong) still update
-      // mastery/streak/review, but must not pay out XP a second time for a
-      // question that already had its one shot — completeLesson()'s displayed
-      // total only counts first attempts, so awarding here has to match.
-      const awardXp = options?.awardXp ?? true;
-
+    (questionId: string, correct: boolean): number => {
       // Reads/writes stateRef synchronously (not the setState updater form)
       // for the same reason as completeLesson/recordMockAttempt: callers like
       // useSubmitMock fire many recordAnswer calls in a tight loop followed
@@ -156,9 +156,15 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       // one.
       const prev = stateRef.current;
       const existing = prev.questions[questionId] ?? {
-        attempts: 0, correct: 0, streak: 0, mastered: false, inReview: false, lastAnsweredAt: '',
+        attempts: 0, correct: 0, streak: 0, mastered: false, inReview: false, lastAnsweredAt: '', xpAwarded: false,
       };
       const streak = correct ? existing.streak + 1 : 0;
+      // XP for a question is paid out once, ever, the first time it is
+      // answered correctly — never again after that, no matter how many
+      // times it resurfaces in a lesson retry, a replayed lesson, a quiz, or
+      // a weak-spots session. Without this, any of those replays would let
+      // XP (and XP-based achievements) be farmed without limit.
+      const xpEarned = correct && !existing.xpAwarded ? XP_PER_CORRECT : 0;
       const updated: QuestionProgress = {
         attempts: existing.attempts + 1,
         correct: existing.correct + (correct ? 1 : 0),
@@ -166,22 +172,28 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         mastered: streak >= 2,
         inReview: correct ? (streak >= 2 ? false : existing.inReview) : true,
         lastAnsweredAt: new Date().toISOString(),
+        xpAwarded: existing.xpAwarded || xpEarned > 0,
       };
       const next: ProgressState = {
         ...prev,
-        totalXp: prev.totalXp + (correct && awardXp ? XP_PER_CORRECT : 0),
+        totalXp: prev.totalXp + xpEarned,
         questions: { ...prev.questions, [questionId]: updated },
       };
 
       stateRef.current = next;
       setState(persist(next));
+      return xpEarned;
     },
     [persist],
   );
 
   const completeLesson = useCallback(
-    (topicId: string, correctCount: number) => {
-      const xp = correctCount * XP_PER_CORRECT;
+    // `sessionXp` is the sum of what recordAnswer() actually paid out during
+    // this lesson — not derived from the number of correct answers, since a
+    // replayed or partly-already-mastered lesson can have correct answers
+    // that pay zero XP (see recordAnswer's global xpAwarded dedup).
+    (topicId: string, sessionXp: number) => {
+      const xp = sessionXp;
       const prev = stateRef.current;
       const today = dayKey();
       const yesterday = dayKey(new Date(Date.now() - 86_400_000));

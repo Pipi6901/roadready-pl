@@ -229,8 +229,13 @@ export default function TopicDetailScreen() {
       >
         <Button
           label={stats.completed ? 'Practise again' : 'Start next lesson'}
-          disabled={stats.completed}
-          onPress={() => router.push(`/lesson/${topic.id}`)}
+          onPress={() =>
+            router.push(
+              stats.completed
+                ? { pathname: '/lesson/[topicId]', params: { topicId: topic.id, lessonIndex: '0' } }
+                : `/lesson/${topic.id}`,
+            )
+          }
         />
         {hasReview ? (
           <SecondaryAction label="Review mistakes" onPress={() => router.push('/weak-spots')} />

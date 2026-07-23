@@ -1,6 +1,6 @@
-import { useRouter } from 'expo-router';
+import { useIsFocused, useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, useWindowDimensions, View } from 'react-native';
+import { Pressable, type ScrollView, useWindowDimensions, View } from 'react-native';
 
 import {
   NODE_SIZE, TopicNode, type TopicNodeState,
@@ -34,6 +34,7 @@ export default function LearnScreen() {
   const { width } = useWindowDimensions();
   const { topics, country } = useContent();
   const progress = useProgress();
+  const isFocused = useIsFocused();
 
   const mapWidth = width - SCREEN_PADDING * 2;
   const centreX = mapWidth / 2;
@@ -62,9 +63,37 @@ export default function LearnScreen() {
   const mapHeight = nodes.length ? (nodes.length - 1) * ROW_PITCH + NODE_SIZE + 60 : 0;
   const routePoints: RoutePoint[] = nodes.map((n) => ({ x: n.x, y: n.y }));
 
+  const scrollRef = React.useRef<ScrollView>(null);
+  // Position of the route map within the scroll content, captured via
+  // onLayout since it sits below the country pill / title / continue card,
+  // whose heights vary with content.
+  const [mapOffsetY, setMapOffsetY] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    // Re-run on every focus (not just mount) — the map View stays mounted
+    // across tab switches, so without this a returning learner would land
+    // wherever they last scrolled instead of back at their current topic.
+    if (!isFocused || mapOffsetY === null || !current) return;
+    scrollRef.current?.scrollTo({
+      y: Math.max(0, mapOffsetY + current.y - 130),
+      animated: true,
+    });
+  }, [isFocused, mapOffsetY, current]);
+
   return (
     <Screen>
-      <ScreenScroll contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING, paddingTop: 8, gap: 16 }}>
+      {/* Opaque header — country pill and title stay solid; the ScrollView
+          (route map) starts right underneath and runs behind the floating
+          "Continue topic" card below. */}
+      <View
+        style={{
+          paddingHorizontal: SCREEN_PADDING,
+          paddingTop: 8,
+          paddingBottom: 16,
+          gap: 16,
+          backgroundColor: t.colors.bg,
+        }}
+      >
         {/* Country pill — opens the country picker */}
         <Pressable
           accessibilityRole="button"
@@ -92,22 +121,90 @@ export default function LearnScreen() {
         <Txt size={26} weight="700">
           Topics
         </Txt>
+      </View>
 
+      <View style={{ flex: 1 }}>
+        <ScreenScroll
+          ref={scrollRef}
+          contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING, paddingTop: 8 }}
+        >
+            {/* Route map */}
+            <View
+              style={{ width: mapWidth, height: mapHeight }}
+              onLayout={(e) => setMapOffsetY(e.nativeEvent.layout.y)}
+            >
+              <TopicRoute points={routePoints} width={mapWidth} height={mapHeight} />
+
+              {nodes.map((n, i) => {
+                const decor = [DECORATIONS[i % DECORATIONS.length], DECORATIONS[(i + 2) % DECORATIONS.length]];
+                return (
+                  <React.Fragment key={n.topic.id}>
+                    {decor.map((d, j) => (
+                      <View
+                        key={`${n.topic.id}-decor-${j}`}
+                        accessibilityElementsHidden
+                        importantForAccessibility="no-hide-descendants"
+                        style={{
+                          pointerEvents: 'none',
+                          position: 'absolute',
+                          left: d.side === 'left' ? d.inset : undefined,
+                          right: d.side === 'right' ? d.inset : undefined,
+                          top: i * ROW_PITCH + d.dy,
+                          opacity: d.faded ? 0.45 : 1,
+                        }}
+                      >
+                        <Icon name={d.icon} size={d.size} color={t.colors.decoration} />
+                      </View>
+                    ))}
+
+                    <View
+                      style={{
+                        position: 'absolute',
+                        left: n.x - NODE_SIZE,
+                        // The current node is drawn larger; shift it up so its
+                        // centre still sits on the route line.
+                        top: i * ROW_PITCH - (n.state === 'current' ? 4 : 0),
+                        width: NODE_SIZE * 2,
+                        alignItems: 'center',
+                      }}
+                    >
+                      <TopicNode
+                        state={n.state}
+                        icon={n.topic.icon}
+                        name={n.topic.name}
+                        mastered={n.stat.mastered}
+                        total={n.stat.total}
+                        onPress={n.state === 'locked' ? undefined : () => router.push(`/topic/${n.topic.id}`)}
+                      />
+                    </View>
+                  </React.Fragment>
+                );
+              })}
+            </View>
+          </ScreenScroll>
+
+        {/* Floating "Continue topic" card — translucent, so the route map
+            scrolling underneath stays visible through it instead of hiding
+            behind a solid block. */}
         {current ? (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={`Continue topic ${current.topic.name}, ${current.stat.mastered} of ${current.stat.total} questions mastered`}
             onPress={() => router.push(`/topic/${current.topic.id}`)}
             style={{
+              position: 'absolute',
+              top: 8,
+              left: SCREEN_PADDING,
+              right: SCREEN_PADDING,
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
               paddingVertical: 16,
               paddingHorizontal: 20,
               borderRadius: 28,
-              backgroundColor: t.colors.sage50,
+              backgroundColor: `${t.colors.sage50}B3`,
               borderWidth: 1,
-              borderColor: t.colors.sage100,
+              borderColor: `${t.colors.sage100}B3`,
             }}
           >
             <View style={{ gap: 2, flex: 1 }}>
@@ -127,58 +224,7 @@ export default function LearnScreen() {
             />
           </Pressable>
         ) : null}
-
-        {/* Route map */}
-        <View style={{ width: mapWidth, height: mapHeight }}>
-          <TopicRoute points={routePoints} width={mapWidth} height={mapHeight} />
-
-          {nodes.map((n, i) => {
-            const decor = [DECORATIONS[i % DECORATIONS.length], DECORATIONS[(i + 2) % DECORATIONS.length]];
-            return (
-              <React.Fragment key={n.topic.id}>
-                {decor.map((d, j) => (
-                  <View
-                    key={`${n.topic.id}-decor-${j}`}
-                    accessibilityElementsHidden
-                    importantForAccessibility="no-hide-descendants"
-                    style={{
-                      pointerEvents: 'none',
-                      position: 'absolute',
-                      left: d.side === 'left' ? d.inset : undefined,
-                      right: d.side === 'right' ? d.inset : undefined,
-                      top: i * ROW_PITCH + d.dy,
-                      opacity: d.faded ? 0.45 : 1,
-                    }}
-                  >
-                    <Icon name={d.icon} size={d.size} color={t.colors.decoration} />
-                  </View>
-                ))}
-
-                <View
-                  style={{
-                    position: 'absolute',
-                    left: n.x - NODE_SIZE,
-                    // The current node is drawn larger; shift it up so its
-                    // centre still sits on the route line.
-                    top: i * ROW_PITCH - (n.state === 'current' ? 4 : 0),
-                    width: NODE_SIZE * 2,
-                    alignItems: 'center',
-                  }}
-                >
-                  <TopicNode
-                    state={n.state}
-                    icon={n.topic.icon}
-                    name={n.topic.name}
-                    mastered={n.stat.mastered}
-                    total={n.stat.total}
-                    onPress={n.state === 'locked' ? undefined : () => router.push(`/topic/${n.topic.id}`)}
-                  />
-                </View>
-              </React.Fragment>
-            );
-          })}
-        </View>
-      </ScreenScroll>
+      </View>
     </Screen>
   );
 }
