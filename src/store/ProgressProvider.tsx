@@ -78,8 +78,12 @@ interface ProgressContextValue {
   topicStats: (topicId: string) => TopicStats;
   allTopicStats: () => TopicStats[];
   nextTopicId: string | null;
-  /** Returns the XP actually paid out for this answer (0 if none — see xpAwarded). */
-  recordAnswer: (questionId: string, correct: boolean) => number;
+  /** `xp` is what was actually paid out for this answer (0 if none — see
+   *  xpAwarded). `newAchievements` covers achievements this single answer
+   *  just unlocked — callers that answer questions outside a lesson/mock
+   *  flow (Quick Quiz, Weak Spots) must surface these themselves, since
+   *  nothing else will. */
+  recordAnswer: (questionId: string, correct: boolean) => { xp: number; newAchievements: string[] };
   completeLesson: (topicId: string, sessionXp: number) => { xp: number; newAchievements: string[] };
   recordMockAttempt: (attempt: MockAttempt) => { newAchievements: string[] };
   reset: () => void;
@@ -110,6 +114,23 @@ const ACHIEVEMENTS: { id: string; test: (s: ProgressState) => boolean }[] = [
   { id: 'fifty-correct', test: (s) => Object.values(s.questions).reduce((a, q) => a + q.correct, 0) >= 50 },
   { id: 'mock-x3', test: (s) => s.mockAttempts.length >= 3 },
 ];
+
+/**
+ * Applies every not-yet-earned achievement whose condition now holds.
+ *
+ * Every mutator that can move a stat an achievement depends on — not just
+ * completeLesson and recordMockAttempt — must call this, or an achievement
+ * earned purely through Quick Quiz / Weak Spots (which only ever call
+ * recordAnswer) would sit true forever without ever being detected, since
+ * nothing else re-runs the check.
+ */
+function checkAchievements(next: ProgressState): { state: ProgressState; newAchievements: string[] } {
+  const newAchievements = ACHIEVEMENTS.filter(
+    (a) => !next.achievements.includes(a.id) && a.test(next),
+  ).map((a) => a.id);
+  if (!newAchievements.length) return { state: next, newAchievements };
+  return { state: { ...next, achievements: [...next.achievements, ...newAchievements] }, newAchievements };
+}
 
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<ProgressState>(EMPTY);
@@ -144,7 +165,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const recordAnswer = useCallback(
-    (questionId: string, correct: boolean): number => {
+    (questionId: string, correct: boolean): { xp: number; newAchievements: string[] } => {
       // Reads/writes stateRef synchronously (not the setState updater form)
       // for the same reason as completeLesson/recordMockAttempt: callers like
       // useSubmitMock fire many recordAnswer calls in a tight loop followed
@@ -180,9 +201,10 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         questions: { ...prev.questions, [questionId]: updated },
       };
 
-      stateRef.current = next;
-      setState(persist(next));
-      return xpEarned;
+      const { state: withAchievements, newAchievements } = checkAchievements(next);
+      stateRef.current = withAchievements;
+      setState(persist(withAchievements));
+      return { xp: xpEarned, newAchievements };
     },
     [persist],
   );
@@ -217,13 +239,9 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         daily: { ...prev.daily, [today]: { lessons: lessonsToday, xp: todayEntry.xp + xp } },
       };
 
-      const newAchievements = ACHIEVEMENTS.filter(
-        (a) => !next.achievements.includes(a.id) && a.test(next),
-      ).map((a) => a.id);
-      next.achievements = [...next.achievements, ...newAchievements];
-
-      stateRef.current = next;
-      setState(persist(next));
+      const { state: withAchievements, newAchievements } = checkAchievements(next);
+      stateRef.current = withAchievements;
+      setState(persist(withAchievements));
 
       return { xp, newAchievements };
     },
@@ -234,13 +252,9 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     (attempt: MockAttempt) => {
       const prev = stateRef.current;
       const next = { ...prev, mockAttempts: [attempt, ...prev.mockAttempts].slice(0, 20) };
-      const newAchievements = ACHIEVEMENTS.filter(
-        (a) => !next.achievements.includes(a.id) && a.test(next),
-      ).map((a) => a.id);
-      next.achievements = [...next.achievements, ...newAchievements];
-
-      stateRef.current = next;
-      setState(persist(next));
+      const { state: withAchievements, newAchievements } = checkAchievements(next);
+      stateRef.current = withAchievements;
+      setState(persist(withAchievements));
 
       return { newAchievements };
     },
@@ -319,7 +333,13 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
     const allStats = () => DEMO_BUNDLE.topics.map((t) => topicStats(t.id));
     const stats = allStats();
-    const nextTopic = stats.find((s) => s.unlocked && !s.completed) ?? stats.find((s) => s.unlocked) ?? null;
+    // Deliberately no fallback to "any unlocked topic" here: topic 0 is
+    // always unlocked, so that fallback silently returned it once every
+    // topic was completed — Home then kept offering "Continue" into a
+    // finished topic, landing on the lesson screen's dead-end "No lessons
+    // left" state. `null` here means "genuinely nothing left to do", and
+    // callers must render a completion state for it instead of guessing.
+    const nextTopic = stats.find((s) => s.unlocked && !s.completed) ?? null;
 
     return {
       ready,

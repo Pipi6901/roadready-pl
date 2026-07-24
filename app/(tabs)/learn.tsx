@@ -6,6 +6,7 @@ import {
   NODE_SIZE, TopicNode, type TopicNodeState,
 } from '@/components/learning/TopicNode';
 import { TopicRoute, type RoutePoint } from '@/components/learning/TopicRoute';
+import { cardShadow } from '@/components/practice/shadow';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
@@ -14,10 +15,24 @@ import { useProgress } from '@/store/ProgressProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 
 const SCREEN_PADDING = 20;
-/** Vertical distance between node centres. */
+/** Baseline vertical distance between node centres — actual spacing jitters
+ *  around this, see nodes useMemo below. */
 const ROW_PITCH = 124;
-/** Snake offsets from the centre line, repeating every four nodes. */
-const OFFSETS = [0, 90, 0, -90];
+/** Furthest a node can drift from the centre line. Bounded well inside the
+ *  map width so the node's label (NODE_LABEL_WIDTH) and the roadside decor
+ *  icons never clip off-screen on a narrow phone. */
+const MAX_OFFSET = 100;
+/** How much a row's vertical pitch can vary either way, so the trail doesn't
+ *  read as a fixed-height ladder. */
+const PITCH_JITTER = 18;
+
+/** Deterministic 0..1 "random" from an integer seed — stable across
+ *  re-renders (no Math.random) so the map's shape doesn't jump around every
+ *  time progress changes elsewhere in the app. */
+function pseudoRandom(seed: number): number {
+  const x = Math.sin(seed * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
+}
 
 /** Roadside dressing. Rows pick two entries each so the gutters never look bare. */
 const DECORATIONS: { icon: IconName; size: number; side: 'left' | 'right'; inset: number; dy: number; faded: boolean }[] = [
@@ -43,24 +58,42 @@ export default function LearnScreen() {
     const stats = topics.map((topic) => ({ topic, stat: progress.topicStats(topic.id) }));
     const currentIndex = stats.findIndex((s) => s.stat.unlocked && !s.stat.completed);
 
+    // A trail, not a ladder: horizontal drift is a smoothed pseudo-random
+    // walk (each offset leans 35% toward the previous one) so the path
+    // curves organically instead of snapping between fixed positions, and
+    // the vertical pitch jitters too so rows don't all land the same
+    // distance apart. Deterministic per topic index — not Math.random — so
+    // the shape stays put across re-renders instead of reshuffling every
+    // time progress changes.
+    let prevOffset = 0;
+    let y = NODE_SIZE / 2;
+
     return stats.map(({ topic, stat }, i) => {
       let state: TopicNodeState = 'available';
       if (!stat.unlocked) state = 'locked';
       else if (stat.completed) state = 'completed';
       else if (i === currentIndex) state = 'current';
 
+      if (i > 0) {
+        y += ROW_PITCH + (pseudoRandom(i * 3.17 + 11) * 2 - 1) * PITCH_JITTER;
+      }
+      const offset = i === 0 ? 0 : Math.round(
+        prevOffset * 0.35 + (pseudoRandom(i * 7.31 + 1) * 2 - 1) * MAX_OFFSET * 0.65,
+      );
+      prevOffset = offset;
+
       return {
         topic,
         stat,
         state,
-        x: centreX + OFFSETS[i % OFFSETS.length],
-        y: i * ROW_PITCH + NODE_SIZE / 2,
+        x: centreX + offset,
+        y,
       };
     });
   }, [topics, progress, centreX]);
 
   const current = nodes.find((n) => n.state === 'current');
-  const mapHeight = nodes.length ? (nodes.length - 1) * ROW_PITCH + NODE_SIZE + 60 : 0;
+  const mapHeight = nodes.length ? nodes[nodes.length - 1].y + NODE_SIZE / 2 + 60 : 0;
   const routePoints: RoutePoint[] = nodes.map((n) => ({ x: n.x, y: n.y }));
 
   const scrollRef = React.useRef<ScrollView>(null);
@@ -137,6 +170,7 @@ export default function LearnScreen() {
 
               {nodes.map((n, i) => {
                 const decor = [DECORATIONS[i % DECORATIONS.length], DECORATIONS[(i + 2) % DECORATIONS.length]];
+                const rowTop = n.y - NODE_SIZE / 2;
                 return (
                   <React.Fragment key={n.topic.id}>
                     {decor.map((d, j) => (
@@ -149,7 +183,7 @@ export default function LearnScreen() {
                           position: 'absolute',
                           left: d.side === 'left' ? d.inset : undefined,
                           right: d.side === 'right' ? d.inset : undefined,
-                          top: i * ROW_PITCH + d.dy,
+                          top: rowTop + d.dy,
                           opacity: d.faded ? 0.45 : 1,
                         }}
                       >
@@ -163,7 +197,7 @@ export default function LearnScreen() {
                         left: n.x - NODE_SIZE,
                         // The current node is drawn larger; shift it up so its
                         // centre still sits on the route line.
-                        top: i * ROW_PITCH - (n.state === 'current' ? 4 : 0),
+                        top: rowTop - (n.state === 'current' ? 4 : 0),
                         width: NODE_SIZE * 2,
                         alignItems: 'center',
                       }}
@@ -191,21 +225,26 @@ export default function LearnScreen() {
             accessibilityRole="button"
             accessibilityLabel={`Continue topic ${current.topic.name}, ${current.stat.mastered} of ${current.stat.total} questions mastered`}
             onPress={() => router.push(`/topic/${current.topic.id}`)}
-            style={{
-              position: 'absolute',
-              top: 8,
-              left: SCREEN_PADDING,
-              right: SCREEN_PADDING,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingVertical: 16,
-              paddingHorizontal: 20,
-              borderRadius: 28,
-              backgroundColor: `${t.colors.sage50}B3`,
-              borderWidth: 1,
-              borderColor: `${t.colors.sage100}B3`,
-            }}
+            style={[
+              {
+                position: 'absolute',
+                top: 8,
+                left: SCREEN_PADDING,
+                right: SCREEN_PADDING,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingVertical: 16,
+                paddingHorizontal: 20,
+                borderRadius: 28,
+                backgroundColor: `${t.colors.sage50}B3`,
+                borderWidth: 1,
+                borderColor: `${t.colors.sage100}B3`,
+              },
+              // A bit more lift than the standard card shadow — this floats
+              // over the map rather than sitting flush on the page.
+              cardShadow(t, 20, 6, 0.12),
+            ]}
           >
             <View style={{ gap: 2, flex: 1 }}>
               <Txt size={11} weight="600" color={t.colors.accentDark} style={{ letterSpacing: 0.5 }}>

@@ -233,6 +233,16 @@ export default function SettingsScreen() {
             />
           </SettingsSection>
 
+          <SettingsSection title="Feedback" icon="vibrate">
+            <SettingsRow
+              label="Vibration"
+              subtitle="Buzz on a correct answer during lessons, quizzes and reviews"
+              switchValue={settings.hapticsEnabled}
+              onSwitchChange={(hapticsEnabled) => settings.update({ hapticsEnabled })}
+              last
+            />
+          </SettingsSection>
+
           <SettingsSection title="About" icon="info" iconColor={t.colors.textMuted}>
             <SettingsRow label="App version" value={Constants.expoConfig?.version ?? '—'} />
             <SettingsRow label="Terms of Service" onPress={() => openLegal('Terms of Service')} />

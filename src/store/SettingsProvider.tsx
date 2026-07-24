@@ -16,6 +16,7 @@ export interface Settings {
   questionOfTheDay: boolean;
   autoReadQuestions: boolean;
   voiceSpeed: number;
+  hapticsEnabled: boolean;
 }
 
 const DEFAULTS: Settings = {
@@ -30,6 +31,7 @@ const DEFAULTS: Settings = {
   questionOfTheDay: true,
   autoReadQuestions: false,
   voiceSpeed: 1,
+  hapticsEnabled: true,
 };
 
 interface SettingsContextValue extends Settings {

@@ -1,4 +1,3 @@
-import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Speech from 'expo-speech';
 import React from 'react';
@@ -12,6 +11,7 @@ import { LessonTopBar } from '@/components/learning/LessonTopBar';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, Txt } from '@/components/ui/primitives';
 import { PAYWALL_ENABLED } from '@/constants/flags';
+import { useHaptics } from '@/hooks/useHaptics';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
@@ -34,6 +34,7 @@ export default function LessonScreen() {
   const progress = useProgress();
   const subscription = useSubscription();
   const { voiceSpeed, autoReadQuestions } = useSettings();
+  const haptics = useHaptics();
 
   // Frozen at mount: completeLesson() bumps completedLessons and would otherwise
   // swap the question set out from under the learner on the last card.
@@ -72,6 +73,10 @@ export default function LessonScreen() {
   // Running total of XP actually paid out this lesson (a ref, not state — it
   // only needs to be read once, at completion, not re-rendered on).
   const sessionXpRef = React.useRef(0);
+  // Achievements unlocked mid-lesson (recordAnswer can trigger one, e.g.
+  // crossing 500 total XP on question 4 of 10) — merged with whatever
+  // completeLesson finds at the end so nothing gets missed.
+  const lessonAchievementsRef = React.useRef<string[]>([]);
   const [flagged, setFlagged] = React.useState<Record<string, boolean>>({});
   const [sheetHeight, setSheetHeight] = React.useState(0);
   // Permanently-cleared count so far, for the progress dots.
@@ -133,13 +138,13 @@ export default function LessonScreen() {
     // first-attempt-within-this-session correctness, or a retry (or a
     // replayed/already-mastered lesson) would show a bonus that never lands
     // in the real balance.
-    const xpEarned = progress.recordAnswer(question.id, correct);
+    const { xp: xpEarned, newAchievements } = progress.recordAnswer(question.id, correct);
     setAwardedXp(xpEarned);
     sessionXpRef.current += xpEarned;
+    if (newAchievements.length) lessonAchievementsRef.current.push(...newAchievements);
     subscription.countQuestion();
-    void Haptics.notificationAsync(
-      correct ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error,
-    );
+    if (correct) haptics.correct();
+    else haptics.incorrect();
 
     Animated.timing(sheetY, {
       toValue: 0,
@@ -175,6 +180,11 @@ export default function LessonScreen() {
       if (nextQueue.length === 0) {
         const finalCorrect = Object.values(firstAttempt).filter(Boolean).length;
         const { xp, newAchievements } = progress.completeLesson(topicId, sessionXpRef.current);
+        // De-duped: an achievement recordAnswer already caught mid-lesson
+        // is already in progress state by the time completeLesson runs, so
+        // completeLesson's own newAchievements won't repeat it — the set
+        // union here is what makes sure it still gets shown.
+        const allNewAchievements = [...new Set([...lessonAchievementsRef.current, ...newAchievements])];
         router.replace({
           pathname: '/lesson/complete',
           params: {
@@ -182,7 +192,7 @@ export default function LessonScreen() {
             total: String(questions.length),
             correct: String(finalCorrect),
             xp: String(xp),
-            ...(newAchievements.length ? { achievement: newAchievements.join(',') } : {}),
+            ...(allNewAchievements.length ? { achievement: allNewAchievements.join(',') } : {}),
           },
         });
         return;

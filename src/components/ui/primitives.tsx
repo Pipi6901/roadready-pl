@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import {
   Animated, Easing, Pressable, type PressableProps, ScrollView, type ScrollViewProps, StyleSheet, Text,
@@ -20,6 +21,13 @@ interface TxtProps extends TextProps {
   size?: number;
   align?: TextStyle['textAlign'];
   lineHeight?: number;
+  /** For a standalone stat figure (XP, streak, a percentage) rather than a
+   *  number sitting inside a sentence: fixed-width tabular digits (so they
+   *  don't jiggle width during a count-up animation), tighter tracking, and
+   *  a heavier default weight — reads as a deliberate display figure
+   *  instead of body text that happens to be a number. An explicit `weight`
+   *  still wins over the default this sets. */
+  numeric?: boolean;
 }
 
 /**
@@ -27,7 +35,7 @@ interface TxtProps extends TextProps {
  * system font scaling keeps working.
  */
 export function Txt({
-  variant = 'body', color, weight, size, align, lineHeight, style, ...rest
+  variant = 'body', color, weight, size, align, lineHeight, numeric = false, style, ...rest
 }: TxtProps) {
   const t = useTheme();
   const base = t.type[variant];
@@ -36,11 +44,16 @@ export function Txt({
       style={[
         {
           fontSize: size ?? base.fontSize,
-          fontWeight: weight ?? (base.fontWeight as TextStyle['fontWeight']),
+          fontWeight: weight ?? (numeric ? '800' : (base.fontWeight as TextStyle['fontWeight'])),
           color: color ?? t.colors.textPrimary,
           textAlign: align,
           lineHeight,
-          letterSpacing: 'letterSpacing' in base ? base.letterSpacing : undefined,
+          // -0.5 read as crowded/blurry at the small sizes these stats
+          // actually render at (15-26px) — negative tracking that tight only
+          // works on much larger display numbers. -0.2 keeps a touch of
+          // tightness without the glyphs mushing together.
+          letterSpacing: numeric ? -0.2 : ('letterSpacing' in base ? base.letterSpacing : undefined),
+          fontVariant: numeric ? ['tabular-nums'] : undefined,
         },
         style,
       ]}
@@ -59,8 +72,18 @@ interface ScreenProps extends ViewProps {
 
 export function Screen({ bg, edges = ['top'], style, children, ...rest }: ScreenProps) {
   const t = useTheme();
+  const base = bg ?? t.colors.bg;
   return (
-    <SafeAreaView edges={edges} style={{ flex: 1, backgroundColor: bg ?? t.colors.bg }}>
+    <SafeAreaView edges={edges} style={{ flex: 1, backgroundColor: base }}>
+      {/* A hint of colour at the top fading into the plain background — still
+          a gradient, not a flat tint, just a stronger and slightly longer
+          one than before. */}
+      <LinearGradient
+        colors={[`${t.colors.sage100}CC`, base]}
+        locations={[0, 0.55]}
+        style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '60%' }}
+        pointerEvents="none"
+      />
       <View style={[{ flex: 1 }, style]} {...rest}>
         {children}
       </View>

@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import * as Speech from 'expo-speech';
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -5,6 +6,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { BilingualText } from '@/components/BilingualText';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
+import { useHaptics } from '@/hooks/useHaptics';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -34,8 +36,10 @@ export function QuestionRunner({
   restartLabel = 'Play Again', exitLabel = 'Back to Practice',
 }: QuestionRunnerProps) {
   const t = useTheme();
+  const router = useRouter();
   const progress = useProgress();
   const { autoReadQuestions, voiceSpeed } = useSettings();
+  const haptics = useHaptics();
 
   const [index, setIndex] = React.useState(0);
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
@@ -49,6 +53,14 @@ export function QuestionRunner({
   // `correctCount * XP_PER_CORRECT` — that would silently let XP be farmed.
   const [xpEarned, setXpEarned] = React.useState(0);
   const [sessionXp, setSessionXp] = React.useState(0);
+  // Achievements unlocked during this session. Quick Quiz and Weak Spots
+  // never go through completeLesson/recordMockAttempt (the only two places
+  // that used to check achievements), so without collecting these here and
+  // surfacing them ourselves below, hitting e.g. "500 XP Club" purely by
+  // quizzing would never show a celebration — the condition would just sit
+  // true, undetected, until some unrelated future lesson happened to
+  // re-check it.
+  const achievementsRef = React.useRef<string[]>([]);
 
   const question = questions[index];
   const revealed = selectedId !== null;
@@ -73,10 +85,14 @@ export function QuestionRunner({
     if (revealed || !question) return;
     setSelectedId(optionId);
     const correct = optionId === question.correctOptionId;
-    if (correct) setCorrectCount((n) => n + 1);
-    const earned = progress.recordAnswer(question.id, correct);
+    if (correct) {
+      setCorrectCount((n) => n + 1);
+      haptics.correct();
+    }
+    const { xp: earned, newAchievements } = progress.recordAnswer(question.id, correct);
     setXpEarned(earned);
     setSessionXp((s) => s + earned);
+    if (newAchievements.length) achievementsRef.current.push(...newAchievements);
   };
 
   const advance = () => {
@@ -91,8 +107,18 @@ export function QuestionRunner({
     setCorrectCount(0);
     setSessionXp(0);
     setDone(false);
+    achievementsRef.current = [];
     onRestart?.();
   };
+
+  // Surfaced once the session lands on its summary, the same "arrive, then
+  // celebrate" pattern lesson/complete.tsx and mock/results.tsx use.
+  React.useEffect(() => {
+    if (done && achievementsRef.current.length) {
+      router.push({ pathname: '/(modals)/achievement', params: { ids: achievementsRef.current.join(',') } });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [done]);
 
   if (done || !question) {
     return (
@@ -432,7 +458,7 @@ function SummaryView({
               >
                 <Icon name={chip.icon} size={14} color={chip.iconColor} />
               </View>
-              <Txt size={17} weight="700">
+              <Txt size={17} numeric>
                 {chip.value}
               </Txt>
               <Txt size={11} color={t.colors.textSecondary}>

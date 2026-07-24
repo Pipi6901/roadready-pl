@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
+import { cardShadow } from '@/components/practice/shadow';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Txt } from '@/components/ui/primitives';
 import { ACHIEVEMENT_META } from '@/constants/rules';
@@ -61,16 +62,22 @@ export default function AchievementModal() {
       />
 
       <View
-        style={{
-          backgroundColor: t.colors.surface,
-          borderTopLeftRadius: 28,
-          borderTopRightRadius: 28,
-          paddingHorizontal: 24,
-          paddingTop: 28,
-          paddingBottom: 40,
-          gap: 20,
-          alignItems: 'center',
-        }}
+        style={[
+          {
+            backgroundColor: t.colors.surface,
+            borderTopLeftRadius: 28,
+            borderTopRightRadius: 28,
+            paddingHorizontal: 24,
+            paddingTop: 28,
+            paddingBottom: 40,
+            gap: 20,
+            alignItems: 'center',
+          },
+          // Shadow cast upward (negative y), since the sheet is pinned to
+          // the bottom of the screen — a downward shadow would fall off the
+          // edge and never actually be visible against the scrim.
+          cardShadow(t, 24, -8, 0.18),
+        ]}
       >
         <View style={{ width: BURST_BOX, height: BURST_BOX, alignItems: 'center', justifyContent: 'center' }}>
           {BURST.map((dot, i) => (

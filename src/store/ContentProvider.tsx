@@ -3,6 +3,7 @@ import React, { createContext, useCallback, useContext, useMemo } from 'react';
 import { COUNTRIES, DEMO_BUNDLE } from '@/data/demo-bundle';
 import { LESSON_SIZE } from '@/constants/rules';
 import type { Country, DisplayQuestion, Question, Topic } from '@/types/content';
+import { useProgress } from './ProgressProvider';
 import { useSettings } from './SettingsProvider';
 import { useSubscription } from './SubscriptionProvider';
 
@@ -34,6 +35,7 @@ const ContentContext = createContext<ContentContextValue | null>(null);
 export function ContentProvider({ children }: { children: React.ReactNode }) {
   const { localeCode, countryCode } = useSettings();
   const { can } = useSubscription();
+  const progress = useProgress();
 
   const showTranslation = !!localeCode && can('translation');
 
@@ -74,7 +76,18 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         questionsForTopic(topicId)
           .slice(lessonIndex * LESSON_SIZE, lessonIndex * LESSON_SIZE + LESSON_SIZE)
           .map(decorate),
-      randomQuestions: (count) => shuffled(DEMO_BUNDLE.questions, count).map(decorate),
+      // Quick Quiz only draws from topics the learner has actually unlocked
+      // on the Learn map — otherwise it could quiz someone on "Vehicle
+      // Loading" before they've even started "Road Signs", undermining the
+      // sequential-unlock structure the map is built around. Topic 0 is
+      // always unlocked, so this is never empty.
+      randomQuestions: (count) => {
+        const unlockedTopicIds = new Set(
+          DEMO_BUNDLE.topics.filter((t) => progress.topicStats(t.id).unlocked).map((t) => t.id),
+        );
+        const pool = DEMO_BUNDLE.questions.filter((q) => unlockedTopicIds.has(q.topicId));
+        return shuffled(pool, count).map(decorate);
+      },
       mockQuestions: () => {
         // Proportional sampling across topics, as the real exam does.
         const target = country.mockTest.questionCount;
@@ -89,7 +102,14 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       },
       decorate,
     };
-  }, [countryCode, decorate]);
+    // Deliberately not depending on `progress` as a whole: it gets a new
+    // identity on every recordAnswer (any question answered anywhere), and
+    // that used to redraw an in-progress Quick Quiz's entire question set out
+    // from under the learner mid-session (see randomQuestions above). Topic
+    // unlock state only ever changes via completeLesson touching
+    // `state.lessons`, so that's the one thing worth reacting to here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countryCode, decorate, progress.state.lessons]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }

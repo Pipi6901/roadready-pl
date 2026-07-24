@@ -6,7 +6,7 @@ import {
   GitFork, Globe, Hand, House, Info, Languages, ListChecks, Lock, Map, MapPin, MessageCircle, Milestone,
   Navigation, OctagonAlert, Package, PartyPopper, Play, Pointer, RotateCcw, RotateCw, Route,
   Search, Settings, ShieldCheck, Signpost, Siren, Sparkles, Sprout, Star, Target, Timer,
-  TrafficCone, TreePine, TrendingDown, TriangleAlert, Trophy, User, Users, Video, Volume2, X, Zap,
+  TrafficCone, TreePine, TrendingDown, TriangleAlert, Trophy, User, Users, Vibrate, Video, Volume2, X, Zap,
 } from 'lucide-react-native';
 
 /**
@@ -80,6 +80,7 @@ const ICONS = {
   trophy: Trophy,
   user: User,
   users: Users,
+  vibrate: Vibrate,
   video: Video,
   'volume-2': Volume2,
   x: X,

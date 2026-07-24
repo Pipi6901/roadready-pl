@@ -31,10 +31,14 @@ function RootStack() {
             rather than in app/(modals)/_layout.tsx: a nested stack cannot
             animate its own root screen in. transparentModal (not modal) because
             the achievement card draws a see-through scrim over the screen that
-            awarded it; the other three paint an opaque background themselves. */}
+            awarded it; the other three paint an opaque background themselves.
+            fade_from_bottom (not the plainer slide_from_bottom) so the sheet
+            eases in rather than snapping up — small, but it's the one
+            transition every one of these modals shares, so it's worth the
+            extra bit of polish. */}
         <Stack.Screen
           name="(modals)"
-          options={{ presentation: 'transparentModal', animation: 'slide_from_bottom' }}
+          options={{ presentation: 'transparentModal', animation: 'fade_from_bottom' }}
         />
       </Stack>
     </>

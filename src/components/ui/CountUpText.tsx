@@ -9,14 +9,14 @@ interface CountUpTextProps {
   suffix?: string;
   duration?: number;
   size?: number;
-  weight?: '400' | '600' | '700';
+  weight?: '400' | '600' | '700' | '800';
   color?: string;
   /** Fires a particle burst once the count-up lands, e.g. on a perfect score. */
   celebrate?: boolean;
 }
 
 /** Animates a number counting up from 0 to `value` on mount / value change. */
-export function CountUpText({ value, suffix = '', duration = 900, size, weight = '700', color, celebrate }: CountUpTextProps) {
+export function CountUpText({ value, suffix = '', duration = 900, size, weight = '800', color, celebrate }: CountUpTextProps) {
   const [display, setDisplay] = React.useState(0);
   const [burstActive, setBurstActive] = React.useState(false);
   const progress = React.useRef(new Animated.Value(0)).current;
@@ -42,7 +42,7 @@ export function CountUpText({ value, suffix = '', duration = 900, size, weight =
 
   return (
     <View>
-      <Txt size={size} weight={weight} color={color}>
+      <Txt size={size} weight={weight} color={color} numeric>
         {display}
         {suffix}
       </Txt>

@@ -28,15 +28,25 @@ export function useSubmitMock(): () => void {
 
     // Answered questions feed the spaced-review system; skipped ones do not —
     // a blank is a missing answer, not a demonstrated misunderstanding.
+    // recordAnswer can itself unlock an achievement mid-scoring (e.g. this
+    // mock's answers push totalXp past 500) — collected here since
+    // recordMockAttempt's own check below only sees state as it stands
+    // *after* every recordAnswer call, so it won't repeat these, but nothing
+    // else surfaces them either.
+    const answerAchievements: string[] = [];
     for (const question of state.questions) {
       const chosen = state.answers[question.id];
-      if (chosen) progress.recordAnswer(question.id, chosen === question.correctOptionId);
+      if (chosen) {
+        const { newAchievements } = progress.recordAnswer(question.id, chosen === question.correctOptionId);
+        if (newAchievements.length) answerAchievements.push(...newAchievements);
+      }
     }
 
-    const { newAchievements } = progress.recordMockAttempt(attempt);
+    const { newAchievements: mockAchievements } = progress.recordMockAttempt(attempt);
+    const allNewAchievements = [...new Set([...answerAchievements, ...mockAchievements])];
     router.replace({
       pathname: '/mock/results',
-      params: newAchievements.length ? { achievement: newAchievements.join(',') } : {},
+      params: allNewAchievements.length ? { achievement: allNewAchievements.join(',') } : {},
     });
   }, [country.mockTest, progress, router]);
 }

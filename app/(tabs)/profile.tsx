@@ -216,7 +216,7 @@ export default function ProfileScreen() {
                   >
                     <Icon name={s.icon} size={15} color={s.fg} />
                   </View>
-                  <Txt size={15} weight="700">
+                  <Txt size={16} numeric>
                     {s.value}
                   </Txt>
                   <Txt size={10} color={t.colors.textSecondary} align="center">

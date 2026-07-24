@@ -28,9 +28,14 @@ export default function DashboardScreen() {
   const { topics, getTopic } = useContent();
   const progress = useProgress();
 
-  const nextTopicId = progress.nextTopicId ?? topics[0]?.id;
+  // null means every topic is genuinely finished — see the comment on
+  // nextTopicId in ProgressProvider. Falling back to topics[0] here used to
+  // send "Continue" into an already-completed topic's dead-end lesson
+  // screen, so the all-done state below is rendered instead.
+  const nextTopicId = progress.nextTopicId;
   const topic = nextTopicId ? getTopic(nextTopicId) : undefined;
   const stats = nextTopicId ? progress.topicStats(nextTopicId) : null;
+  const allTopicsDone = progress.ready && topics.length > 0 && !nextTopicId;
 
   // Which of the last 7 days had the goal met — drives the streak calendar.
   const streakDays = React.useMemo(() => {
@@ -101,38 +106,68 @@ export default function DashboardScreen() {
               Continue Learning
             </Txt>
 
-            <Card gap={12}>
-              <Row style={{ gap: 12 }}>
-                <View
-                  style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: t.radius.sm,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: t.colors.sage100,
-                    borderBottomWidth: 3,
-                    borderBottomColor: t.colors.sage200,
-                  }}
-                >
-                  <Icon name={topic?.icon ?? 'signpost'} size={22} color={t.colors.onSurfaceAlt} />
-                </View>
-                <Txt size={16} weight="600">
-                  {topic?.name ?? 'Road Signs'}
+            {allTopicsDone ? (
+              <Card gap={12}>
+                <Row style={{ gap: 12 }}>
+                  <View
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: t.radius.sm,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: t.colors.successBg,
+                      borderBottomWidth: 3,
+                      borderBottomColor: t.colors.success,
+                    }}
+                  >
+                    <Icon name="party-popper" size={22} color={t.colors.successText} />
+                  </View>
+                  <Txt size={16} weight="600">
+                    All topics complete!
+                  </Txt>
+                </Row>
+
+                <Txt size={13} color={t.colors.textSecondary}>
+                  You&apos;ve finished every topic. Keep sharp with a quick quiz or a mock test.
                 </Txt>
-              </Row>
 
-              <ProgressBar value={stats && stats.totalLessons ? stats.completedLessons / stats.totalLessons : 0} />
+                <Button label="Go to Practice" onPress={() => router.push('/(tabs)/practice')} />
+              </Card>
+            ) : (
+              <Card gap={12}>
+                <Row style={{ gap: 12 }}>
+                  <View
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: t.radius.sm,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: t.colors.sage100,
+                      borderBottomWidth: 3,
+                      borderBottomColor: t.colors.sage200,
+                    }}
+                  >
+                    <Icon name={topic?.icon ?? 'signpost'} size={22} color={t.colors.onSurfaceAlt} />
+                  </View>
+                  <Txt size={16} weight="600">
+                    {topic?.name ?? 'Road Signs'}
+                  </Txt>
+                </Row>
 
-              <Txt size={13} color={t.colors.textSecondary}>
-                {stats ? `${stats.completedLessons}/${stats.totalLessons} lessons complete` : 'Not started'}
-              </Txt>
+                <ProgressBar value={stats && stats.totalLessons ? stats.completedLessons / stats.totalLessons : 0} />
 
-              <Button
-                label="Continue"
-                onPress={() => nextTopicId && router.push(`/lesson/${nextTopicId}`)}
-              />
-            </Card>
+                <Txt size={13} color={t.colors.textSecondary}>
+                  {stats ? `${stats.completedLessons}/${stats.totalLessons} lessons complete` : 'Not started'}
+                </Txt>
+
+                <Button
+                  label="Continue"
+                  onPress={() => nextTopicId && router.push(`/lesson/${nextTopicId}`)}
+                />
+              </Card>
+            )}
           </View>
 
           <View style={{ gap: 12 }}>
