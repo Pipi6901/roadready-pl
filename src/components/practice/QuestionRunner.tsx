@@ -458,7 +458,7 @@ function SummaryView({
               >
                 <Icon name={chip.icon} size={14} color={chip.iconColor} />
               </View>
-              <Txt size={17} numeric>
+              <Txt size={17} weight="700" numeric>
                 {chip.value}
               </Txt>
               <Txt size={11} color={t.colors.textSecondary}>

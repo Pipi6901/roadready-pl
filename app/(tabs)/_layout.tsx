@@ -35,8 +35,13 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen name="index" options={tab('Home', 'house')} />
-      <Tabs.Screen name="learn" options={tab('Learn', 'book-open')} />
-      <Tabs.Screen name="practice" options={tab('Practice', 'timer')} />
+      {/* 'route' instead of the generic 'book-open' — Learn's screen IS the
+          winding road map, so the tab icon matches what's actually there. */}
+      <Tabs.Screen name="learn" options={tab('Learn', 'route')} />
+      {/* 'gauge' instead of 'timer' — a speedometer ties back to the
+          driving theme and reads as more deliberate than a generic clock,
+          which doesn't obviously mean "practice" at all. */}
+      <Tabs.Screen name="practice" options={tab('Practice', 'gauge')} />
       <Tabs.Screen name="profile" options={tab('Profile', 'user')} />
     </Tabs>
   );

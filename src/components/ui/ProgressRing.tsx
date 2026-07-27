@@ -114,7 +114,7 @@ export function ProgressRing({
         />
       </Svg>
       {displayLabel ? (
-        <Txt size={labelSize} numeric>
+        <Txt size={labelSize} weight="700" numeric>
           {displayLabel}
         </Txt>
       ) : null}

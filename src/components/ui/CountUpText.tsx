@@ -16,7 +16,7 @@ interface CountUpTextProps {
 }
 
 /** Animates a number counting up from 0 to `value` on mount / value change. */
-export function CountUpText({ value, suffix = '', duration = 900, size, weight = '800', color, celebrate }: CountUpTextProps) {
+export function CountUpText({ value, suffix = '', duration = 900, size, weight = '700', color, celebrate }: CountUpTextProps) {
   const [display, setDisplay] = React.useState(0);
   const [burstActive, setBurstActive] = React.useState(false);
   const progress = React.useRef(new Animated.Value(0)).current;

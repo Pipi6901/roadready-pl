@@ -61,7 +61,10 @@ export default function ProfileScreen() {
 
   const stats: { icon: IconName; value: string; label: string; bg: string; edge: string; fg: string }[] = [
     {
-      icon: 'star',
+      // Same icon FeedbackSheet already shows next to "+10 XP" during a
+      // lesson — a star has no established tie to XP anywhere else in the
+      // app, this does.
+      icon: 'zap',
       value: progress.state.totalXp.toLocaleString('en-GB'),
       label: 'Total XP',
       bg: t.colors.amber50,
@@ -69,6 +72,10 @@ export default function ProfileScreen() {
       fg: t.colors.amberDark,
     },
     {
+      // Fire for a streak is the one icon in this row I'm not swapping —
+      // it's not a lazy default, it's the convention every habit-tracking
+      // app uses because it's instantly legible; replacing it would cost
+      // recognisability for no real gain.
       icon: 'flame',
       value: String(progress.state.streakDays),
       label: 'Day streak',
@@ -77,7 +84,9 @@ export default function ProfileScreen() {
       fg: t.colors.amberDark,
     },
     {
-      icon: 'check',
+      // A bare checkmark doesn't say what got checked off. A book with a
+      // check on it does — this stat is specifically "questions mastered".
+      icon: 'book-open-check',
       value: String(progress.masteredCount),
       label: 'Mastered',
       bg: t.colors.successBg,
@@ -85,7 +94,10 @@ export default function ProfileScreen() {
       fg: t.colors.successDark,
     },
     {
-      icon: 'target',
+      // Compass instead of a bullseye — "on course" reads as precision too,
+      // without doubling up on the target/bullseye glyph already used for
+      // Weak Spots and the goal-progress rings elsewhere in the app.
+      icon: 'compass',
       value: `${progress.accuracy}%`,
       label: 'Accuracy',
       bg: t.colors.sage100,
@@ -202,21 +214,25 @@ export default function ProfileScreen() {
                     shadow,
                   ]}
                 >
+                  {/* Rounded-square slab with a bottom edge, not a plain
+                      circle — matches the icon treatment used everywhere
+                      else in the app (practice cards, topic nodes) instead
+                      of inventing a one-off shape just for this row. */}
                   <View
                     style={{
-                      width: 30,
-                      height: 30,
-                      borderRadius: 15,
+                      width: 34,
+                      height: 34,
+                      borderRadius: 12,
                       alignItems: 'center',
                       justifyContent: 'center',
                       backgroundColor: s.bg,
-                      borderBottomWidth: 2,
+                      borderBottomWidth: 3,
                       borderBottomColor: s.edge,
                     }}
                   >
-                    <Icon name={s.icon} size={15} color={s.fg} />
+                    <Icon name={s.icon} size={17} color={s.fg} />
                   </View>
-                  <Txt size={16} numeric>
+                  <Txt size={16} weight="700" numeric>
                     {s.value}
                   </Txt>
                   <Txt size={10} color={t.colors.textSecondary} align="center">

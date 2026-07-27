@@ -44,15 +44,16 @@ export function Txt({
       style={[
         {
           fontSize: size ?? base.fontSize,
-          fontWeight: weight ?? (numeric ? '800' : (base.fontWeight as TextStyle['fontWeight'])),
+          fontWeight: weight ?? (base.fontWeight as TextStyle['fontWeight']),
           color: color ?? t.colors.textPrimary,
           textAlign: align,
           lineHeight,
-          // -0.5 read as crowded/blurry at the small sizes these stats
-          // actually render at (15-26px) — negative tracking that tight only
-          // works on much larger display numbers. -0.2 keeps a touch of
-          // tightness without the glyphs mushing together.
-          letterSpacing: numeric ? -0.2 : ('letterSpacing' in base ? base.letterSpacing : undefined),
+          letterSpacing: 'letterSpacing' in base ? base.letterSpacing : undefined,
+          // Tried heavier weight (800) + tight tracking (-0.5, then -0.2) for
+          // these stat numbers — both read as too heavy/crowded rather than
+          // "premium". Down to just tabular figures now: fixed-width digits
+          // so a count-up animation doesn't jiggle, without touching weight
+          // or spacing at all.
           fontVariant: numeric ? ['tabular-nums'] : undefined,
         },
         style,
