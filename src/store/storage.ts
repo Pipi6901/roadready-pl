@@ -41,4 +41,5 @@ export const KEYS = {
   settings: 'settings',
   progress: 'progress',
   subscription: 'subscription',
+  remoteContent: 'remote-content',
 } as const;

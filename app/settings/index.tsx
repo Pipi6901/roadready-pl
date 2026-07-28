@@ -1,5 +1,6 @@
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { Alert, View } from 'react-native';
 
@@ -238,7 +239,14 @@ export default function SettingsScreen() {
               label="Vibration"
               subtitle="Buzz on a correct answer during lessons, quizzes and reviews"
               switchValue={settings.hapticsEnabled}
-              onSwitchChange={(hapticsEnabled) => settings.update({ hapticsEnabled })}
+              onSwitchChange={(hapticsEnabled) => {
+                settings.update({ hapticsEnabled });
+                // Fire directly rather than through useHaptics(): that hook
+                // reads hapticsEnabled from context, which hasn't re-rendered
+                // with this update yet — the whole point here is to let the
+                // learner immediately feel what turning it on does.
+                if (hapticsEnabled) void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              }}
               last
             />
           </SettingsSection>

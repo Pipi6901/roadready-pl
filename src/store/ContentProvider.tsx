@@ -1,6 +1,7 @@
-import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { COUNTRIES, DEMO_BUNDLE } from '@/data/demo-bundle';
+import { initRemoteContent, remoteContentStore } from '@/data/remoteContent';
 import { LESSON_SIZE } from '@/constants/rules';
 import type { Country, DisplayQuestion, Question, Topic } from '@/types/content';
 import { useProgress } from './ProgressProvider';
@@ -12,8 +13,11 @@ import { useSubscription } from './SubscriptionProvider';
  * this layer decides whether a translation is attached, based on the selected
  * language AND the subscription tier (translation is a Pro feature).
  *
- * Today it serves the bundled demo pack; in production it reads the downloaded
- * content package (docs/02-architecture.md §3). Screens stay unchanged.
+ * The bundled demo-bundle.ts is only the seed/fallback now — on mount this
+ * fetches content.json from Firebase Hosting (see src/data/remoteContent.ts)
+ * and swaps it in if newer, so content can change without an app-store
+ * release. Screens stay unchanged either way, they only ever go through
+ * useContent().
  */
 
 interface ContentContextValue {
@@ -36,6 +40,23 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const { localeCode, countryCode } = useSettings();
   const { can } = useSubscription();
   const progress = useProgress();
+
+  // Fires once per app start: apply whatever was cached from the last fetch,
+  // then check Firebase Hosting for anything newer in the background. Never
+  // blocks — the app renders with the bundled seed immediately either way
+  // (NFR-01, cold start must not wait on the network).
+  useEffect(() => {
+    void initRemoteContent();
+  }, []);
+
+  // DEMO_BUNDLE's fields get mutated in place when new content arrives
+  // (see remoteContent.ts) — invisible to the `value` useMemo below unless
+  // something in its dependency array actually changes, so this is that
+  // something.
+  const contentVersion = React.useSyncExternalStore(
+    remoteContentStore.subscribe,
+    remoteContentStore.getVersion,
+  );
 
   const showTranslation = !!localeCode && can('translation');
 
@@ -109,7 +130,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     // unlock state only ever changes via completeLesson touching
     // `state.lessons`, so that's the one thing worth reacting to here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countryCode, decorate, progress.state.lessons]);
+  }, [countryCode, decorate, progress.state.lessons, contentVersion]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }

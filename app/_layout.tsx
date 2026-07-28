@@ -29,15 +29,24 @@ function RootStack() {
         <Stack.Screen name="settings" />
         {/* The whole modal group is presented at once, so the option lives here
             rather than in app/(modals)/_layout.tsx: a nested stack cannot
-            animate its own root screen in. transparentModal (not modal) because
-            the achievement card draws a see-through scrim over the screen that
-            awarded it; the other three paint an opaque background themselves.
-            fade_from_bottom (not the plainer slide_from_bottom) so the sheet
-            eases in rather than snapping up — small, but it's the one
-            transition every one of these modals shares, so it's worth the
-            extra bit of polish. */}
+            animate its own root screen in. Plain `modal` (opaque) — every
+            screen left in this group (change-country, change-language,
+            trial-ended) paints its own solid background via <Screen> and
+            needs a correctly computed top safe-area inset, which
+            transparentModal was breaking (the close button rendered under
+            the status bar clock instead of below it). fade_from_bottom
+            (not the plainer slide_from_bottom) so the sheet eases in rather
+            than snapping up. */}
         <Stack.Screen
           name="(modals)"
+          options={{ presentation: 'modal', animation: 'fade_from_bottom' }}
+        />
+        {/* Split out from (modals): this is the one screen that actually
+            needs a see-through scrim over whatever awarded the achievement,
+            so only it gets transparentModal — forcing that on the group
+            above is what broke their safe area in the first place. */}
+        <Stack.Screen
+          name="achievement"
           options={{ presentation: 'transparentModal', animation: 'fade_from_bottom' }}
         />
       </Stack>

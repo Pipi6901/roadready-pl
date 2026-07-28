@@ -25,6 +25,12 @@ const MAX_OFFSET = 100;
 /** How much a row's vertical pitch can vary either way, so the trail doesn't
  *  read as a fixed-height ladder. */
 const PITCH_JITTER = 18;
+/** Vertical space the floating "Continue topic" card needs to clear before
+ *  it stops overlapping whatever's scrolled beneath it. Used both as the
+ *  map's baseline top padding (so the very first node — the common case for
+ *  a brand-new learner, since topic 0 starts as "current" — never renders
+ *  directly under the card) and as the auto-scroll margin for deeper nodes. */
+const CARD_CLEARANCE = 130;
 
 /** Deterministic 0..1 "random" from an integer seed — stable across
  *  re-renders (no Math.random) so the map's shape doesn't jump around every
@@ -108,7 +114,7 @@ export default function LearnScreen() {
     // wherever they last scrolled instead of back at their current topic.
     if (!isFocused || mapOffsetY === null || !current) return;
     scrollRef.current?.scrollTo({
-      y: Math.max(0, mapOffsetY + current.y - 130),
+      y: Math.max(0, mapOffsetY + current.y - CARD_CLEARANCE),
       animated: true,
     });
   }, [isFocused, mapOffsetY, current]);
@@ -159,7 +165,7 @@ export default function LearnScreen() {
       <View style={{ flex: 1 }}>
         <ScreenScroll
           ref={scrollRef}
-          contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING, paddingTop: 8 }}
+          contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING, paddingTop: CARD_CLEARANCE }}
         >
             {/* Route map */}
             <View

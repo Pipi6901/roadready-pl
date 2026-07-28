@@ -39,3 +39,7 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Firebase CLI local cache (deploy history, hosting cache) — regenerated
+# per-machine, not part of the deployable config
+firebase-hosting/.firebase/

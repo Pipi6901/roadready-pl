@@ -36,7 +36,12 @@ const UNITED_KINGDOM: Country = {
   legalNotice:
     'Highway Code material is Crown Copyright and is used under the Open Government Licence v3.0. Practice questions in this app are written independently by RoadReady from published road rules and are not examination items from any driving test authority.',
   status: 'active',
-  questionCount: 800,
+  // Patched below to QUESTIONS.length once that array exists — this literal
+  // is just the TypeScript-required initial value, never what actually
+  // ships. It used to sit at 800 (the eventual DVSA-licensed bank size) and
+  // was never updated as the demo bank grew, so the country picker quoted
+  // "800 questions available" while the app actually had 140.
+  questionCount: 0,
   mockTest: {
     questionCount: 50,
     timeLimitMinutes: 57,
@@ -2926,6 +2931,11 @@ const QUESTIONS: Question[] = [
     sourceRef: 'Highway Code rule 225',
   },
 ];
+
+// See the comment on UNITED_KINGDOM.questionCount above — this keeps the
+// country picker's "N questions available" honest without hand-maintaining
+// a second number that drifts every time the bank grows.
+UNITED_KINGDOM.questionCount = QUESTIONS.length;
 
 /* -------------------------------------------------------------------------- */
 /* Translations                                                                */

@@ -21,6 +21,14 @@ const BURST_BOX = 140;
 /**
  * New achievement card — ТЗ 8.6. Presented as a transparent modal.
  *
+ * Lives as its own top-level route rather than inside app/(modals) — that
+ * group is presented `modal` (opaque) as a whole because change-country,
+ * change-language and trial-ended all paint solid backgrounds and need
+ * correct top safe-area insets. This is the one screen that actually wants
+ * to show a see-through scrim over whatever awarded it, so it gets its own
+ * `transparentModal` presentation in app/_layout.tsx instead of forcing that
+ * mode onto the other three (which broke their top inset — see ADR notes).
+ *
  * `ids` is a comma-separated list: completing a lesson/mock can clear more
  * than one achievement at once (e.g. a topic's only lesson earns both
  * "First Lesson" and "Topic Master" the same moment), and each one deserves

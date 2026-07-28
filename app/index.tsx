@@ -85,7 +85,7 @@ export default function SplashScreen() {
   const t = useTheme();
   const router = useRouter();
   const { width, height } = useWindowDimensions();
-  const { ready, onboarded, update } = useSettings();
+  const { ready, onboarded, hasSeenSplash, update } = useSettings();
   const [exiting, setExiting] = React.useState(false);
 
   const ringScale = useSharedValue(1);
@@ -114,9 +114,16 @@ export default function SplashScreen() {
     router.replace(onboarded ? '/(tabs)' : '/welcome');
   }, [ready, onboarded, update, router]);
 
+  // Returning learners skip straight past the tap-to-continue gate — it
+  // only needs to be seen once, on the very first cold start ever.
+  React.useEffect(() => {
+    if (ready && hasSeenSplash) go();
+  }, [ready, hasSeenSplash, go]);
+
   const handlePress = React.useCallback(() => {
     if (exiting || !ready) return;
     setExiting(true);
+    update({ hasSeenSplash: true });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     ringScale.value = withTiming(2.4, { duration: EXIT_MS, easing: Easing.out(Easing.cubic) });
@@ -136,7 +143,7 @@ export default function SplashScreen() {
     // Driven from JS rather than the worklet callback so navigation timing
     // is identical (and reliable) across native and web.
     setTimeout(go, EXIT_MS);
-  }, [exiting, ready, go, ringScale, ringFade, carScale, screenOpacity]);
+  }, [exiting, ready, go, update, ringScale, ringFade, carScale, screenOpacity]);
 
   const carStyle = useAnimatedStyle(() => ({
     transform: [{ scale: carScale.value }],
@@ -144,6 +151,12 @@ export default function SplashScreen() {
   const screenStyle = useAnimatedStyle(() => ({
     opacity: screenOpacity.value,
   }));
+
+  // Nothing to show while settings are still loading, or for a returning
+  // learner who's about to be redirected by the effect above — rendering
+  // the full tap UI here too would flash it for a frame before navigating
+  // away.
+  if (!ready || hasSeenSplash) return null;
 
   return (
     <Animated.View style={[screenStyle, { flex: 1 }]}>

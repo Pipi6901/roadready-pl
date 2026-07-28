@@ -92,9 +92,12 @@ export function Screen({ bg, edges = ['top'], style, children, ...rest }: Screen
   );
 }
 
-export function ScreenScroll({ contentContainerStyle, ...rest }: ScrollViewProps) {
+export function ScreenScroll({
+  contentContainerStyle, ref, ...rest
+}: ScrollViewProps & { ref?: React.Ref<ScrollView> }) {
   return (
     <ScrollView
+      ref={ref}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={[{ paddingBottom: 24 }, contentContainerStyle]}
       {...rest}

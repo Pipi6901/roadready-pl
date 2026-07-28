@@ -28,7 +28,7 @@ export default function MockResultsScreen() {
   // Surface the celebration once the results screen itself has landed,
   // rather than racing it during the replace() from useSubmitMock.
   React.useEffect(() => {
-    if (achievement) router.push({ pathname: '/(modals)/achievement', params: { ids: achievement } });
+    if (achievement) router.push({ pathname: '/achievement', params: { ids: achievement } });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [achievement]);
 

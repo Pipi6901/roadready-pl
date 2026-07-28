@@ -115,7 +115,7 @@ export function QuestionRunner({
   // celebrate" pattern lesson/complete.tsx and mock/results.tsx use.
   React.useEffect(() => {
     if (done && achievementsRef.current.length) {
-      router.push({ pathname: '/(modals)/achievement', params: { ids: achievementsRef.current.join(',') } });
+      router.push({ pathname: '/achievement', params: { ids: achievementsRef.current.join(',') } });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [done]);

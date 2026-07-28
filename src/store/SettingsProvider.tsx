@@ -17,6 +17,11 @@ export interface Settings {
   autoReadQuestions: boolean;
   voiceSpeed: number;
   hapticsEnabled: boolean;
+  /** Whether the "Tap anywhere to continue" splash has ever been dismissed.
+   *  It's the app's routing gate (app/index.tsx also decides onboarding vs
+   *  tabs there), so it can't just be skipped outright — but the tap
+   *  itself should only be asked for once, on the very first launch. */
+  hasSeenSplash: boolean;
 }
 
 const DEFAULTS: Settings = {
@@ -32,6 +37,7 @@ const DEFAULTS: Settings = {
   autoReadQuestions: false,
   voiceSpeed: 1,
   hapticsEnabled: true,
+  hasSeenSplash: false,
 };
 
 interface SettingsContextValue extends Settings {

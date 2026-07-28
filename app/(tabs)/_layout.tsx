@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -11,6 +12,12 @@ import { useTheme } from '@/theme/ThemeProvider';
  */
 export default function TabsLayout() {
   const t = useTheme();
+  // A fixed tabBarStyle.height (needed for the mockup's 64pt bar) opts out
+  // of React Navigation's own safe-area handling, so the home-indicator
+  // inset has to be added back by hand — otherwise the bar sits flush
+  // against the bottom edge and the labels end up crowded against (or
+  // under) the gesture area on any iPhone without a physical home button.
+  const insets = useSafeAreaInsets();
 
   const tab = (name: string, icon: IconName) => ({
     title: name,
@@ -28,8 +35,9 @@ export default function TabsLayout() {
         tabBarStyle: {
           backgroundColor: t.colors.surface,
           borderTopColor: t.colors.border,
-          height: 64,
+          height: 64 + insets.bottom,
           paddingTop: 6,
+          paddingBottom: insets.bottom,
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
       }}

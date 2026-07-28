@@ -46,7 +46,7 @@ export default function LessonCompleteScreen() {
   // racing it during the replace() that brought the learner here.
   React.useEffect(() => {
     if (params.achievement) {
-      router.push({ pathname: '/(modals)/achievement', params: { ids: params.achievement } });
+      router.push({ pathname: '/achievement', params: { ids: params.achievement } });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.achievement]);
