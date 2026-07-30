@@ -8,12 +8,26 @@
  */
 
 /**
- * Onboarding flow: Welcome → Country → Language → Goal → Paywall.
+ * Onboarding flow: Welcome → (Country) → Language → Goal → Paywall.
  *
- * ON — RevenueCat + App Store products exist (ADR-012). Country and
- * translation language remain changeable in Settings regardless.
+ * ON — RevenueCat + App Store products exist (ADR-012). The Country step is
+ * itself skipped — see COUNTRY_SELECTOR_ENABLED below.
  */
 export const ONBOARDING_ENABLED = true;
+
+/**
+ * The in-app country picker (onboarding step + Settings → Country + the
+ * Learn tab's country pill).
+ *
+ * OFF (ADR-013): the product now ships one country per app build instead of
+ * one app covering many countries — RoadReady is UK-only. `countryCode`
+ * stays hardcoded to `'GB'` (see ONBOARDING_SKIP_DEFAULTS and
+ * SettingsProvider's DEFAULTS). Unlike the other flags here, this one isn't
+ * expected to flip back to `true` in this codebase — a second country means a
+ * new app, not a re-enabled picker — but the screens stay in place in case
+ * that changes.
+ */
+export const COUNTRY_SELECTOR_ENABLED = false;
 
 /**
  * Paywall and the free-tier limits that push users towards it.

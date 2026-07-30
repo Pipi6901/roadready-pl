@@ -11,6 +11,7 @@
 | Флаг | Значение | Комментарий |
 |---|---|---|
 | `ONBOARDING_ENABLED` | `true` | Подключён |
+| `COUNTRY_SELECTOR_ENABLED` | `false` | Один билд — одна страна (ADR-013). Не временное — обратно включать не планируется в этом приложении |
 | `PAYWALL_ENABLED` | `true` | react-native-iap + RevenueCat REST (ADR-012). iOS настроен, Android — нет. Ни разу не проверялось на реальном билде |
 | `HAZARD_ENABLED` | `false` | Клипы входят в лицензионный пакет DVSA, которого нет (ADR-006) |
 
@@ -18,7 +19,7 @@
 
 ## Онбординг
 
-**Статус: включён.** Welcome → Country → Language → Goal → Paywall. Файлы: `app/(onboarding)/`, компоненты — `src/components/onboarding/`.
+**Статус: включён.** Welcome → Language → Goal → Paywall (шаг Country пропущен — см. ниже). Файлы: `app/(onboarding)/`, компоненты — `src/components/onboarding/`.
 
 `ONBOARDING_SKIP_DEFAULTS = { countryCode: 'GB', localeCode: null }` — эти значения используются, только если флаг снова выключат; `localeCode: null` означает «English only».
 
@@ -27,6 +28,17 @@
 - последний шаг цепочки зависит от `PAYWALL_ENABLED`: при выключенном пейволле `goal.tsx` сам завершает онбординг и уходит на вкладки, при включённом (сейчас) — передаёт управление пейволлу.
 
 **Билинг:** точка входа одна — `src/store/SubscriptionProvider.tsx`. Методы `startTrial`, `restore`, `cancel` и вычисление `isPro` реализованы через `react-native-iap` + REST-валидацию в RevenueCat (ADR-012, не Adapty из более раннего ADR-005). Экраны об этом не знают и не должны меняться при смене вендора биллинга.
+
+---
+
+## Выбор страны
+
+**Статус: выключен, не временно (ADR-013).** `countryCode` жёстко `'GB'`. Убраны из навигации:
+- шаг `Country` в онбординге (`welcome.tsx` ведёт сразу на `/language`);
+- строка «Country» в Settings (`app/settings/index.tsx`);
+- country-пилюля на вкладке Learn (`app/(tabs)/learn.tsx`).
+
+Экраны `app/(onboarding)/country.tsx` и `app/(modals)/change-country.tsx`, а также модель `Country`/`COUNTRIES` (`src/data/demo-bundle.ts`) и `ContentProvider` — не удалены, только отключены от навигации. В отличие от остальных флагов на этой странице, `COUNTRY_SELECTOR_ENABLED` не планируется включать обратно в этом приложении — вторая страна означает новое дочернее приложение, а не переключатель здесь.
 
 ---
 

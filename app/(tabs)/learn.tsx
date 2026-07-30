@@ -53,7 +53,7 @@ export default function LearnScreen() {
   const t = useTheme();
   const router = useRouter();
   const { width } = useWindowDimensions();
-  const { topics, country } = useContent();
+  const { topics } = useContent();
   const progress = useProgress();
   const isFocused = useIsFocused();
 
@@ -121,9 +121,10 @@ export default function LearnScreen() {
 
   return (
     <Screen>
-      {/* Opaque header — country pill and title stay solid; the ScrollView
-          (route map) starts right underneath and runs behind the floating
-          "Continue topic" card below. */}
+      {/* Opaque header — title stays solid; the ScrollView (route map) starts
+          right underneath and runs behind the floating "Continue topic" card
+          below. Country pill removed (ADR-013): one app per country now, so
+          there's nothing to switch to. */}
       <View
         style={{
           paddingHorizontal: SCREEN_PADDING,
@@ -133,30 +134,6 @@ export default function LearnScreen() {
           backgroundColor: t.colors.bg,
         }}
       >
-        {/* Country pill — opens the country picker */}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Country: ${country.name}. Change country`}
-          onPress={() => router.push('/(modals)/change-country')}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            alignSelf: 'flex-start',
-            gap: 6,
-            minHeight: 44,
-            paddingVertical: 8,
-            paddingHorizontal: 14,
-            borderRadius: 20,
-            backgroundColor: t.colors.sage100,
-          }}
-        >
-          <Txt size={14}>{country.flagEmoji}</Txt>
-          <Txt size={13} weight="600">
-            {country.name}
-          </Txt>
-          <Icon name="chevron-down" size={14} color={t.colors.textSecondary} />
-        </Pressable>
-
         <Txt size={26} weight="700">
           Topics
         </Txt>

@@ -154,3 +154,16 @@ NFR-10 и ТЗ 10.7 требуют тёмную тему с первого ре�
 Restore Purchase (обязателен по ADR-002, аккаунтов нет) реализован через `getAvailablePurchases()` react-native-iap с повторной отправкой найденных покупок в RevenueCat.
 
 **Следствие:** `src/store/SubscriptionProvider.tsx` — реальная реализация вместо мока, `src/data/revenuecat.ts` и `src/constants/billing.ts` — новые модули. `PAYWALL_ENABLED` (src/constants/flags.ts) остаётся выключен до заведения проекта в RevenueCat и продуктов (SKU) в App Store Connect / Google Play Console — сейчас там плейсхолдеры.
+
+---
+
+## ADR-013. Один билд приложения — одна страна, без селектора внутри
+**Дата:** 2026-07-30 · **Статус:** принято (решение заказчика)
+
+В `01-product-scope.md` (§ строка 51) изначально закладывалась многострановая архитектура: "Other countries besides UK — architecture is ready, but there is no content", с выбором страны в онбординге и в Settings (`app/(onboarding)/country.tsx`, `app/(modals)/change-country.tsx`), пятью странами "coming soon" в `COUNTRIES` (`src/data/demo-bundle.ts`).
+
+**Решение:** для запуска в сторах селектор страны из приложения убирается — RoadReady жёстко про UK (`countryCode` всегда `'GB'`). Экспансия в другие страны — это отдельные дочерние приложения (свой bundle id, свой листинг в App Store/Google Play), а не переключатель внутри одного билда.
+
+**Обоснование:** заказчик решил, что раздельные приложения на страну дают более точный ASO (ключевые слова, скриншоты, отзывы — все заточены под одну страну), не путают пользователя мёртвыми "coming soon" карточками и не усложняют App Review вопросом "почему выбор есть, а содержимого для него нет".
+
+**Реализация:** флаг `COUNTRY_SELECTOR_ENABLED = false` (`src/constants/flags.ts`) — убирает шаг Country из онбординга (`welcome.tsx` ведёт сразу на `/language`), строку "Country" в Settings и country-пилюлю на вкладке Learn. Экраны `country.tsx` и `change-country.tsx`, модель `Country`/`COUNTRIES` и `ContentProvider` — не удалены, только отключены от навигации: если экспансия в новую страну всё же случится через форк этого репозитория (а не с нуля), пригодится каркас. В отличие от остальных флагов в файле, этот не предполагается когда-нибудь включить обратно в этом же приложении.

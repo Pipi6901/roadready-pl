@@ -11,11 +11,14 @@ import { SettingsRow } from '@/components/settings/SettingsRow';
 import { SettingsSection, useCardShadow } from '@/components/settings/SettingsSection';
 import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { Slider } from '@/components/ui/Slider';
+import { COUNTRY_SELECTOR_ENABLED } from '@/constants/flags';
+import { requestNotificationPermission } from '@/features/notifications/reminders';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useSubscription } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { formatTime } from '@/utils/time';
 
 const VOICE_SPEED_MIN = 0.5;
 const VOICE_SPEED_MAX = 2;
@@ -24,17 +27,6 @@ const VOICE_SPEED_MAX = 2;
 const VOICE_SPEED_STEP = 0.125;
 const VOICE_SPEED_TICKS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 const VOICE_SPEED_MINOR_TICKS = [0.625, 0.875, 1.125, 1.375, 1.625, 1.875];
-
-/** "20:00" -> "8:00 PM". */
-function formatTime(hhmm: string): string {
-  const [rawH, rawM] = hhmm.split(':');
-  const h = Number(rawH);
-  const m = Number(rawM);
-  if (Number.isNaN(h) || Number.isNaN(m)) return hhmm;
-  const period = h >= 12 ? 'PM' : 'AM';
-  const hour12 = h % 12 === 0 ? 12 : h % 12;
-  return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
-}
 
 /**
  * Settings — mockup frame "Settings", with one structural change.
@@ -84,9 +76,20 @@ export default function SettingsScreen() {
     );
   };
 
-  const onEditReminderTime = () => {
-    // TODO: replace with the native time picker once notifications are wired.
-    Alert.alert('Reminder time', `Daily reminder is set for ${formatTime(settings.reminderTime)}.`);
+  const onToggleDailyReminder = async (enabled: boolean) => {
+    if (!enabled) {
+      settings.update({ dailyReminder: false });
+      return;
+    }
+    const granted = await requestNotificationPermission();
+    if (!granted) {
+      Alert.alert(
+        'Notifications are off',
+        'Enable notifications for RoadReady in your device Settings to get a daily reminder.',
+      );
+      return;
+    }
+    settings.update({ dailyReminder: true });
   };
 
   const openLegal = (doc: string) => {
@@ -128,14 +131,16 @@ export default function SettingsScreen() {
             </View>
           </Row>
 
-          <SettingsSection title="Country" icon="map-pin">
-            <SettingsRow
-              label="Country"
-              value={`${country.name} ${country.flagEmoji}`}
-              onPress={() => router.push('/(modals)/change-country')}
-              last
-            />
-          </SettingsSection>
+          {COUNTRY_SELECTOR_ENABLED ? (
+            <SettingsSection title="Country" icon="map-pin">
+              <SettingsRow
+                label="Country"
+                value={`${country.name} ${country.flagEmoji}`}
+                onPress={() => router.push('/(modals)/change-country')}
+                last
+              />
+            </SettingsSection>
+          ) : null}
 
           <SettingsSection title="Language" icon="languages">
             <SettingsRow
@@ -159,12 +164,12 @@ export default function SettingsScreen() {
             <SettingsRow
               label="Daily reminder"
               switchValue={settings.dailyReminder}
-              onSwitchChange={(dailyReminder) => settings.update({ dailyReminder })}
+              onSwitchChange={(enabled) => void onToggleDailyReminder(enabled)}
             />
             <SettingsRow
               label="Reminder time"
               value={formatTime(settings.reminderTime)}
-              onPress={onEditReminderTime}
+              onPress={() => router.push('/settings/reminder-time')}
               disabled={!settings.dailyReminder}
             />
             <SettingsRow

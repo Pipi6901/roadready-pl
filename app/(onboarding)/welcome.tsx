@@ -7,6 +7,7 @@ import { DecoLayer, DotGrid, type DecoItem } from '@/components/onboarding/Decor
 import { LinkButton, OnboardingButton } from '@/components/onboarding/OnboardingButton';
 import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
+import { COUNTRY_SELECTOR_ENABLED } from '@/constants/flags';
 import { useSubscription } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -143,7 +144,7 @@ export default function WelcomeScreen() {
             label="Get Started"
             fontSize={16}
             paddingVertical={16}
-            onPress={() => router.push('/country')}
+            onPress={() => router.push(COUNTRY_SELECTOR_ENABLED ? '/country' : '/language')}
           />
           <LinkButton label="Restore purchase" onPress={onRestore} />
         </View>

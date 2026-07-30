@@ -129,7 +129,7 @@ app/
 
 ## 3. Схема переходов
 
-**Первый запуск:** Splash → Welcome → Country → Language → Goal → Paywall → Home
+**Первый запуск:** Splash → Welcome → Language → Goal → Paywall → Home (шаг Country пропущен — ADR-013, `COUNTRY_SELECTOR_ENABLED = false`)
 
 **Повторный запуск:** Splash → Home (либо напрямую на экран из deep link)
 

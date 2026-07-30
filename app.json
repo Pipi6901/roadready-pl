@@ -28,7 +28,8 @@
       "expo-router",
       "expo-sqlite",
       "expo-audio",
-      "expo-video"
+      "expo-video",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true

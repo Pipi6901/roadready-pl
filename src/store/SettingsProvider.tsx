@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { LOCALES } from '@/data/demo-bundle';
+import { cancelDailyReminder, hasNotificationPermission, scheduleDailyReminder } from '@/features/notifications/reminders';
 import { KEYS, load, save } from './storage';
 
 export interface Settings {
@@ -63,6 +64,24 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setReady(true);
     });
   }, []);
+
+  // Keeps the OS-scheduled notification in sync with the stored intent —
+  // reruns on every relevant change, and once more on cold start in case the
+  // schedule was lost (reinstall, OS notification-store reset). Only checks
+  // the existing permission; never prompts here (see settings/index.tsx's
+  // switch handler for the actual permission request).
+  useEffect(() => {
+    if (!ready) return;
+    (async () => {
+      if (!settings.dailyReminder) {
+        await cancelDailyReminder();
+        return;
+      }
+      if (await hasNotificationPermission()) {
+        await scheduleDailyReminder(settings.reminderTime);
+      }
+    })();
+  }, [ready, settings.dailyReminder, settings.reminderTime]);
 
   const update = useCallback((patch: Partial<Settings>) => {
     setSettings((prev) => {
