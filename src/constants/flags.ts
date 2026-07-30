@@ -32,13 +32,17 @@ export const COUNTRY_SELECTOR_ENABLED = false;
 /**
  * Paywall and the free-tier limits that push users towards it.
  *
- * ON for iOS: react-native-iap + RevenueCat REST are wired (ADR-012), the
- * Monthly/Yearly products exist in App Store Connect and are attached to the
- * `RoadReady Pro` entitlement. NOTE: this has not been exercised on a real
- * device/TestFlight build yet (no Mac available in this environment) — verify
- * purchase, restore, and trial expiry against a sandbox account before
- * shipping. Android is not configured in RevenueCat yet; requestPurchase's
- * `google` branch will fail until it is.
+ * ON for iOS: react-native-purchases(-ui) renders the RevenueCat-hosted
+ * paywall and drives the purchase (ADR-014, supersedes ADR-012's
+ * react-native-iap choice — that package is no longer installed). Monthly/Yearly
+ * products exist in App Store Connect and are attached to the `RoadReady Pro`
+ * entitlement.
+ *
+ * NOTE: this has not been exercised on a real device/TestFlight build yet (no
+ * Mac available in this environment) — the whole reason ADR-012 avoided this
+ * SDK was an open New Architecture bug; verify the app doesn't crash on
+ * launch before shipping, then verify purchase/restore/trial against a
+ * sandbox account. Android is not configured in RevenueCat yet.
  */
 export const PAYWALL_ENABLED = true;
 

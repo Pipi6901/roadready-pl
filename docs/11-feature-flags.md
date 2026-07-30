@@ -12,7 +12,7 @@
 |---|---|---|
 | `ONBOARDING_ENABLED` | `true` | Подключён |
 | `COUNTRY_SELECTOR_ENABLED` | `false` | Один билд — одна страна (ADR-013). Не временное — обратно включать не планируется в этом приложении |
-| `PAYWALL_ENABLED` | `true` | react-native-iap + RevenueCat REST (ADR-012). iOS настроен, Android — нет. Ни разу не проверялось на реальном билде |
+| `PAYWALL_ENABLED` | `true` | react-native-purchases(-ui), RevenueCat-хостед пейвол (ADR-014). iOS настроен, Android — нет. Ни разу не проверялось на реальном билде — риск New Architecture из ADR-012 не снят |
 | `HAZARD_ENABLED` | `false` | Клипы входят в лицензионный пакет DVSA, которого нет (ADR-006) |
 
 ---
@@ -27,7 +27,7 @@
 - у пользователя, который уже открывал приложение, в хранилище стоит `onboarded: true` — он онбординг не увидит. Для проверки сбросить прогресс (Settings → Reset progress) или очистить хранилище приложения;
 - последний шаг цепочки зависит от `PAYWALL_ENABLED`: при выключенном пейволле `goal.tsx` сам завершает онбординг и уходит на вкладки, при включённом (сейчас) — передаёт управление пейволлу.
 
-**Билинг:** точка входа одна — `src/store/SubscriptionProvider.tsx`. Методы `startTrial`, `restore`, `cancel` и вычисление `isPro` реализованы через `react-native-iap` + REST-валидацию в RevenueCat (ADR-012, не Adapty из более раннего ADR-005). Экраны об этом не знают и не должны меняться при смене вендора биллинга.
+**Билинг:** точка входа одна — `src/store/SubscriptionProvider.tsx`. Метод `restore` и вычисление `isPro` реализованы через `react-native-purchases` (ADR-014; не `react-native-iap` из ADR-012 и не Adapty из ещё более раннего ADR-005). Покупку теперь ведёт сам компонент `RevenueCatUI.Paywall`, а не код приложения — `startTrial`/`cancel` в контексте больше нет.
 
 ---
 
@@ -44,25 +44,26 @@
 
 ## Пейволл
 
-**Статус: включён (iOS).** Экран `app/(onboarding)/paywall.tsx`, ограничения бесплатного тарифа — активны. Логика в `SubscriptionProvider`, переменная `unlocked`.
+**Статус: включён (iOS).** Экран `app/(onboarding)/paywall.tsx` теперь просто рендерит `<RevenueCatUI.Paywall />` — весь визуал (заголовок, фичи, тарифы, цены) редактируется в дашборде RevenueCat, не в коде (ADR-014). Ограничения бесплатного тарифа активны, логика в `SubscriptionProvider`, переменная `unlocked`.
 
 **Где ещё это учтено:**
 - `app/(onboarding)/goal.tsx` — передаёт управление пейволлу вместо завершения онбординга самостоятельно;
-- `app/lesson/[topicId].tsx` — кнопка «See Pro plans» на экране дневного лимита показывается;
+- `app/lesson/[topicId].tsx` — кнопка «See Pro plans» на экране дневного лимита ведёт туда же;
 - `app/(tabs)/practice.tsx` — бейджи «Pro» появляются там, где `can()` запрещает функцию.
 
-**Что реально настроено (ADR-012):**
-- RevenueCat: приложение для App Store подключено, ключи (`In-app purchase key`, `App Store Connect API`) валидны.
-- App Store Connect: группа подписок `RoadReady Pro`, продукты `com.astonio.roadready.pro.monthly` (£4.99) и `.pro.yearly` (£39.99) — созданы, с ценами и локализацией, но **не отправлены на проверку** (статус Missing Metadata/черновик).
-- `src/constants/billing.ts`: iOS-ключ и entitlement id (`RoadReady Pro`, НЕ slug `pro`) вписаны и совпадают с дашбордом.
-- Android — не настроен: `REVENUECAT_API_KEY.android` — плейсхолдер, `requestPurchase` для Google Play работать не будет.
+**Что реально настроено:**
+- RevenueCat: приложение для App Store подключено, ключи (`In-app purchase key`, `App Store Connect API`) валидны, паблик API-ключ SDK вписан в `src/constants/billing.ts`.
+- App Store Connect: группа подписок `RoadReady Pro`, продукты `com.astonio.roadready.pro.monthly` (£4.99) и `.pro.yearly` (£39.99) — созданы, с ценами, 3-дневным бесплатным триалом и локализацией, но **не отправлены на проверку** (статус Missing Metadata/черновик).
+- Offering `default` в RevenueCat привязан к этим двум реальным продуктам (не к тестовым Test Store).
+- Пейвол собран в их визуальном редакторе (шаблон/AI + правки), опубликован (`Publish paywall`).
+- `react-native-purchases` + `react-native-purchases-ui` (10.5.0) установлены и подключены в `SubscriptionProvider.tsx`; `react-native-iap` из ADR-012 удалён.
+- Android — не настроен: `REVENUECAT_API_KEY.android` — плейсхолдер.
 
 **Что осталось перед реальным релизом:**
-1. ~~Настроить Introductory Offer~~ — готово: 3-дневный бесплатный триал настроен на обоих продуктах (без даты окончания, 175 стран), совпадает с `TRIAL_DAYS` в `paywall.tsx`.
+1. **Собрать реальный билд (Codemagic) и проверить, что приложение не падает на старте** — это главный открытый риск: `react-native-purchases` — тот самый пакет с неисправленным багом New Architecture, от которого ADR-012 сознательно отказался. Если упадёт — откат к `react-native-iap` через git history (коммит с ADR-012).
 2. Добавить screenshot и отправить обе подписки на проверку вместе с первой версией приложения.
-3. Прогнать сценарии на реальном билде (TestFlight/sandbox): покупка, восстановление, истечение триала, упор в дневной лимит, апгрейд с месячной на годовую — **ни разу не проверялось на устройстве**, только typecheck.
-4. Проверить, что цены в `paywall.tsx` (`PLANS`) и `src/components/settings/plan.ts` — там TODO на замену хардкода живой ценой из `fetchProducts`.
-5. Android — завести приложение в RevenueCat, продукты в Google Play Console, заполнить `REVENUECAT_API_KEY.android`.
+3. Прогнать сценарии на реальном билде (TestFlight/sandbox): покупка, восстановление, истечение триала, упор в дневной лимит.
+4. Android — завести приложение в RevenueCat, продукты в Google Play Console, заполнить `REVENUECAT_API_KEY.android`.
 
 Чек-лист требований App Review — в [06-monetization.md](06-monetization.md), раздел 5.
 
