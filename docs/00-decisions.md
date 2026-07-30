@@ -139,3 +139,18 @@ Firestore остаётся серверной стороной: хранит к�
 NFR-10 и ТЗ 10.7 требуют тёмную тему с первого релиза, но в макете `screens.pen` описана только светлая палитра (24 экрана, тёмных вариантов нет).
 
 **Решение:** вся вёрстка с первого дня использует только семантические токены (`bg`, `surface`, `text-primary`, …) — хардкод цветов в компонентах запрещён (ТЗ 10.2). Тёмная палитра выводится из светлой отдельной задачей дизайна до старта вёрстки экранов, проверяется по контрасту WCAG AA и фиксируется в [04-design-system.md](04-design-system.md).
+
+---
+
+## ADR-012. Подписки — RevenueCat как бэкенд, react-native-purchases не используется
+**Дата:** 2026-07-29 · **Статус:** принято
+
+Продукт требует именно RevenueCat (дашборд, вебхуки, аналитика), а не Adapty из ADR-005. Перед подключением проверен статус бага New Architecture, из-за которого ADR-005 в своё время отказался от RevenueCat.
+
+**Спайк подтвердил, что баг всё ещё открыт:** актуальная `react-native-purchases` 10.5.0 по-прежнему не публикует `codegenConfig` (нет TurboModule-спеки), а issues [#1747](https://github.com/RevenueCat/react-native-purchases/issues/1747) и [#1739](https://github.com/RevenueCat/react-native-purchases/issues/1739) («`NativeModules.RNPurchases is null` под New Architecture», репродуцируется на связке, аналогичной нашей) остаются открытыми без ответа мейнтейнеров; попытка фикса (PR #1779) закрыта без мёржа 26.05.2026. New Architecture в Expo SDK 57 отключить нельзя (ADR-009), так что риск краша реален для любой сборки этого проекта.
+
+**Решение:** не ставить `react-native-purchases` вообще. Покупку ведёт `react-native-iap` 15.x (SDK построен на Nitro Modules, которые физически требуют New Architecture — риска несовместимости нет по конструкции). Полученный чек/токен покупки отправляется в RevenueCat через задокументированную ими REST-интеграцию без SDK (`POST /v1/receipts`, см. [Using RevenueCat without the SDK](https://www.revenuecat.com/docs/migrating-to-revenuecat/sdk-or-not/sdk-less-integration)) — они валидируют покупку у Apple/Google и ведут учёт подписки, вебхуки и аналитику как обычно. Готовый пейвол-компонент `react-native-purchases-ui` не используется по той же причине; экран пейвола свой (`app/(onboarding)/paywall.tsx`).
+
+Restore Purchase (обязателен по ADR-002, аккаунтов нет) реализован через `getAvailablePurchases()` react-native-iap с повторной отправкой найденных покупок в RevenueCat.
+
+**Следствие:** `src/store/SubscriptionProvider.tsx` — реальная реализация вместо мока, `src/data/revenuecat.ts` и `src/constants/billing.ts` — новые модули. `PAYWALL_ENABLED` (src/constants/flags.ts) остаётся выключен до заведения проекта в RevenueCat и продуктов (SKU) в App Store Connect / Google Play Console — сейчас там плейсхолдеры.

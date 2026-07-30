@@ -8,22 +8,25 @@
  */
 
 /**
- * Onboarding flow: Welcome → Country → Language → Goal.
+ * Onboarding flow: Welcome → Country → Language → Goal → Paywall.
  *
- * OFF until the flow is wired through Adapty. While off, the splash screen
- * routes straight to the tabs and the app runs on the defaults below.
- * Country and translation language remain changeable in Settings.
+ * ON — RevenueCat + App Store products exist (ADR-012). Country and
+ * translation language remain changeable in Settings regardless.
  */
-export const ONBOARDING_ENABLED = false;
+export const ONBOARDING_ENABLED = true;
 
 /**
  * Paywall and the free-tier limits that push users towards it.
  *
- * OFF until billing is connected (ADR-005). While off, every feature is
- * unlocked: gating features without a way to pay for them would leave the app
- * unusable, not monetised.
+ * ON for iOS: react-native-iap + RevenueCat REST are wired (ADR-012), the
+ * Monthly/Yearly products exist in App Store Connect and are attached to the
+ * `RoadReady Pro` entitlement. NOTE: this has not been exercised on a real
+ * device/TestFlight build yet (no Mac available in this environment) — verify
+ * purchase, restore, and trial expiry against a sandbox account before
+ * shipping. Android is not configured in RevenueCat yet; requestPurchase's
+ * `google` branch will fail until it is.
  */
-export const PAYWALL_ENABLED = false;
+export const PAYWALL_ENABLED = true;
 
 /**
  * Hazard Perception (ADR-006). The clips ship with the DVSA licence pack we do

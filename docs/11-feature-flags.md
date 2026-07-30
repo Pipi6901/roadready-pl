@@ -8,56 +8,49 @@
 
 ## Текущее состояние
 
-| Флаг | Значение | Почему выключен |
+| Флаг | Значение | Комментарий |
 |---|---|---|
-| `ONBOARDING_ENABLED` | `false` | Онбординг будет подключён через Adapty |
-| `PAYWALL_ENABLED` | `false` | Биллинг не подключён (ADR-005) |
+| `ONBOARDING_ENABLED` | `true` | Подключён |
+| `PAYWALL_ENABLED` | `true` | react-native-iap + RevenueCat REST (ADR-012). iOS настроен, Android — нет. Ни разу не проверялось на реальном билде |
 | `HAZARD_ENABLED` | `false` | Клипы входят в лицензионный пакет DVSA, которого нет (ADR-006) |
 
 ---
 
 ## Онбординг
 
-**Что выключено:** Welcome → Country → Language → Goal. Файлы на месте: `app/(onboarding)/`, компоненты — `src/components/onboarding/`.
+**Статус: включён.** Welcome → Country → Language → Goal → Paywall. Файлы: `app/(onboarding)/`, компоненты — `src/components/onboarding/`.
 
-**Как ведёт себя приложение сейчас:** заставка сразу открывает вкладки, подставляя значения, которые собрал бы онбординг:
+`ONBOARDING_SKIP_DEFAULTS = { countryCode: 'GB', localeCode: null }` — эти значения используются, только если флаг снова выключат; `localeCode: null` означает «English only».
 
-```ts
-ONBOARDING_SKIP_DEFAULTS = { countryCode: 'GB', localeCode: null }
-```
-
-`localeCode: null` означает «English only». Страна и язык остаются доступны в настройках, так что двуязычный режим можно включить руками — Settings → Language.
-
-**Как включить:**
-
-1. В `src/constants/flags.ts` поставить `ONBOARDING_ENABLED = true`.
-2. Всё. Заставка снова уйдёт на `/welcome`, дальше по цепочке.
-
-**Проверить после включения:**
+**Проверить:**
 - у пользователя, который уже открывал приложение, в хранилище стоит `onboarded: true` — он онбординг не увидит. Для проверки сбросить прогресс (Settings → Reset progress) или очистить хранилище приложения;
-- если включается вместе с Adapty, экран `paywall.tsx` вызывает `startTrial(plan)` из `SubscriptionProvider` — именно это место заменяется вызовом Adapty;
-- последний шаг цепочки зависит от `PAYWALL_ENABLED`: при выключенном пейволле `goal.tsx` сам завершает онбординг и уходит на вкладки, при включённом — передаёт управление пейволлу.
+- последний шаг цепочки зависит от `PAYWALL_ENABLED`: при выключенном пейволле `goal.tsx` сам завершает онбординг и уходит на вкладки, при включённом (сейчас) — передаёт управление пейволлу.
 
-**Что трогать при подключении Adapty:** точка входа одна — `src/store/SubscriptionProvider.tsx`. Методы `startTrial`, `restore`, `cancel` и вычисление `isPro` сейчас работают на локальном состоянии; они и есть контракт с биллингом. Экраны про Adapty не знают и меняться не должны.
+**Билинг:** точка входа одна — `src/store/SubscriptionProvider.tsx`. Методы `startTrial`, `restore`, `cancel` и вычисление `isPro` реализованы через `react-native-iap` + REST-валидацию в RevenueCat (ADR-012, не Adapty из более раннего ADR-005). Экраны об этом не знают и не должны меняться при смене вендора биллинга.
 
 ---
 
 ## Пейволл
 
-**Что выключено:** экран `app/(onboarding)/paywall.tsx` и **все ограничения бесплатного тарифа**.
-
-**Почему вместе:** ограничивать функции, когда купить подписку невозможно, — значит просто сломать приложение. Пока пейволл выключен, `can()` возвращает `true` для всего, а `questionsLeftToday` равен бесконечности. Логика в `SubscriptionProvider`, переменная `unlocked`.
+**Статус: включён (iOS).** Экран `app/(onboarding)/paywall.tsx`, ограничения бесплатного тарифа — активны. Логика в `SubscriptionProvider`, переменная `unlocked`.
 
 **Где ещё это учтено:**
-- `app/(onboarding)/goal.tsx` — при выключенном пейволле завершает онбординг сам;
-- `app/lesson/[topicId].tsx` — кнопка «See Pro plans» на экране дневного лимита скрыта (сам лимит недостижим);
-- `app/(tabs)/practice.tsx` — бейджи «Pro» не появляются, потому что `can()` разрешает всё.
+- `app/(onboarding)/goal.tsx` — передаёт управление пейволлу вместо завершения онбординга самостоятельно;
+- `app/lesson/[topicId].tsx` — кнопка «See Pro plans» на экране дневного лимита показывается;
+- `app/(tabs)/practice.tsx` — бейджи «Pro» появляются там, где `can()` запрещает функцию.
 
-**Как включить:**
+**Что реально настроено (ADR-012):**
+- RevenueCat: приложение для App Store подключено, ключи (`In-app purchase key`, `App Store Connect API`) валидны.
+- App Store Connect: группа подписок `RoadReady Pro`, продукты `com.astonio.roadready.pro.monthly` (£4.99) и `.pro.yearly` (£39.99) — созданы, с ценами и локализацией, но **не отправлены на проверку** (статус Missing Metadata/черновик).
+- `src/constants/billing.ts`: iOS-ключ и entitlement id (`RoadReady Pro`, НЕ slug `pro`) вписаны и совпадают с дашбордом.
+- Android — не настроен: `REVENUECAT_API_KEY.android` — плейсхолдер, `requestPurchase` для Google Play работать не будет.
 
-1. `PAYWALL_ENABLED = true` в `src/constants/flags.ts`.
-2. Проверить, что цены больше не константы: в `paywall.tsx` массив `PLANS` и `src/components/settings/plan.ts` помечены TODO — в проде цены приходят из стора через биллинг-SDK.
-3. Прогнать сценарии: покупка, восстановление, окончание триала, упор в дневной лимит, апгрейд с месячной на годовую.
+**Что осталось перед реальным релизом:**
+1. ~~Настроить Introductory Offer~~ — готово: 3-дневный бесплатный триал настроен на обоих продуктах (без даты окончания, 175 стран), совпадает с `TRIAL_DAYS` в `paywall.tsx`.
+2. Добавить screenshot и отправить обе подписки на проверку вместе с первой версией приложения.
+3. Прогнать сценарии на реальном билде (TestFlight/sandbox): покупка, восстановление, истечение триала, упор в дневной лимит, апгрейд с месячной на годовую — **ни разу не проверялось на устройстве**, только typecheck.
+4. Проверить, что цены в `paywall.tsx` (`PLANS`) и `src/components/settings/plan.ts` — там TODO на замену хардкода живой ценой из `fetchProducts`.
+5. Android — завести приложение в RevenueCat, продукты в Google Play Console, заполнить `REVENUECAT_API_KEY.android`.
 
 Чек-лист требований App Review — в [06-monetization.md](06-monetization.md), раздел 5.
 

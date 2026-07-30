@@ -23,8 +23,9 @@ const SPARKLE_DECO: DecoItem[] = [
 
 /**
  * Display prices. In production these come from the store (localised currency,
- * regional pricing) via the billing SDK — ADR-005. Hardcoded here so the screen
- * renders before the billing spike lands.
+ * regional pricing) via react-native-iap's `fetchProducts` — ADR-012.
+ * Hardcoded here until real product IDs exist in App Store Connect / Play
+ * Console (src/constants/billing.ts).
  */
 const PLANS: Record<Plan, { label: string; price: string; period: string }> = {
   monthly: { label: 'Monthly', price: '£4.99', period: 'month' },

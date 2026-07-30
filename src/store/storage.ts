@@ -42,4 +42,5 @@ export const KEYS = {
   progress: 'progress',
   subscription: 'subscription',
   remoteContent: 'remote-content',
+  revenuecatUserId: 'revenuecat-user-id',
 } as const;

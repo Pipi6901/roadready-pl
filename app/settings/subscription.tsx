@@ -26,7 +26,7 @@ const PLANS: Plan[] = ['monthly', 'yearly'];
  *
  * Everything money-related is a deep link into the store: Apple and Google both
  * require subscription management to go through their own UI, and the app has
- * no server-side billing of its own (ADR-002 / ADR-005).
+ * no server-side billing of its own (ADR-002 / ADR-012).
  */
 export default function SubscriptionScreen() {
   const t = useTheme();

@@ -1,7 +1,20 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  endConnection,
+  finishTransaction,
+  getAvailablePurchases,
+  initConnection,
+  purchaseErrorListener,
+  purchaseUpdatedListener,
+  requestPurchase,
+  type Purchase,
+} from 'react-native-iap';
 
 import { HAZARD_ENABLED as HAZARD_FLAG, PAYWALL_ENABLED } from '@/constants/flags';
 import { FREE_QUESTIONS_PER_DAY } from '@/constants/rules';
+import { ENTITLEMENT_ID, PRODUCT_IDS } from '@/constants/billing';
+import { fetchSubscriber, isEntitlementActive, submitPurchase } from '@/data/revenuecat';
+import { uuidv4 } from '@/utils/uuid';
 import { KEYS, load, save } from './storage';
 
 export type Plan = 'monthly' | 'yearly';
@@ -33,8 +46,9 @@ interface SubscriptionContextValue {
   questionsLeftToday: number;
   can: (feature: Feature) => boolean;
   /**
-   * Placeholder for the billing layer (Adapty, ADR-005). Kept behind this
-   * interface on purpose: swapping the vendor must cost a day, not a week.
+   * Buys `plan` through the store (react-native-iap) and validates the result
+   * with RevenueCat over REST (ADR-012). Resolves once the purchase clears;
+   * rejects on error or user cancellation.
    */
   startTrial: (plan: Plan) => Promise<void>;
   restore: () => Promise<boolean>;
@@ -44,73 +58,177 @@ interface SubscriptionContextValue {
 
 const SubscriptionContext = createContext<SubscriptionContextValue | null>(null);
 
-const TRIAL_DAYS = 3;
-const dayKey = () => new Date().toISOString().slice(0, 10);
+const skuToPlan = (sku: string): Plan | null =>
+  sku === PRODUCT_IDS.monthly ? 'monthly' : sku === PRODUCT_IDS.yearly ? 'yearly' : null;
+
+async function getAppUserId(): Promise<string> {
+  const existing = await load<string | null>(KEYS.revenuecatUserId, null);
+  if (existing) return existing;
+  const id = uuidv4();
+  await save(KEYS.revenuecatUserId, id);
+  return id;
+}
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<SubscriptionState>(EMPTY);
   const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    load<SubscriptionState>(KEYS.subscription, EMPTY).then((s) => {
-      const merged = { ...EMPTY, ...s };
-      // Expire the trial locally; the real check happens in the billing SDK.
-      if (merged.status === 'trial' && merged.trialStartedAt) {
-        const elapsed = Date.now() - new Date(merged.trialStartedAt).getTime();
-        if (elapsed > TRIAL_DAYS * 86_400_000) merged.status = 'expired';
-      }
-      setState(merged);
-      setReady(true);
-    });
-  }, []);
+  const appUserId = useRef<string | null>(null);
+  const pendingPurchase = useRef<{ sku: string; resolve: () => void; reject: (e: Error) => void } | null>(null);
 
   const persist = useCallback((next: SubscriptionState) => {
     void save(KEYS.subscription, next);
     return next;
   }, []);
 
-  const startTrial = useCallback(
-    async (plan: Plan) => {
-      setState((prev) =>
-        persist({
-          ...prev,
-          status: 'trial',
-          plan,
-          trialStartedAt: new Date().toISOString(),
-          renewsAt: new Date(Date.now() + TRIAL_DAYS * 86_400_000).toISOString(),
-        }),
-      );
+  const applySubscriber = useCallback(
+    (subscriber: Parameters<typeof isEntitlementActive>[0], plan: Plan | null) => {
+      const ent = subscriber.entitlements[ENTITLEMENT_ID];
+      if (ent && isEntitlementActive(subscriber)) {
+        setState((prev) =>
+          persist({
+            ...prev,
+            status: 'active',
+            plan: plan ?? prev.plan,
+            renewsAt: ent.expires_date,
+          }),
+        );
+        return true;
+      }
+      return false;
     },
     [persist],
   );
 
-  const restore = useCallback(async () => {
-    // Real implementation asks the billing SDK; with no accounts this is the
-    // only way a reinstalled app gets its subscription back (ADR-002).
-    return false;
+  // Local settings load + store connection, in parallel: neither depends on the other.
+  useEffect(() => {
+    let cancelled = false;
+
+    load<SubscriptionState>(KEYS.subscription, EMPTY).then((s) => {
+      if (!cancelled) setState({ ...EMPTY, ...s });
+    });
+
+    (async () => {
+      appUserId.current = await getAppUserId();
+      try {
+        await initConnection();
+        // Reconcile silently: a previous purchase may not have been recorded
+        // locally yet (reinstall, or the RevenueCat call failed last time).
+        const owned = await getAvailablePurchases();
+        for (const purchase of owned) {
+          const plan = skuToPlan(purchase.productId);
+          if (!plan || !appUserId.current) continue;
+          try {
+            const subscriber = await submitPurchase(appUserId.current, purchase);
+            applySubscriber(subscriber, plan);
+          } catch {
+            // RevenueCat not configured yet, or offline — keep whatever we had cached.
+          }
+        }
+      } catch {
+        // No store connection (simulator without a signed-in account, etc.).
+      } finally {
+        if (!cancelled) setReady(true);
+      }
+    })();
+
+    const updatedSub = purchaseUpdatedListener(async (purchase: Purchase) => {
+      const plan = skuToPlan(purchase.productId);
+      const pending = pendingPurchase.current;
+      try {
+        if (!appUserId.current) throw new Error('No app user id yet');
+        const subscriber = await submitPurchase(appUserId.current, purchase);
+        await finishTransaction({ purchase, isConsumable: false });
+        const active = applySubscriber(subscriber, plan);
+        if (pending && pending.sku === purchase.productId) {
+          pendingPurchase.current = null;
+          if (active) pending.resolve();
+          else pending.reject(new Error('Purchase did not grant the pro entitlement'));
+        }
+      } catch (e) {
+        if (pending && pending.sku === purchase.productId) {
+          pendingPurchase.current = null;
+          pending.reject(e instanceof Error ? e : new Error('Purchase validation failed'));
+        }
+      }
+    });
+
+    const errorSub = purchaseErrorListener((error) => {
+      const pending = pendingPurchase.current;
+      if (pending) {
+        pendingPurchase.current = null;
+        pending.reject(new Error(error.message || 'Purchase failed'));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      updatedSub.remove();
+      errorSub.remove();
+      void endConnection();
+    };
+  }, [applySubscriber]);
+
+  const startTrial = useCallback(async (plan: Plan) => {
+    const sku = PRODUCT_IDS[plan];
+    return new Promise<void>((resolve, reject) => {
+      pendingPurchase.current = { sku, resolve, reject };
+      requestPurchase({
+        request: { apple: { sku }, google: { skus: [sku] } },
+        type: 'subs',
+      }).catch((e: Error) => {
+        pendingPurchase.current = null;
+        reject(e);
+      });
+    });
   }, []);
 
+  const restore = useCallback(async () => {
+    if (!appUserId.current) return false;
+    try {
+      const owned = await getAvailablePurchases();
+      let restored = false;
+      for (const purchase of owned) {
+        const plan = skuToPlan(purchase.productId);
+        if (!plan) continue;
+        const subscriber = await submitPurchase(appUserId.current, purchase);
+        if (applySubscriber(subscriber, plan)) restored = true;
+      }
+      if (!restored) {
+        // Nothing pending locally — ask RevenueCat directly in case this is a
+        // reinstall on the same store account with no local purchase queue entry.
+        const subscriber = await fetchSubscriber(appUserId.current);
+        restored = applySubscriber(subscriber, null);
+      }
+      return restored;
+    } catch {
+      return false;
+    }
+  }, [applySubscriber]);
+
   const cancel = useCallback(() => {
+    // Dev/test-only local override. Real cancellation always happens in the
+    // store's own subscription management UI (app/settings/subscription.tsx).
     setState((prev) => persist({ ...prev, status: 'expired' }));
   }, [persist]);
 
   const countQuestion = useCallback(() => {
-    setState((prev) => {
-      const key = dayKey();
-      return persist({
+    const dayKey = new Date().toISOString().slice(0, 10);
+    setState((prev) =>
+      persist({
         ...prev,
-        dailyQuestionCount: { ...prev.dailyQuestionCount, [key]: (prev.dailyQuestionCount[key] ?? 0) + 1 },
-      });
-    });
+        dailyQuestionCount: { ...prev.dailyQuestionCount, [dayKey]: (prev.dailyQuestionCount[dayKey] ?? 0) + 1 },
+      }),
+    );
   }, [persist]);
 
   const value = useMemo<SubscriptionContextValue>(() => {
     const isPro = state.status === 'trial' || state.status === 'active';
-    const usedToday = state.dailyQuestionCount[dayKey()] ?? 0;
+    const dayKey = new Date().toISOString().slice(0, 10);
+    const usedToday = state.dailyQuestionCount[dayKey] ?? 0;
 
     // With the paywall switched off there is no way to buy anything, so gating
-    // features would just break the app. Everything is unlocked until billing
-    // is connected — see src/constants/flags.ts.
+    // features would just break the app. Everything is unlocked until the
+    // RevenueCat project and store products exist — see src/constants/flags.ts.
     const unlocked = !PAYWALL_ENABLED || isPro;
 
     return {
