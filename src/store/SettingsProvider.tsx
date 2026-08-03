@@ -32,7 +32,12 @@ const DEFAULTS: Settings = {
   examDate: null,
   displayName: 'Learner',
   firstLaunchAt: new Date().toISOString(),
-  dailyReminder: true,
+  // Defaults off, not on: nothing ever requests the OS notification
+  // permission at first launch, so an "on" default here would show the
+  // toggle as enabled while no reminder is actually scheduled until the user
+  // visits Settings and flips it themselves (see onToggleDailyReminder,
+  // which is the only place permission is requested).
+  dailyReminder: false,
   reminderTime: '20:00',
   questionOfTheDay: true,
   autoReadQuestions: false,

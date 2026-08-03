@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useCardShadow } from '@/components/settings/SettingsSection';
 import { PLAN_PRICE } from '@/components/settings/plan';
@@ -30,11 +30,7 @@ export default function TrialEndedModal() {
   const shadow = useCardShadow();
 
   const onSubscribe = () => {
-    // TODO: open the store purchase sheet through the billing module (ADR-005).
-    Alert.alert(
-      'Subscribe',
-      'Checkout opens in the App Store / Google Play purchase sheet once billing is connected.',
-    );
+    router.push('/paywall');
   };
 
   return (

@@ -38,11 +38,11 @@ export const COUNTRY_SELECTOR_ENABLED = false;
  * products exist in App Store Connect and are attached to the `RoadReady Pro`
  * entitlement.
  *
- * NOTE: this has not been exercised on a real device/TestFlight build yet (no
- * Mac available in this environment) — the whole reason ADR-012 avoided this
- * SDK was an open New Architecture bug; verify the app doesn't crash on
- * launch before shipping, then verify purchase/restore/trial against a
- * sandbox account. Android is not configured in RevenueCat yet.
+ * Verified on a real device via TestFlight (2026-08): the app does not crash
+ * on launch with this SDK despite the open New Architecture issue ADR-012
+ * originally avoided it for, and a sandbox purchase completed end-to-end
+ * (native StoreKit sheet, entitlement unlocked). Android is not configured in
+ * RevenueCat yet.
  */
 export const PAYWALL_ENABLED = true;
 

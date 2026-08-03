@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Alert, Linking, Platform, Pressable, StyleSheet, View } from 'react-native';
 
@@ -30,6 +31,7 @@ const PLANS: Plan[] = ['monthly', 'yearly'];
  */
 export default function SubscriptionScreen() {
   const t = useTheme();
+  const router = useRouter();
   const shadow = useCardShadow();
   const subscription = useSubscription();
   const { state, isPro } = subscription;
@@ -51,6 +53,13 @@ export default function SubscriptionScreen() {
 
   const onChangePlan = (plan: Plan) => {
     if (state.plan === plan) return;
+    // Free users have nothing to "switch" — the store's manage-subscriptions
+    // page only lists existing subscriptions, so sending them there is a dead
+    // end. Send them to the real purchase flow instead.
+    if (!isPro) {
+      router.push('/paywall');
+      return;
+    }
     Alert.alert(
       `Switch to ${plan === 'monthly' ? 'Monthly' : 'Yearly'}?`,
       'Plan changes are handled by the store. We will take you to your subscription settings, where the switch takes effect at the end of the current period.',
