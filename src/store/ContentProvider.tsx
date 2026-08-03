@@ -64,6 +64,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     (q: Question): DisplayQuestion => ({
       ...q,
       translation: showTranslation ? (DEMO_BUNDLE.translations[localeCode!]?.[q.id] ?? null) : null,
+      media: q.mediaId ? (DEMO_BUNDLE.media[q.mediaId] ?? null) : null,
     }),
     [showTranslation, localeCode],
   );

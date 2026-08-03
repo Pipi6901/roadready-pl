@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BilingualText } from '@/components/BilingualText';
 import { AnswerOption, type AnswerOptionState } from '@/components/AnswerOption';
+import { QuestionMedia } from '@/components/QuestionMedia';
 import { FeedbackSheet } from '@/components/learning/FeedbackSheet';
 import { LessonTopBar } from '@/components/learning/LessonTopBar';
 import { Icon } from '@/components/ui/Icon';
@@ -315,6 +316,8 @@ export default function LessonScreen() {
           paddingBottom: (answered ? sheetHeight : 0) + 32,
         }}
       >
+        <QuestionMedia media={question.media} />
+
         {/* Question + speech */}
         <Row style={{ gap: 10, alignItems: 'flex-start' }}>
           <View style={{ flex: 1 }}>

@@ -116,9 +116,17 @@ export default function SplashScreen() {
 
   // Returning learners skip straight past the tap-to-continue gate — it
   // only needs to be seen once, on the very first cold start ever.
+  //
+  // `!exiting` matters: handlePress below sets hasSeenSplash true (to
+  // persist the "seen it" flag) in the same breath as scheduling its own
+  // delayed go() call for after the exit animation. Without this guard,
+  // that hasSeenSplash flip would re-run this effect and fire a SECOND,
+  // immediate go() on top of the delayed one — two router.replace('/welcome')
+  // calls back to back, which is why the destination screen used to flash
+  // in twice.
   React.useEffect(() => {
-    if (ready && hasSeenSplash) go();
-  }, [ready, hasSeenSplash, go]);
+    if (ready && hasSeenSplash && !exiting) go();
+  }, [ready, hasSeenSplash, exiting, go]);
 
   const handlePress = React.useCallback(() => {
     if (exiting || !ready) return;

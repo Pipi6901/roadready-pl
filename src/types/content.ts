@@ -62,6 +62,16 @@ export interface Question {
   sourceRef: string;
 }
 
+/** A media asset referenced by a question's mediaId, keyed by id in ContentBundle.media. */
+export interface MediaAsset {
+  id: string;
+  type: 'image' | 'video';
+  url: string;
+  width: number | null;
+  height: number | null;
+  durationMs: number | null;
+}
+
 export interface QuestionTranslation {
   text: string;
   options: Record<string, string>;
@@ -76,10 +86,13 @@ export interface ContentBundle {
   topics: Topic[];
   questions: Question[];
   translations: TranslationBundle;
+  /** mediaId -> asset, only for media actually referenced by a published question. */
+  media: Record<string, MediaAsset>;
   versionHash: string;
 }
 
-/** A question resolved for display: English plus optional translation. */
+/** A question resolved for display: English plus optional translation and media. */
 export interface DisplayQuestion extends Question {
   translation: QuestionTranslation | null;
+  media: MediaAsset | null;
 }

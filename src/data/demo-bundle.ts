@@ -4023,5 +4023,8 @@ export const DEMO_BUNDLE: ContentBundle = {
     'pt-BR': {},
     ar: {},
   },
+  // The bundled seed ships without images/clips — every real question's
+  // mediaId comes from the admin's media library via content.json.
+  media: {},
   versionHash: 'demo-uk-2026-01',
 };

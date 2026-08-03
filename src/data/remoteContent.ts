@@ -50,6 +50,10 @@ function applyPayload(payload: RemoteContentPayload): void {
   DEMO_BUNDLE.topics = payload.topics;
   DEMO_BUNDLE.questions = payload.questions;
   DEMO_BUNDLE.translations = payload.translations;
+  // Older cached payloads (saved before media publishing existed) won't have
+  // this field — fall back to empty rather than wiping out a question's
+  // ability to resolve its mediaId.
+  DEMO_BUNDLE.media = payload.media ?? {};
   DEMO_BUNDLE.versionHash = payload.versionHash;
   // COUNTRIES/LOCALES are imported by reference elsewhere (e.g.
   // ContentProvider destructures COUNTRIES directly) — splice in place

@@ -4,6 +4,7 @@ import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { BilingualText } from '@/components/BilingualText';
+import { QuestionMedia } from '@/components/QuestionMedia';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { useHaptics } from '@/hooks/useHaptics';
@@ -185,6 +186,8 @@ export function QuestionRunner({
       </View>
 
       <ScreenScroll style={{ flex: 1 }} contentContainerStyle={{ padding: 20, gap: 16 }}>
+        <QuestionMedia media={question.media} />
+
         <Row style={{ gap: 10, alignItems: 'flex-start' }}>
           <View style={{ flex: 1 }}>
             <BilingualText

@@ -5,6 +5,7 @@ import { Pressable, View } from 'react-native';
 import { AnswerOption } from '@/components/AnswerOption';
 import { SoftButton } from '@/components/practice/SoftButton';
 import { BilingualText } from '@/components/BilingualText';
+import { QuestionMedia } from '@/components/QuestionMedia';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { formatClock, mockSession, remainingMs } from '@/features/practice/mockSession';
@@ -101,6 +102,8 @@ export default function MockRunScreen() {
       </View>
 
       <ScreenScroll style={{ flex: 1 }} contentContainerStyle={{ padding: 20, gap: 16 }}>
+        <QuestionMedia media={question.media} />
+
         <BilingualText
           english={question.text}
           translation={question.translation?.text}
