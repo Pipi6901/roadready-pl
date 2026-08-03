@@ -183,23 +183,25 @@ ADR-012 сознательно избежал `react-native-purchases`(-ui) из
 
 ---
 
-## ADR-015. Веб-админка контента — реализована, публикация не задеплоена (блокер: Blaze)
-**Дата:** 2026-07-31 · **Статус:** принято частично — код готов, две части заблокированы платным тарифом Firebase
+## ADR-015. Веб-админка контента — полностью реализована и задеплоена
+**Дата:** 2026-07-31, обновлено 2026-08-03 · **Статус:** принято, всё в проде
 
 ADR-003/004 описывают полную архитектуру: Next.js-админка, Firestore, Cloud Function публикации, CSV-импорт, медиатека, роли. По прямому запросу заказчика CSV-импорт, email-инвайты и полная схема (включая слот под будущие переводы) вошли в первую версию — не отложены.
 
 **Реализовано и проверено вживую** (отдельный репозиторий `roadready-admin`, тот же Firebase-проект `roadready-80e53`):
-- Firestore-схема 1:1 с `docs/02-architecture.md` §2 (`countries`, `testsets/draft`, `topics`, `questions`, `locales`, `adminUsers`), security rules с ролями `content_editor`/`admin`, soft delete.
+- Firestore-схема 1:1 с `docs/02-architecture.md` §2 (`countries`, `testsets/draft`, `topics`, `questions`, `locales`, `adminUsers`, `media`), security rules с ролями `content_editor`/`admin`, soft delete.
 - Сид демо-банка (140 вопросов, 14 тем, 6 стран, 9 локалей) из `src/data/demo-bundle.ts` — числа сверены после импорта.
-- Вход по email/паролю, CRUD тем (создание/переименование/сортировка/soft-delete) и вопросов (полная форма) — проверено чтение и запись через реальный UI на реальных данных.
+- Вход по email/паролю, CRUD тем (создание/переименование/сортировка/soft-delete) и вопросов (полная форма), медиатека (загрузка в Storage, привязка к вопросу, delete-guard по `usedByQuestions`) — проверено чтение и запись через реальный UI на реальных данных.
 - CSV-импорт по формату `docs/03-content-pipeline.md` §3: построчная валидация, запрет частичного импорта, upsert по `question_id`.
-- Код `inviteUser` и `publishTestSet` (Cloud Functions v2) написан полностью, включая ручную реализацию Firebase Hosting REST API (version → populateFiles → upload → finalize → release) для публикации `content.json` — тот же путь, что уже использует `roadready/content.json`.
+- `inviteUser` и `publishTestSet` (Cloud Functions v2) задеплоены и проверены end-to-end: приглашение реально создаёт аккаунт и присылает письмо (Identity Toolkit REST API), Publish реально пересобирает `content.json` и выкладывает его на `roadready-80e53` Hosting — проверено через `curl` совпадением `versionHash` и отредактированного поля.
+- Сама админка задеплоена на отдельный Hosting-сайт `roadready-admin` (**https://roadready-admin.web.app**) через официальную Next.js SSR-интеграцию Firebase (`firebase experiments:enable webframeworks`) — работает Cloud Function `ssrroadreadyadmin`, никакого статического экспорта не понадобилось.
 
-**Заблокировано (не код, а платный тариф Google):**
-1. **Cloud Functions требуют план Blaze** (привязанная карта) — подтверждено попыткой реального деплоя (`artifactregistry.googleapis.com` недоступен без Blaze). Из-за этого `inviteUser` и `publishTestSet` не задеплоены — кнопки "Invite"/"Publish" в UI есть и вызывают функции корректно, но сами функции пока не существуют в облаке.
-2. **Firebase Storage тоже требует Blaze** (с 3 февраля 2026 — политика Google изменилась, раньше это было не так). Медиатека (`docs/03-content-pipeline.md` §5) поэтому не реализована вообще, только заложена в типы (`Media` в `roadready-admin/src/lib/types.ts`).
-3. **Публичный хостинг самой админки** тоже упирается в это: динамические маршруты (`/topics/[topicId]`) для статического экспорта на Firebase Hosting не работают без SSR, а SSR = Cloud Functions = снова Blaze. Практическая альтернатива — Vercel (бесплатно, без карты) — не задействована, ждёт решения.
+**2026-08-03: план Blaze подключён заказчиком**, все три блокера из первой версии этого ADR сняты:
+1. Cloud Functions задеплоены (`inviteUser`, `publishTestSet`) — сервис-аккаунту функций (`{project-number}-compute@developer.gserviceaccount.com`) вручную выдана IAM-роль **Firebase Hosting Admin**, без неё `publishTestSet` не смог бы писать в Hosting REST API.
+2. Firebase Storage включён (разовый клик "Get Started" в консоли — отдельный шаг от самого апгрейда до Blaze, обязателен на любом тарифе). Медиатека реализована полностью.
+3. Публичный хостинг админки — Firebase SSR, Vercel не понадобился.
 
-Заказчик пометил Blaze как вопрос к ментору/бюджету, попросил продолжать без подключения. Пока админка используется локально (`npm run dev` в `roadready-admin`), с реальными Firestore-данными — редактирование тем/вопросов и CSV-импорт полностью рабочие уже сейчас, только "Publish" физически не долетает до `content.json` без Blaze.
-
-**Следствие:** если/когда Blaze подтвердят — включение сводится к `firebase deploy --only functions` плюс `FIREBASE_WEB_API_KEY` в конфиг функций (для писем-приглашений) и выбору хостинга для самой админки (Firebase SSR или Vercel).
+**Мелкие технические заметки, если переносить на другой проект:**
+- Env-переменная для `inviteUser` называется `WEB_API_KEY`, не `FIREBASE_WEB_API_KEY` — Cloud Functions резервирует префикс `FIREBASE_` и деплой падает с ошибкой при его использовании.
+- Storage Rules не смогли прочитать роль из Firestore через `firestore.get()` (cross-service чтение) — permission denied при реальной загрузке, хотя правило компилировалось без ошибок. Не стали дебажить: раз вход в приложение и так только по инвайту, `request.auth != null` в Storage Rules достаточно — роль всё равно проверяется в Firestore Rules и в UI.
+- Firebase Auth письма-приглашения по умолчанию используют название проекта (`roadready-80e53`) в теме и подписи и на первый раз попадают в спам — стоит настроить шаблон в Console → Authentication → Templates, если это станет проблемой при масштабировании числа редакторов.
