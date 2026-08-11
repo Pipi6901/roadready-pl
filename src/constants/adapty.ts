@@ -22,4 +22,4 @@ export const ADAPTY_PUBLIC_KEY = Platform.select({
  * funnel. Dashboard → Placements → create one pointing at that funnel, then
  * paste its ID here.
  */
-export const ONBOARDING_PLACEMENT_ID = 'REPLACE_WITH_ONBOARDING_PLACEMENT_ID';
+export const ONBOARDING_PLACEMENT_ID = 'roadready_onboarding';
