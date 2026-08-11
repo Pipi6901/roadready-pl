@@ -69,9 +69,13 @@ interface ScreenProps extends ViewProps {
   /** Background colour; defaults to the theme background. */
   bg?: string;
   edges?: Edge[];
+  /** Skips the top gradient tint below, for screens with their own opaque
+   *  header block that would otherwise show a visible seam against it (e.g.
+   *  the Learn tab's "Topics" header). */
+  flat?: boolean;
 }
 
-export function Screen({ bg, edges = ['top'], style, children, ...rest }: ScreenProps) {
+export function Screen({ bg, edges = ['top'], flat, style, children, ...rest }: ScreenProps) {
   const t = useTheme();
   const base = bg ?? t.colors.bg;
   return (
@@ -79,12 +83,14 @@ export function Screen({ bg, edges = ['top'], style, children, ...rest }: Screen
       {/* A hint of colour at the top fading into the plain background — still
           a gradient, not a flat tint, just a stronger and slightly longer
           one than before. */}
-      <LinearGradient
-        colors={[`${t.colors.sage100}CC`, base]}
-        locations={[0, 0.55]}
-        style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '60%' }}
-        pointerEvents="none"
-      />
+      {flat ? null : (
+        <LinearGradient
+          colors={[`${t.colors.sage100}CC`, base]}
+          locations={[0, 0.55]}
+          style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '60%' }}
+          pointerEvents="none"
+        />
+      )}
       <View style={[{ flex: 1 }, style]} {...rest}>
         {children}
       </View>

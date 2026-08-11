@@ -120,7 +120,7 @@ export default function LearnScreen() {
   }, [isFocused, mapOffsetY, current]);
 
   return (
-    <Screen>
+    <Screen flat>
       {/* Opaque header — title stays solid; the ScrollView (route map) starts
           right underneath and runs behind the floating "Continue topic" card
           below. Country pill removed (ADR-013): one app per country now, so
