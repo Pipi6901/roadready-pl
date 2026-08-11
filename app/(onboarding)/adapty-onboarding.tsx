@@ -39,8 +39,14 @@ export default function AdaptyOnboardingScreen() {
         // onboarding is confirmed working on a real TestFlight build):
         // surfaces the actual failure instead of silently falling through to
         // the paywall, since there is no other way to see what broke on a
-        // release build without device logs.
-        if (!cancelled) setError(e instanceof Error ? e.message : JSON.stringify(e));
+        // release build without device logs. AdaptyError's `.message` is just
+        // a generic wrapper ("An error was returned by the server...") — the
+        // real cause is in `.detail` and `.adaptyCode`.
+        if (cancelled) return;
+        const err = e as { message?: string; detail?: string; adaptyCode?: unknown };
+        const parts = [err?.message, err?.detail && `detail: ${err.detail}`, err?.adaptyCode != null && `code: ${err.adaptyCode}`]
+          .filter(Boolean);
+        setError(parts.length ? parts.join('\n') : JSON.stringify(e));
       });
 
     return () => {
