@@ -140,7 +140,11 @@ workflows:
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
         beta_groups:
-          - Internal
+          # Must match the Internal Testing group's exact name in App Store
+          # Connect (TestFlight → Internal Testing) — it's "RoadReady", not
+          # the generic "Internal" this was set to before, which is why
+          # earlier builds landed on ASC but never got auto-added to a group.
+          - RoadReady
       email:
         recipients:
           - gugalevandrei@gmail.com
