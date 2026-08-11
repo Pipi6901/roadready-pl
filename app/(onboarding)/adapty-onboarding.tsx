@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Pressable, View } from 'react-native';
 import { adapty, AdaptyOnboardingView, type AdaptyOnboarding } from 'react-native-adapty';
 
+import { Txt } from '@/components/ui/primitives';
 import { ADAPTY_PUBLIC_KEY, ONBOARDING_PLACEMENT_ID } from '@/constants/adapty';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -20,7 +21,7 @@ export default function AdaptyOnboardingScreen() {
   const t = useTheme();
   const router = useRouter();
   const [onboarding, setOnboarding] = React.useState<AdaptyOnboarding | null>(null);
-  const [error, setError] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -33,8 +34,13 @@ export default function AdaptyOnboardingScreen() {
       .then((result) => {
         if (!cancelled) setOnboarding(result);
       })
-      .catch(() => {
-        if (!cancelled) setError(true);
+      .catch((e: unknown) => {
+        // TEMP DEBUG (see docs/08-risks-open-questions.md — remove once the
+        // onboarding is confirmed working on a real TestFlight build):
+        // surfaces the actual failure instead of silently falling through to
+        // the paywall, since there is no other way to see what broke on a
+        // release build without device logs.
+        if (!cancelled) setError(e instanceof Error ? e.message : JSON.stringify(e));
       });
 
     return () => {
@@ -46,11 +52,25 @@ export default function AdaptyOnboardingScreen() {
     router.replace('/paywall');
   }, [router]);
 
-  // Network hiccup or misconfigured placement: don't strand the learner on a
-  // blank screen, fall through to the paywall same as a normal finish.
   if (error) {
-    goToPaywall();
-    return null;
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, backgroundColor: t.colors.bg }}>
+        <Txt size={14} weight="700" align="center">
+          Adapty onboarding failed to load
+        </Txt>
+        <Txt size={12} color={t.colors.textSecondary} align="center">
+          {error}
+        </Txt>
+        <Pressable
+          onPress={goToPaywall}
+          style={{ paddingVertical: 12, paddingHorizontal: 20, backgroundColor: t.colors.blue800, borderRadius: t.radius.md }}
+        >
+          <Txt size={14} weight="700" color={t.colors.onBlue}>
+            Continue to paywall
+          </Txt>
+        </Pressable>
+      </View>
+    );
   }
 
   if (!onboarding) {
