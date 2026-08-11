@@ -32,7 +32,15 @@ export default function AdaptyOnboardingScreen() {
     adapty
       .isActivated()
       .then((active) => (active ? undefined : adapty.activate(ADAPTY_PUBLIC_KEY)))
+      // getOnboarding() resolves through the placement's audience targeting
+      // ("All Users" rule) and has been 404-ing ("Placement Not Found") on
+      // device even though the same placement resolves fine in the
+      // dashboard's own Preview — which doesn't go through that audience
+      // engine. getOnboardingForDefaultAudience() skips it, so if the bug is
+      // in audience resolution rather than the placement itself, this
+      // sidesteps it.
       .then(() => adapty.getOnboarding(ONBOARDING_PLACEMENT_ID))
+      .catch(() => adapty.getOnboardingForDefaultAudience(ONBOARDING_PLACEMENT_ID))
       .then((result) => {
         if (!cancelled) setOnboarding(result);
       })
