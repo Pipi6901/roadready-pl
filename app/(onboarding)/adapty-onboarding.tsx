@@ -26,10 +26,12 @@ export default function AdaptyOnboardingScreen() {
   React.useEffect(() => {
     let cancelled = false;
 
-    // Safe to call from every screen that mounts this — same idempotent
-    // pattern SubscriptionProvider uses for Purchases.configure().
+    // Unlike RevenueCat's Purchases.configure(), Adapty's own SDK exposes a
+    // separate isActivated() check specifically so callers avoid re-calling
+    // activate() — so guard it explicitly rather than assuming it no-ops.
     adapty
-      .activate(ADAPTY_PUBLIC_KEY)
+      .isActivated()
+      .then((active) => (active ? undefined : adapty.activate(ADAPTY_PUBLIC_KEY)))
       .then(() => adapty.getOnboarding(ONBOARDING_PLACEMENT_ID))
       .then((result) => {
         if (!cancelled) setOnboarding(result);

@@ -127,7 +127,7 @@ export default function SplashScreen() {
   // persist the "seen it" flag) in the same breath as scheduling its own
   // delayed go() call for after the exit animation. Without this guard,
   // that hasSeenSplash flip would re-run this effect and fire a SECOND,
-  // immediate go() on top of the delayed one — two router.replace('/welcome')
+  // immediate go() on top of the delayed one — two router.replace(...)
   // calls back to back, which is why the destination screen used to flash
   // in twice.
   React.useEffect(() => {

@@ -8,13 +8,14 @@
 # to the repo (`npx expo prebuild` run locally and checked in), delete the
 # prebuild step for that platform and this file still works unchanged.
 #
-# No Firebase and no RevenueCat/Adapty here on purpose — the app currently
-# ships with zero environment variables read anywhere in the source
-# (grepped, confirmed) and SubscriptionProvider is a local mock behind
-# PAYWALL_ENABLED=false (see src/constants/flags.ts, ADR-005 in
-# docs/00-decisions.md). Add a `.env` write step and the relevant variable
-# group back in once Adapty is actually wired in — copying that boilerplate
-# in now would just be dead weight referencing secrets nothing reads.
+# No Firebase, RevenueCat, or Adapty env vars/variable groups here on
+# purpose — both SDKs' public keys (src/constants/billing.ts,
+# src/constants/adapty.ts) are hardcoded client-side, same as a Stripe
+# publishable key, so there is nothing secret for CI to inject. If either
+# ever needs a *private* key (e.g. server-side webhook secrets), add a
+# `.env` write step and the relevant variable group then — copying that
+# boilerplate in now would just be dead weight referencing secrets nothing
+# reads.
 
 workflows:
   # =========================================================================
