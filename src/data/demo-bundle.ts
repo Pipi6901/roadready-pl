@@ -138,6 +138,16 @@ export const COUNTRIES: Country[] = [
 /* Locales                                                                     */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * v1 launch languages — curator call: Polish, Urdu, Punjabi, Arabic,
+ * Portuguese. Picked from the DVSA theory test's own official language list,
+ * weighted toward the UK's largest non-English-speaking communities (2021
+ * census: Polish and Punjabi are the two biggest by a wide margin, Urdu and
+ * Arabic close behind). Hindi/Spanish/Spanish-LatAm/Portuguese-BR stay out
+ * of the picker for now — see the matching V1_LOCALE_CODES filter in
+ * roadready-admin's publishTestSet, which is the one that actually governs
+ * this once the app is pulling live content.
+ */
 export const LOCALES: Locale[] = [
   {
     code: 'pl',
@@ -161,25 +171,11 @@ export const LOCALES: Locale[] = [
     flagEmoji: '🇮🇳',
   },
   {
-    code: 'hi',
-    nameNative: 'हिन्दी',
-    nameEnglish: 'Hindi',
-    direction: 'ltr',
-    flagEmoji: '🇮🇳',
-  },
-  {
-    code: 'es',
-    nameNative: 'Español',
-    nameEnglish: 'Spanish',
-    direction: 'ltr',
-    flagEmoji: '🇪🇸',
-  },
-  {
-    code: 'es-419',
-    nameNative: 'Español (LatAm)',
-    nameEnglish: 'Spanish (Latin America)',
-    direction: 'ltr',
-    flagEmoji: '🇲🇽',
+    code: 'ar',
+    nameNative: 'العربية',
+    nameEnglish: 'Arabic',
+    direction: 'rtl',
+    flagEmoji: '🇸🇦',
   },
   {
     code: 'pt',
@@ -187,20 +183,6 @@ export const LOCALES: Locale[] = [
     nameEnglish: 'Portuguese',
     direction: 'ltr',
     flagEmoji: '🇵🇹',
-  },
-  {
-    code: 'pt-BR',
-    nameNative: 'Português (BR)',
-    nameEnglish: 'Portuguese (Brazil)',
-    direction: 'ltr',
-    flagEmoji: '🇧🇷',
-  },
-  {
-    code: 'ar',
-    nameNative: 'العربية',
-    nameEnglish: 'Arabic',
-    direction: 'rtl',
-    flagEmoji: '🇸🇦',
   },
 ];
 

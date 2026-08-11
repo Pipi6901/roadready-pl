@@ -48,6 +48,10 @@ export default function LanguageModal() {
         <Txt size={13} color={t.colors.textSecondary} lineHeight={19}>
           Questions will show in English + your chosen language.
         </Txt>
+        <Txt size={12} color={t.colors.textMuted} lineHeight={17}>
+          The official DVSA theory test itself is conducted in English. Translations here are a
+          study aid — contact DVSA directly if you need language support for the real exam.
+        </Txt>
 
         {/* "English only" first — it is the default and the way back out. */}
         <Pressable

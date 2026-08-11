@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import React from 'react';
 import { Pressable, useWindowDimensions, View } from 'react-native';
 import Animated, {
@@ -96,9 +96,8 @@ export default function SplashScreen() {
   const go = React.useCallback(() => {
     if (!ready) return;
 
-    // Onboarding is switched off until it is wired through Adapty. Its screens
-    // are untouched and still reachable by URL — only this gate skips them,
-    // seeding the defaults onboarding would otherwise have collected.
+    // ONBOARDING_ENABLED off skips straight to the tabs, seeding the defaults
+    // onboarding would otherwise have collected via the Adapty flow.
     if (!ONBOARDING_ENABLED) {
       if (!onboarded) {
         update({
@@ -111,7 +110,14 @@ export default function SplashScreen() {
       return;
     }
 
-    router.replace(onboarded ? '/(tabs)' : '/welcome');
+    if (onboarded) {
+      router.replace('/(tabs)');
+      return;
+    }
+    // Cast: expo-router's generated route types only include
+    // /adapty-onboarding after the dev server has run once against this new
+    // file (app/(onboarding)/adapty-onboarding.tsx) — harmless until then.
+    router.replace('/adapty-onboarding' as Href);
   }, [ready, onboarded, update, router]);
 
   // Returning learners skip straight past the tap-to-continue gate — it
