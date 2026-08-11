@@ -1,15 +1,15 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { ActivityIndicator, Pressable, View } from 'react-native';
-import { adapty, AdaptyOnboardingView, type AdaptyOnboarding } from 'react-native-adapty';
+import { AdaptyOnboardingView, type AdaptyOnboarding } from 'react-native-adapty';
 
 import { Txt } from '@/components/ui/primitives';
-import { ADAPTY_PUBLIC_KEY, ONBOARDING_PLACEMENT_ID } from '@/constants/adapty';
+import { loadOnboarding, OnboardingLoadError } from '@/features/onboarding/loadOnboarding';
 import { useTheme } from '@/theme/ThemeProvider';
 
 /**
- * Presents the onboarding funnel built in the Adapty dashboard (Splash →
- * Welcome → Language → Goal → Building Plan → Trial → Paywall). This is the
+ * Presents the onboarding funnel built in the Adapty dashboard (Welcome →
+ * Language → Exam Date → Building Plan → Everything You Get). This is the
  * app's only onboarding entry point — see app/index.tsx.
  *
  * This screen only presents the informational onboarding content. The actual
@@ -26,37 +26,15 @@ export default function AdaptyOnboardingScreen() {
   React.useEffect(() => {
     let cancelled = false;
 
-    // Unlike RevenueCat's Purchases.configure(), Adapty's own SDK exposes a
-    // separate isActivated() check specifically so callers avoid re-calling
-    // activate() — so guard it explicitly rather than assuming it no-ops.
-    adapty
-      .isActivated()
-      .then((active) => (active ? undefined : adapty.activate(ADAPTY_PUBLIC_KEY)))
-      // getOnboarding() resolves through the placement's audience targeting
-      // ("All Users" rule) and has been 404-ing ("Placement Not Found") on
-      // device even though the same placement resolves fine in the
-      // dashboard's own Preview — which doesn't go through that audience
-      // engine. getOnboardingForDefaultAudience() skips it, so if the bug is
-      // in audience resolution rather than the placement itself, this
-      // sidesteps it.
-      .then(() => adapty.getOnboarding(ONBOARDING_PLACEMENT_ID))
-      .catch(() => adapty.getOnboardingForDefaultAudience(ONBOARDING_PLACEMENT_ID))
+    loadOnboarding()
       .then((result) => {
         if (!cancelled) setOnboarding(result);
       })
       .catch((e: unknown) => {
-        // TEMP DEBUG (see docs/08-risks-open-questions.md — remove once the
-        // onboarding is confirmed working on a real TestFlight build):
-        // surfaces the actual failure instead of silently falling through to
-        // the paywall, since there is no other way to see what broke on a
-        // release build without device logs. AdaptyError's `.message` is just
-        // a generic wrapper ("An error was returned by the server...") — the
-        // real cause is in `.detail` and `.adaptyCode`.
         if (cancelled) return;
-        const err = e as { message?: string; detail?: string; adaptyCode?: unknown };
-        const parts = [err?.message, err?.detail && `detail: ${err.detail}`, err?.adaptyCode != null && `code: ${err.adaptyCode}`]
-          .filter(Boolean);
-        setError(parts.length ? parts.join('\n') : JSON.stringify(e));
+        const stage = e instanceof OnboardingLoadError ? e.stage : 'unknown';
+        const detail = e instanceof OnboardingLoadError ? e.detail : String(e);
+        setError(`[${stage}]\n${detail}`);
       });
 
     return () => {
@@ -69,6 +47,10 @@ export default function AdaptyOnboardingScreen() {
   }, [router]);
 
   if (error) {
+    // TEMP DEBUG (docs/08-risks-open-questions.md): a release build gives no
+    // other way to see why the funnel failed on a tester's device. Replace with
+    // a silent hand-off to the paywall once the funnel has been confirmed
+    // working in TestFlight — a user must never see this.
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, backgroundColor: t.colors.bg }}>
         <Txt size={14} weight="700" align="center">
