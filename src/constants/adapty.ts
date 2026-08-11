@@ -22,14 +22,15 @@ export const ADAPTY_PUBLIC_KEY = Platform.select({
  * funnel. Dashboard → Placements → Onboardings → the placement serving the
  * `main` onboarding.
  *
- * The `_v2` suffix is not versioning: the first placement was created with a
- * trailing space in its ID ("roadready_onboarding "), which the dashboard
- * renders trimmed and does not allow editing afterwards. Every build 404'd
- * with "Placement Not Found" while the dashboard looked perfectly configured,
- * because the SDK asked for the string without the space. Verified against
- * Adapty's SDK endpoint directly: only the space-suffixed id resolved.
+ * This id looks unremarkable and cost several builds: the original placement
+ * had been created with a trailing space in its ID ("roadready_onboarding "),
+ * which the dashboard renders trimmed and refuses to edit after creation. Every
+ * build 404'd with "Placement Not Found" while the dashboard looked perfectly
+ * configured, because the SDK asked for the string without the space. The
+ * placement has since been recreated clean, and this id was verified against
+ * Adapty's SDK endpoint directly before shipping.
  *
  * So: never paste this value from anywhere. Type it, and keep it byte-identical
  * to the dashboard's Placement ID field.
  */
-export const ONBOARDING_PLACEMENT_ID = 'roadready_onboarding_v2';
+export const ONBOARDING_PLACEMENT_ID = 'roadready_onboarding';
