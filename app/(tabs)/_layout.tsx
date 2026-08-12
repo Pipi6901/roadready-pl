@@ -3,6 +3,7 @@ import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon, type IconName } from '@/components/ui/Icon';
+import { Txt } from '@/components/ui/primitives';
 import { useTheme } from '@/theme/ThemeProvider';
 
 /**
@@ -19,10 +20,28 @@ export default function TabsLayout() {
   // under) the gesture area on any iPhone without a physical home button.
   const insets = useSafeAreaInsets();
 
+  // Declared here rather than read back from the navigator's own tint props:
+  // those hand the colour over as a ColorValue, which Icon and Txt don't take.
+  //
+  // The blue is a primary button's (Continue on Home). blue800 — the deep navy
+  // of headers and inverse blocks — used to be the selected tint, and it barely
+  // separates from the bar in light mode while sinking into the surface in dark
+  // mode, so the bar read as having nothing selected at all.
+  const selected = t.colors.accent;
+  const idle = t.colors.textMuted;
+
+  // The label carries the mockup's weight difference on top of the colour
+  // (600 selected / 400 idle) — selection must never be signalled by colour
+  // alone (NFR-07).
   const tab = (name: string, icon: IconName) => ({
     title: name,
     tabBarIcon: ({ focused }: { focused: boolean }) => (
-      <Icon name={icon} size={24} color={focused ? t.colors.blue800 : t.colors.textMuted} />
+      <Icon name={icon} size={24} color={focused ? selected : idle} />
+    ),
+    tabBarLabel: ({ focused }: { focused: boolean }) => (
+      <Txt size={11} weight={focused ? '600' : '400'} color={focused ? selected : idle}>
+        {name}
+      </Txt>
     ),
   });
 
@@ -30,8 +49,10 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: t.colors.blue800,
-        tabBarInactiveTintColor: t.colors.textMuted,
+        // Still set even though icon and label paint themselves: the tints also
+        // drive the press ripple and VoiceOver's selected state.
+        tabBarActiveTintColor: selected,
+        tabBarInactiveTintColor: idle,
         tabBarStyle: {
           backgroundColor: t.colors.surface,
           borderTopColor: t.colors.border,
@@ -39,7 +60,6 @@ export default function TabsLayout() {
           paddingTop: 6,
           paddingBottom: insets.bottom,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
       }}
     >
       <Tabs.Screen name="index" options={tab('Home', 'house')} />
