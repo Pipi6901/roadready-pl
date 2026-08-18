@@ -12,6 +12,7 @@ import { SettingsSection, useCardShadow } from '@/components/settings/SettingsSe
 import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { Slider } from '@/components/ui/Slider';
 import { COUNTRY_SELECTOR_ENABLED } from '@/constants/flags';
+import { useMediaPack } from '@/features/media/useMediaPack';
 import { requestNotificationPermission } from '@/features/notifications/reminders';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
@@ -27,6 +28,12 @@ const VOICE_SPEED_MAX = 2;
 const VOICE_SPEED_STEP = 0.125;
 const VOICE_SPEED_TICKS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 const VOICE_SPEED_MINOR_TICKS = [0.625, 0.875, 1.125, 1.375, 1.625, 1.875];
+
+/** Sizes are only ever shown to help judge a download, so one decimal is plenty. */
+function formatSize(bytes: number): string {
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 /**
  * Settings — mockup frame "Settings", with one structural change.
@@ -46,6 +53,7 @@ export default function SettingsScreen() {
   const progress = useProgress();
   const subscription = useSubscription();
   const { country } = useContent();
+  const media = useMediaPack();
 
   const [restoring, setRestoring] = React.useState(false);
 
@@ -90,6 +98,17 @@ export default function SettingsScreen() {
       return;
     }
     settings.update({ dailyReminder: true });
+  };
+
+  const onDeleteMedia = () => {
+    Alert.alert(
+      'Delete downloaded media?',
+      'Illustrations and clips will be streamed again next time you need them, so this only frees space — no progress is lost.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: () => media.remove() },
+      ],
+    );
   };
 
   const openLegal = (doc: string) => {
@@ -180,19 +199,57 @@ export default function SettingsScreen() {
             />
           </SettingsSection>
 
-          {/* The demo bundle ships inside the app binary, so there is genuinely
-              nothing to download yet. In production this row reports the state
-              of the downloaded content package and the action fetches it. */}
+          {/* Questions and explanations ship inside the binary and are refreshed
+              by a ~200 KB content.json fetch, so they are never "downloaded" in
+              any sense a learner would recognise. Only media is worth a real
+              download — see src/features/media/mediaCache.ts. */}
           <SettingsSection title="Offline" icon="download" iconColor={t.colors.successDark}>
-            <SettingsRow label="Downloaded content" value="Demo bundle (bundled with app)" />
-            <SettingsRow
-              label="Download all content for offline use"
-              subtitle="Included in the app for now — the downloadable content pack arrives with the full question bank."
-              accent
-              disabled
-              chevron={false}
-              last
-            />
+            <SettingsRow label="Questions and explanations" value="Included in the app" />
+
+            {media.status.total === 0 ? (
+              <SettingsRow
+                label="Images and clips"
+                subtitle="No illustrated questions in the current content — nothing to download."
+                chevron={false}
+                last
+              />
+            ) : (
+              <>
+                <SettingsRow
+                  label="Images and clips"
+                  value={`${media.status.cached} of ${media.status.total} · ${formatSize(media.status.bytes)}`}
+                />
+                <SettingsRow
+                  label={
+                    media.status.downloading
+                      ? `Downloading… ${Math.round((media.status.progress ?? 0) * 100)}%`
+                      : 'Download all media for offline use'
+                  }
+                  subtitle={
+                    media.status.failed > 0
+                      ? `${media.status.failed} file(s) could not be downloaded. Tap to try again.`
+                      : media.status.cached === media.status.total
+                        ? 'Everything is on this device — illustrated questions work with no connection.'
+                        : undefined
+                  }
+                  accent
+                  chevron={false}
+                  disabled={media.status.downloading || media.status.cached === media.status.total}
+                  onPress={media.download}
+                  accessibilityHint="Downloads every question illustration and video clip to this device"
+                  last={media.status.cached === 0}
+                />
+                {media.status.cached > 0 && (
+                  <SettingsRow
+                    label="Delete downloaded media"
+                    danger
+                    chevron={false}
+                    onPress={onDeleteMedia}
+                    last
+                  />
+                )}
+              </>
+            )}
           </SettingsSection>
 
           <SettingsSection title="Purchases" icon="gem" iconColor={t.colors.amberDark}>
