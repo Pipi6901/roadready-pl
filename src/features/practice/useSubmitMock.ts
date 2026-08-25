@@ -4,6 +4,7 @@ import React from 'react';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { mockSession, requiredToPass, scoreMockSession } from './mockSession';
+import { EVENTS, track } from '@/features/analytics/analytics';
 
 /**
  * Scores the current mock attempt, files it, and moves to the results screen.
@@ -43,6 +44,7 @@ export function useSubmitMock(): () => void {
     }
 
     const { newAchievements: mockAchievements } = progress.recordMockAttempt(attempt);
+    track(EVENTS.mockTestFinished, { score: attempt.score, total: attempt.total, passed: attempt.passed });
     const allNewAchievements = [...new Set([...answerAchievements, ...mockAchievements])];
     router.replace({
       pathname: '/mock/results',

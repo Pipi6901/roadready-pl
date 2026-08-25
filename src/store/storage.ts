@@ -43,4 +43,5 @@ export const KEYS = {
   subscription: 'subscription',
   remoteContent: 'remote-content',
   revenuecatUserId: 'revenuecat-user-id',
+  analyticsDeviceId: 'analytics-device-id',
 } as const;

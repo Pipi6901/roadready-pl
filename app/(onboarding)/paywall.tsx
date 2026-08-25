@@ -4,6 +4,7 @@ import { Alert } from 'react-native';
 import RevenueCatUI from 'react-native-purchases-ui';
 
 import { ENTITLEMENT_ID } from '@/constants/billing';
+import { EVENTS, track } from '@/features/analytics/analytics';
 import { useSettings } from '@/store/SettingsProvider';
 
 /**
@@ -24,12 +25,23 @@ export default function PaywallScreen() {
     router.replace('/(tabs)');
   }, [update, router]);
 
+  // `source` distinguishes the onboarding paywall from the one reached later
+  // from a hit daily limit — without it the conversion rates of two very
+  // different moments end up averaged into one meaningless number.
+  React.useEffect(() => {
+    track(EVENTS.paywallShown, { source: 'onboarding' });
+  }, []);
+
   return (
     <RevenueCatUI.Paywall
       style={{ flex: 1 }}
-      onPurchaseCompleted={finishOnboarding}
+      onPurchaseCompleted={() => {
+        track(EVENTS.purchaseCompleted, { source: 'onboarding' });
+        finishOnboarding();
+      }}
       onRestoreCompleted={({ customerInfo }) => {
         const restored = !!customerInfo.entitlements.active[ENTITLEMENT_ID];
+        track(EVENTS.purchaseRestored, { restored });
         Alert.alert(
           restored ? 'Purchase restored' : 'Nothing to restore',
           restored
@@ -38,7 +50,10 @@ export default function PaywallScreen() {
         );
         if (restored) finishOnboarding();
       }}
-      onDismiss={finishOnboarding}
+      onDismiss={() => {
+        track(EVENTS.paywallDismissed, { source: 'onboarding' });
+        finishOnboarding();
+      }}
     />
   );
 }

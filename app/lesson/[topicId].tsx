@@ -12,6 +12,7 @@ import { LessonTopBar } from '@/components/learning/LessonTopBar';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, Txt } from '@/components/ui/primitives';
 import { PAYWALL_ENABLED } from '@/constants/flags';
+import { EVENTS, track } from '@/features/analytics/analytics';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
@@ -100,6 +101,12 @@ export default function LessonScreen() {
   // Gate only between cards: answering the last free question must still show
   // its feedback rather than swapping the screen out mid-sentence.
   const limitReached = !subscription.isPro && subscription.questionsLeftToday <= 0 && !answered;
+
+  // Fires on the transition into the wall, not on every render of it —
+  // otherwise one blocked learner would look like dozens in the funnel.
+  React.useEffect(() => {
+    if (limitReached) track(EVENTS.limitHit, { limit_type: 'daily_questions', topic_id: topicId });
+  }, [limitReached, topicId]);
 
   const speak = React.useCallback(
     (text: string) => {

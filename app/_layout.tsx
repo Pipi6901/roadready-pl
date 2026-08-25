@@ -1,9 +1,11 @@
+import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { EVENTS, initAnalytics, track } from '@/features/analytics/analytics';
 import { ContentProvider } from '@/store/ContentProvider';
 import { ProgressProvider } from '@/store/ProgressProvider';
 import { SettingsProvider } from '@/store/SettingsProvider';
@@ -55,6 +57,15 @@ function RootStack() {
 }
 
 export default function RootLayout() {
+  // Once per app start, before anything can call track(): the device id lives
+  // in AsyncStorage, so events fired earlier would have nothing to attribute
+  // themselves to. track() queues them either way, initAnalytics flushes.
+  React.useEffect(() => {
+    void initAnalytics(Constants.expoConfig?.version ?? '0.0.0').then(() => {
+      track(EVENTS.appOpened);
+    });
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
