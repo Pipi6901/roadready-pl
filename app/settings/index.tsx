@@ -2,7 +2,7 @@ import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { Alert, View } from 'react-native';
+import { Alert, Linking, View } from 'react-native';
 
 import { Avatar } from '@/components/settings/Avatar';
 import { NavBar } from '@/components/settings/NavBar';
@@ -12,6 +12,7 @@ import { SettingsSection, useCardShadow } from '@/components/settings/SettingsSe
 import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { Slider } from '@/components/ui/Slider';
 import { COUNTRY_SELECTOR_ENABLED } from '@/constants/flags';
+import { PRIVACY_POLICY_URL } from '@/constants/legal';
 import { useMediaPack } from '@/features/media/useMediaPack';
 import { requestNotificationPermission } from '@/features/notifications/reminders';
 import { useContent } from '@/store/ContentProvider';
@@ -111,9 +112,14 @@ export default function SettingsScreen() {
     );
   };
 
-  const openLegal = (doc: string) => {
-    // TODO: point at the published document once the legal pages are live.
-    Alert.alert(doc, `${doc} will open here once the document is published.`);
+  const openLegal = async (url: string, title: string) => {
+    // App Review checks that a subscription app links to a reachable privacy
+    // policy from inside the app, not only from the store listing.
+    try {
+      await Linking.openURL(url);
+    } catch {
+      Alert.alert(title, `Could not open the browser. The document is at ${url}`);
+    }
   };
 
   // Local draft so dragging feels instant; the store only writes once the
@@ -315,8 +321,11 @@ export default function SettingsScreen() {
 
           <SettingsSection title="About" icon="info" iconColor={t.colors.textMuted}>
             <SettingsRow label="App version" value={Constants.expoConfig?.version ?? '—'} />
-            <SettingsRow label="Terms of Service" onPress={() => openLegal('Terms of Service')} />
-            <SettingsRow label="Privacy Policy" onPress={() => openLegal('Privacy Policy')} last />
+            <SettingsRow
+              label="Privacy Policy"
+              onPress={() => void openLegal(PRIVACY_POLICY_URL, 'Privacy Policy')}
+              last
+            />
           </SettingsSection>
 
           {/* NFR-11. Deliberately no DVSA or Crown Copyright wording — that

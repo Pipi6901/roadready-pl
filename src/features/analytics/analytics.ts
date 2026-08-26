@@ -51,6 +51,7 @@ let sessionId = Date.now();
 let lastActivity = Date.now();
 let counter = 0;
 let userProperties: Record<string, unknown> | null = null;
+let appStateBound = false;
 
 /** Apple's own analytics uses the same 30 minutes; keeping it identical makes
  *  our session numbers comparable to what App Store Connect reports. */
@@ -75,17 +76,28 @@ export async function initAnalytics(appVersion: string): Promise<void> {
 
   // Anything queued when the app was last killed — offline, or force-quit
   // mid-request. Without this the events simply vanished.
+  // De-duplicated on insert_id: track() can fire before this resolves, and it
+  // persists as it goes — so the same event can be both in memory and in the
+  // snapshot being restored here.
   const pending = await load<AmplitudeEvent[]>(KEYS.analyticsQueue, []);
-  if (Array.isArray(pending) && pending.length) queue = [...pending, ...queue];
+  if (Array.isArray(pending) && pending.length) {
+    const seen = new Set(queue.map((e) => e.insert_id));
+    queue = [...pending.filter((e) => !seen.has(e.insert_id)), ...queue];
+  }
 
   // A return to the foreground after a long gap is a new session. Without
-  // this every install would report exactly one endless session.
-  AppState.addEventListener('change', (state) => {
-    if (state !== 'active') return;
-    if (Date.now() - lastActivity > SESSION_TIMEOUT_MS) sessionId = Date.now();
-    lastActivity = Date.now();
-    void flush();
-  });
+  // this every install would report exactly one endless session. Guarded
+  // because a Fast Refresh re-runs the effect that calls this, and a second
+  // listener would double every foreground flush.
+  if (!appStateBound) {
+    appStateBound = true;
+    AppState.addEventListener('change', (state) => {
+      if (state !== 'active') return;
+      if (Date.now() - lastActivity > SESSION_TIMEOUT_MS) sessionId = Date.now();
+      lastActivity = Date.now();
+      void flush();
+    });
+  }
 
   ready = true;
   void flush();
@@ -140,6 +152,7 @@ async function flush(): Promise<void> {
 
   flushing = true;
   const batch = queue.slice(0, MAX_BATCH);
+  let drained = false;
 
   try {
     const res = await fetch(AMPLITUDE_ENDPOINT, {
@@ -156,6 +169,7 @@ async function flush(): Promise<void> {
     // are transient, so the batch stays queued for the next track() call.
     if (res.ok || (res.status >= 400 && res.status < 500)) {
       queue = queue.slice(batch.length);
+      drained = true;
       void save(KEYS.analyticsQueue, queue);
     }
   } catch {
@@ -168,7 +182,12 @@ async function flush(): Promise<void> {
   // returned without sending. Without this line they would sit in the queue
   // until the *next* track() call — so the last event of any burst always
   // arrived one event late, and the final one never arrived at all.
-  if (queue.length > 0) void flush();
+  //
+  // `drained` is what keeps this from becoming a spin loop: on a network
+  // failure nothing leaves the queue, so recursing unconditionally would
+  // retry instantly and forever — a phone in the Underground would hammer
+  // the radio flat. A failed batch waits for the next event or app start.
+  if (drained && queue.length > 0) void flush();
 }
 
 /** Events from docs/06-monetization.md §7. Named here so screens can't typo them. */
