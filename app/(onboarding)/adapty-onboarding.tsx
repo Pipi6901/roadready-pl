@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, View } from 'react-native';
 import { AdaptyOnboardingView, type AdaptyOnboarding } from 'react-native-adapty';
 
 import { Txt } from '@/components/ui/primitives';
+import { EVENTS, track } from '@/features/analytics/analytics';
 import { loadOnboarding, OnboardingLoadError } from '@/features/onboarding/loadOnboarding';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -43,8 +44,14 @@ export default function AdaptyOnboardingScreen() {
   }, []);
 
   const goToPaywall = React.useCallback(() => {
-    router.replace('/paywall');
+    router.replace('/paywall?source=onboarding');
   }, [router]);
+
+  // Пара к onboarding_completed: разница между ними и есть доля тех, кто
+  // отвалился внутри воронки Adapty, — иначе её не видно ниоткуда.
+  React.useEffect(() => {
+    track(EVENTS.onboardingStarted);
+  }, []);
 
   if (error) {
     // TEMP DEBUG (docs/08-risks-open-questions.md): a release build gives no
@@ -83,8 +90,14 @@ export default function AdaptyOnboardingScreen() {
     <AdaptyOnboardingView
       onboarding={onboarding}
       style={{ flex: 1 }}
-      onClose={goToPaywall}
-      onError={() => goToPaywall()}
+      onClose={() => {
+        track(EVENTS.onboardingCompleted, { reason: 'closed' });
+        goToPaywall();
+      }}
+      onError={() => {
+        track(EVENTS.onboardingCompleted, { reason: 'error' });
+        goToPaywall();
+      }}
     />
   );
 }

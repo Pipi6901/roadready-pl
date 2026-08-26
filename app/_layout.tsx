@@ -5,17 +5,40 @@ import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { EVENTS, initAnalytics, track } from '@/features/analytics/analytics';
+import { EVENTS, initAnalytics, setUserProperties, track } from '@/features/analytics/analytics';
 import { ContentProvider } from '@/store/ContentProvider';
 import { ProgressProvider } from '@/store/ProgressProvider';
-import { SettingsProvider } from '@/store/SettingsProvider';
-import { SubscriptionProvider } from '@/store/SubscriptionProvider';
+import { SettingsProvider, useSettings } from '@/store/SettingsProvider';
+import { SubscriptionProvider, useSubscription } from '@/store/SubscriptionProvider';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
+
+/**
+ * Attributes every event carries. Lives inside the providers because that is
+ * where language and subscription tier are known; RootLayout below sits
+ * outside them and cannot read either.
+ */
+function AnalyticsIdentity() {
+  const { localeCode, countryCode } = useSettings();
+  const { isPro, state } = useSubscription();
+
+  React.useEffect(() => {
+    setUserProperties({
+      locale: localeCode ?? 'en',
+      country: countryCode,
+      is_pro: isPro,
+      plan: state.plan ?? 'none',
+      subscription_status: state.status,
+    });
+  }, [localeCode, countryCode, isPro, state.plan, state.status]);
+
+  return null;
+}
 
 function RootStack() {
   const t = useTheme();
   return (
     <>
+      <AnalyticsIdentity />
       <StatusBar style={t.isDark ? 'light' : 'dark'} />
       <Stack
         screenOptions={{

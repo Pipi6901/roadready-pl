@@ -10,6 +10,7 @@ import { mockSession } from '@/features/practice/mockSession';
 import { useContent } from '@/store/ContentProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { EVENTS, track } from '@/features/analytics/analytics';
 
 /** Mock Test Setup — mockup frame "Mock Test Setup". */
 export default function MockSetupScreen() {
@@ -46,6 +47,7 @@ export default function MockSetupScreen() {
 
   const start = () => {
     mockSession.start(mockQuestions(), timeLimitMinutes);
+    track(EVENTS.mockTestStarted, { time_limit_minutes: timeLimitMinutes });
     // replace(): the running exam must not be escapable with a back swipe.
     router.replace('/mock/run');
   };

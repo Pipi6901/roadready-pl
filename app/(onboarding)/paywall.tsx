@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { Alert } from 'react-native';
 import RevenueCatUI from 'react-native-purchases-ui';
@@ -19,6 +19,10 @@ import { useSettings } from '@/store/SettingsProvider';
 export default function PaywallScreen() {
   const router = useRouter();
   const { update } = useSettings();
+  // Четыре точки входа на пейвол: онбординг, упёрся в дневной лимит, конец
+  // триала, настройки. Без разделения их конверсии усредняются в одно число,
+  // по которому нельзя понять ничего.
+  const { source = 'onboarding' } = useLocalSearchParams<{ source?: string }>();
 
   const finishOnboarding = React.useCallback(() => {
     update({ onboarded: true });
@@ -29,14 +33,14 @@ export default function PaywallScreen() {
   // from a hit daily limit — without it the conversion rates of two very
   // different moments end up averaged into one meaningless number.
   React.useEffect(() => {
-    track(EVENTS.paywallShown, { source: 'onboarding' });
-  }, []);
+    track(EVENTS.paywallShown, { source });
+  }, [source]);
 
   return (
     <RevenueCatUI.Paywall
       style={{ flex: 1 }}
       onPurchaseCompleted={() => {
-        track(EVENTS.purchaseCompleted, { source: 'onboarding' });
+        track(EVENTS.purchaseCompleted, { source });
         finishOnboarding();
       }}
       onRestoreCompleted={({ customerInfo }) => {
@@ -51,7 +55,7 @@ export default function PaywallScreen() {
         if (restored) finishOnboarding();
       }}
       onDismiss={() => {
-        track(EVENTS.paywallDismissed, { source: 'onboarding' });
+        track(EVENTS.paywallDismissed, { source });
         finishOnboarding();
       }}
     />

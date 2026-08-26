@@ -30,7 +30,7 @@ export default function TrialEndedModal() {
   const shadow = useCardShadow();
 
   const onSubscribe = () => {
-    router.push('/paywall');
+    router.push('/paywall?source=trial_ended');
   };
 
   return (

@@ -281,7 +281,7 @@ export default function LessonScreen() {
 
           <View style={{ alignSelf: 'stretch', gap: 10, marginTop: 8 }}>
             {PAYWALL_ENABLED ? (
-              <Button label="See Pro plans" onPress={() => router.push('/paywall')} />
+              <Button label="See Pro plans" onPress={() => router.push('/paywall?source=daily_limit')} />
             ) : null}
             <Button label="Back to topics" variant="ghost" onPress={() => router.back()} />
           </View>

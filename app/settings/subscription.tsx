@@ -57,7 +57,7 @@ export default function SubscriptionScreen() {
     // page only lists existing subscriptions, so sending them there is a dead
     // end. Send them to the real purchase flow instead.
     if (!isPro) {
-      router.push('/paywall');
+      router.push('/paywall?source=settings');
       return;
     }
     Alert.alert(

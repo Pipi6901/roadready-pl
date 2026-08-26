@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 
 import { AMPLITUDE_API_KEY, AMPLITUDE_ENDPOINT, ANALYTICS_ENABLED } from '@/constants/analytics';
 import { KEYS, load, save } from '@/store/storage';
@@ -30,16 +30,31 @@ const MAX_QUEUE = 200;
 interface AmplitudeEvent {
   event_type: string;
   event_properties?: Record<string, unknown>;
+  user_properties?: Record<string, unknown>;
   time: number;
   platform: string;
   os_name: string;
   app_version: string;
+  /** Amplitude groups events into sessions by this; without it "sessions per
+   *  user", "session length" and everything built on them stay empty. */
+  session_id: number;
+  /** Amplitude de-duplicates on this within 7 days. A 5xx retry can otherwise
+   *  double-count events the server had already accepted. */
+  insert_id: string;
 }
 
 let deviceId: string | null = null;
 let queue: AmplitudeEvent[] = [];
 let flushing = false;
 let ready = false;
+let sessionId = Date.now();
+let lastActivity = Date.now();
+let counter = 0;
+let userProperties: Record<string, unknown> | null = null;
+
+/** Apple's own analytics uses the same 30 minutes; keeping it identical makes
+ *  our session numbers comparable to what App Store Connect reports. */
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
 
 /**
  * A random id generated once and kept on the device. Not a user id: the app has
@@ -57,8 +72,33 @@ export async function initAnalytics(appVersion: string): Promise<void> {
   const stored = await load<string | null>(KEYS.analyticsDeviceId, null);
   deviceId = stored ?? newDeviceId();
   if (!stored) void save(KEYS.analyticsDeviceId, deviceId);
+
+  // Anything queued when the app was last killed — offline, or force-quit
+  // mid-request. Without this the events simply vanished.
+  const pending = await load<AmplitudeEvent[]>(KEYS.analyticsQueue, []);
+  if (Array.isArray(pending) && pending.length) queue = [...pending, ...queue];
+
+  // A return to the foreground after a long gap is a new session. Without
+  // this every install would report exactly one endless session.
+  AppState.addEventListener('change', (state) => {
+    if (state !== 'active') return;
+    if (Date.now() - lastActivity > SESSION_TIMEOUT_MS) sessionId = Date.now();
+    lastActivity = Date.now();
+    void flush();
+  });
+
   ready = true;
   void flush();
+}
+
+/**
+ * Attributes attached to every subsequent event: language, subscription tier,
+ * country. Without them the funnel is one undivided blob — you can see that
+ * conversion is 4%, but not that it is 9% among Polish speakers and 1% among
+ * everyone else, which is the whole reason this app has translations.
+ */
+export function setUserProperties(props: Record<string, unknown>): void {
+  userProperties = { ...userProperties, ...props };
 }
 
 let version = '0.0.0';
@@ -71,16 +111,25 @@ let version = '0.0.0';
 export function track(eventType: string, properties?: Record<string, unknown>): void {
   if (!ANALYTICS_ENABLED) return;
 
+  const now = Date.now();
+  if (now - lastActivity > SESSION_TIMEOUT_MS) sessionId = now;
+  lastActivity = now;
+  counter += 1;
+
   queue.push({
     event_type: eventType,
     event_properties: properties,
-    time: Date.now(),
+    user_properties: userProperties ?? undefined,
+    time: now,
     platform: Platform.OS,
     os_name: Platform.OS,
     app_version: version,
+    session_id: sessionId,
+    insert_id: `${deviceId ?? 'pending'}-${now}-${counter}`,
   });
 
   if (queue.length > MAX_QUEUE) queue = queue.slice(-MAX_QUEUE);
+  void save(KEYS.analyticsQueue, queue);
   void flush();
 }
 
@@ -107,6 +156,7 @@ async function flush(): Promise<void> {
     // are transient, so the batch stays queued for the next track() call.
     if (res.ok || (res.status >= 400 && res.status < 500)) {
       queue = queue.slice(batch.length);
+      void save(KEYS.analyticsQueue, queue);
     }
   } catch {
     // Offline. The queue survives until the next event or app start.
@@ -132,6 +182,7 @@ export const EVENTS = {
   purchaseRestored: 'purchase_restored',
   lessonStarted: 'lesson_started',
   lessonCompleted: 'lesson_completed',
+  mockTestStarted: 'mock_test_started',
   mockTestFinished: 'mock_test_finished',
   limitHit: 'limit_hit',
   mediaDownloadFinished: 'content_download_finished',
