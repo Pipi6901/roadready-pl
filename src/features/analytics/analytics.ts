@@ -113,6 +113,12 @@ async function flush(): Promise<void> {
   } finally {
     flushing = false;
   }
+
+  // Events fired while the request was in flight found `flushing` true and
+  // returned without sending. Without this line they would sit in the queue
+  // until the *next* track() call — so the last event of any burst always
+  // arrived one event late, and the final one never arrived at all.
+  if (queue.length > 0) void flush();
 }
 
 /** Events from docs/06-monetization.md §7. Named here so screens can't typo them. */
@@ -124,6 +130,7 @@ export const EVENTS = {
   paywallDismissed: 'paywall_dismissed',
   purchaseCompleted: 'purchase_completed',
   purchaseRestored: 'purchase_restored',
+  lessonStarted: 'lesson_started',
   lessonCompleted: 'lesson_completed',
   mockTestFinished: 'mock_test_finished',
   limitHit: 'limit_hit',

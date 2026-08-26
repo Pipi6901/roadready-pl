@@ -108,6 +108,10 @@ export default function LessonScreen() {
     if (limitReached) track(EVENTS.limitHit, { limit_type: 'daily_questions', topic_id: topicId });
   }, [limitReached, topicId]);
 
+  React.useEffect(() => {
+    track(EVENTS.lessonStarted, { topic_id: topicId, lesson_index: lessonIndex });
+  }, [topicId, lessonIndex]);
+
   const speak = React.useCallback(
     (text: string) => {
       Speech.stop();
@@ -188,6 +192,13 @@ export default function LessonScreen() {
       if (nextQueue.length === 0) {
         const finalCorrect = Object.values(firstAttempt).filter(Boolean).length;
         const { xp, newAchievements } = progress.completeLesson(topicId, sessionXpRef.current);
+        track(EVENTS.lessonCompleted, {
+          topic_id: topicId,
+          lesson_index: lessonIndex,
+          total: questions.length,
+          correct: finalCorrect,
+          xp,
+        });
         // De-duped: an achievement recordAnswer already caught mid-lesson
         // is already in progress state by the time completeLesson runs, so
         // completeLesson's own newAchievements won't repeat it — the set

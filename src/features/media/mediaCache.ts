@@ -1,6 +1,7 @@
 import { Directory, File, Paths } from 'expo-file-system';
 
 import { DEMO_BUNDLE } from '@/data/demo-bundle';
+import { EVENTS, track } from '@/features/analytics/analytics';
 import type { MediaAsset } from '@/types/content';
 
 /**
@@ -190,6 +191,11 @@ export async function downloadMediaPack(): Promise<void> {
   running = null;
   emit({ downloading: false, progress: null });
   refreshMediaStatus();
+  track(EVENTS.mediaDownloadFinished, {
+    requested: missing.length,
+    failed,
+    size_mb: Math.round((snapshot.bytes / (1024 * 1024)) * 10) / 10,
+  });
 }
 
 export function cancelMediaDownload(): void {
