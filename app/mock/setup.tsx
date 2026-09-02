@@ -3,11 +3,13 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { NavBar } from '@/components/practice/NavBar';
+import { ScoreHistoryChart } from '@/components/practice/ScoreHistoryChart';
 import { cardShadow } from '@/components/practice/shadow';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { mockSession } from '@/features/practice/mockSession';
 import { useContent } from '@/store/ContentProvider';
+import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 import { EVENTS, track } from '@/features/analytics/analytics';
@@ -17,6 +19,7 @@ export default function MockSetupScreen() {
   const t = useTheme();
   const router = useRouter();
   const { country, mockQuestions } = useContent();
+  const progress = useProgress();
   const { localeName, translationEnabled } = useSettings();
 
   const { questionCount, timeLimitMinutes, passMark } = country.mockTest;
@@ -141,6 +144,12 @@ export default function MockSetupScreen() {
             </Row>
           ))}
         </View>
+
+        <ScoreHistoryChart
+          attempts={progress.state.mockAttempts}
+          passMark={passMark}
+          questionCount={questionCount}
+        />
 
         <Row style={{ gap: 6 }}>
           <Icon name="languages" size={14} color={t.colors.textMuted} />
