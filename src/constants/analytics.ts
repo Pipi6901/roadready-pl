@@ -6,7 +6,7 @@
  * this folder — it is meant to ship inside the app. The Secret Key (which CAN
  * read and delete data) must never appear in this repository.
  */
-export const AMPLITUDE_API_KEY = 'f6b4b0fda9c5757740d530d4ab31b2dd';
+export const AMPLITUDE_API_KEY = 'REPLACE_WITH_AMPLITUDE_PL_API_KEY';
 
 /**
  * EU residency would be `api.eu.amplitude.com`. Keep this in sync with the

@@ -10,15 +10,15 @@ import { Platform } from 'react-native';
  * meant to ship inside the client, same as the RevenueCat key.
  */
 
-/** From the Adapty dashboard → the "RoadReady" app (not "Kepler") → SDK keys → Public SDK key. */
+/** From the Adapty dashboard → the Polish app (not the UK "RoadReady" one) → SDK keys → Public SDK key. */
 export const ADAPTY_PUBLIC_KEY = Platform.select({
-  ios: 'public_live_TJPMyjPL.sPAJ9Xx9M9A6DmmmOpd8',
-  android: 'REPLACE_WITH_ADAPTY_ANDROID_PUBLIC_KEY',
+  ios: 'REPLACE_WITH_ADAPTY_PL_IOS_PUBLIC_KEY',
+  android: 'REPLACE_WITH_ADAPTY_PL_ANDROID_PUBLIC_KEY',
   default: '',
 })!;
 
 /**
- * The Placement ID configured in Adapty for the "roadready" onboarding
+ * The Placement ID configured in Adapty for the Polish onboarding
  * funnel. Dashboard → Placements → Onboardings → the placement serving the
  * `main` onboarding.
  *
@@ -33,4 +33,4 @@ export const ADAPTY_PUBLIC_KEY = Platform.select({
  * So: never paste this value from anywhere. Type it, and keep it byte-identical
  * to the dashboard's Placement ID field.
  */
-export const ONBOARDING_PLACEMENT_ID = 'roadready_onboarding';
+export const ONBOARDING_PLACEMENT_ID = 'REPLACE_WITH_ADAPTY_PL_PLACEMENT_ID';

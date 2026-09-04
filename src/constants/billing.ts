@@ -12,16 +12,16 @@ import { Platform } from 'react-native';
 
 /** From the RevenueCat dashboard → Project settings → API keys → Public app-specific key. */
 export const REVENUECAT_API_KEY = Platform.select({
-  ios: 'appl_HPwkqAEbFVWiRWIjtbbMJCmyuAA',
+  ios: 'REPLACE_WITH_REVENUECAT_PL_IOS_PUBLIC_KEY',
   // Android app not configured in RevenueCat yet — fill in once it exists.
-  android: 'REPLACE_WITH_REVENUECAT_GOOGLE_PUBLIC_KEY',
+  android: 'REPLACE_WITH_REVENUECAT_PL_ANDROID_PUBLIC_KEY',
   default: '',
 })!;
 
 /** Must match the SKUs created in App Store Connect / Google Play Console exactly. */
 export const PRODUCT_IDS = {
-  monthly: 'com.astonio.roadready.pro.monthly',
-  yearly: 'com.astonio.roadready.pro.yearly',
+  monthly: 'com.astonio.roadreadypl.pro.monthly',
+  yearly: 'com.astonio.roadreadypl.pro.yearly',
 } as const;
 
 /**
