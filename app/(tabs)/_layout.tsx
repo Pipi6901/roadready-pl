@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 /**
@@ -13,6 +14,7 @@ import { useTheme } from '@/theme/ThemeProvider';
  */
 export default function TabsLayout() {
   const t = useTheme();
+  const tr = useT();
   // A fixed tabBarStyle.height (needed for the mockup's 64pt bar) opts out
   // of React Navigation's own safe-area handling, so the home-indicator
   // inset has to be added back by hand — otherwise the bar sits flush
@@ -62,15 +64,15 @@ export default function TabsLayout() {
         },
       }}
     >
-      <Tabs.Screen name="index" options={tab('Home', 'house')} />
+      <Tabs.Screen name="index" options={tab(tr('tabs.home'), 'house')} />
       {/* 'route' instead of the generic 'book-open' — Learn's screen IS the
           winding road map, so the tab icon matches what's actually there. */}
-      <Tabs.Screen name="learn" options={tab('Learn', 'route')} />
+      <Tabs.Screen name="learn" options={tab(tr('tabs.learn'), 'route')} />
       {/* 'gauge' instead of 'timer' — a speedometer ties back to the
           driving theme and reads as more deliberate than a generic clock,
           which doesn't obviously mean "practice" at all. */}
-      <Tabs.Screen name="practice" options={tab('Practice', 'gauge')} />
-      <Tabs.Screen name="profile" options={tab('Profile', 'user')} />
+      <Tabs.Screen name="practice" options={tab(tr('tabs.practice'), 'gauge')} />
+      <Tabs.Screen name="profile" options={tab(tr('tabs.profile'), 'user')} />
     </Tabs>
   );
 }

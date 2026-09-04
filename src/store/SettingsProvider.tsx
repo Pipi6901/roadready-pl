@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { LOCALES } from '@/data/demo-bundle';
+import { deviceUiLocale, findUiLocale } from '@/features/i18n/locales';
 import { cancelDailyReminder, hasNotificationPermission, scheduleDailyReminder } from '@/features/notifications/reminders';
 import { KEYS, load, save } from './storage';
 
@@ -9,6 +10,15 @@ export interface Settings {
   countryCode: string;
   /** null = "Polish only (no translation)" */
   localeCode: string | null;
+  /**
+   * Language of the app's own interface, which is a separate choice from the
+   * translation shown under a question: someone sitting the exam in Polish may
+   * still want the app in Ukrainian.
+   *
+   * null = follow the device. Stored as null rather than as the resolved code
+   * so that changing the phone's language keeps working afterwards.
+   */
+  uiLocale: string | null;
   examDate: string | null;
   displayName: string;
   firstLaunchAt: string;
@@ -29,6 +39,7 @@ const DEFAULTS: Settings = {
   onboarded: false,
   countryCode: 'PL',
   localeCode: null,
+  uiLocale: null,
   examDate: null,
   displayName: 'Learner',
   firstLaunchAt: new Date().toISOString(),
@@ -54,6 +65,9 @@ interface SettingsContextValue extends Settings {
   translationEnabled: boolean;
   localeDirection: 'ltr' | 'rtl';
   localeName: string;
+  /** Interface language actually in force, with the device fallback resolved. */
+  uiLocaleCode: string;
+  uiLocaleName: string;
   daysUntilExam: number | null;
 }
 
@@ -104,6 +118,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<SettingsContextValue>(() => {
     const locale = LOCALES.find((l) => l.code === settings.localeCode) ?? null;
+    const uiLocaleCode = settings.uiLocale ?? deviceUiLocale();
     let daysUntilExam: number | null = null;
     if (settings.examDate) {
       const diff = new Date(settings.examDate).getTime() - Date.now();
@@ -117,6 +132,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       translationEnabled: !!locale,
       localeDirection: locale?.direction ?? 'ltr',
       localeName: locale?.nameNative ?? 'Polish only',
+      uiLocaleCode,
+      uiLocaleName: findUiLocale(uiLocaleCode)?.nameNative ?? uiLocaleCode,
       daysUntilExam,
     };
   }, [settings, ready, update, reset]);

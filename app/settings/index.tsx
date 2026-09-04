@@ -13,6 +13,7 @@ import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { Slider } from '@/components/ui/Slider';
 import { COUNTRY_SELECTOR_ENABLED } from '@/constants/flags';
 import { PRIVACY_POLICY_URL } from '@/constants/legal';
+import { useT } from '@/features/i18n/useT';
 import { useMediaPack } from '@/features/media/useMediaPack';
 import { requestNotificationPermission } from '@/features/notifications/reminders';
 import { useContent } from '@/store/ContentProvider';
@@ -48,6 +49,7 @@ function formatSize(bytes: number): string {
  */
 export default function SettingsScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const shadow = useCardShadow();
   const settings = useSettings();
@@ -63,10 +65,8 @@ export default function SettingsScreen() {
     try {
       const restored = await subscription.restore();
       Alert.alert(
-        restored ? 'Purchase restored' : 'Nothing to restore',
-        restored
-          ? 'Your subscription is active again on this device.'
-          : 'We could not find an active subscription for this store account.',
+        tr(restored ? 'settings.restore.restoredTitle' : 'settings.restore.nothingTitle'),
+        tr(restored ? 'settings.restore.restoredBody' : 'settings.restore.nothingBody'),
       );
     } finally {
       setRestoring(false);
@@ -75,14 +75,10 @@ export default function SettingsScreen() {
 
   const onResetProgress = () => {
     // Destructive and unrecoverable — progress exists only on this device.
-    Alert.alert(
-      'Reset progress?',
-      'This erases your XP, streak, mastered questions and mock test history on this device. It cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Reset', style: 'destructive', onPress: () => progress.reset() },
-      ],
-    );
+    Alert.alert(tr('settings.reset.title'), tr('settings.reset.body'), [
+      { text: tr('common.cancel'), style: 'cancel' },
+      { text: tr('common.reset'), style: 'destructive', onPress: () => progress.reset() },
+    ]);
   };
 
   const onToggleDailyReminder = async (enabled: boolean) => {
@@ -92,24 +88,17 @@ export default function SettingsScreen() {
     }
     const granted = await requestNotificationPermission();
     if (!granted) {
-      Alert.alert(
-        'Notifications are off',
-        'Enable notifications for RoadReady in your device Settings to get a daily reminder.',
-      );
+      Alert.alert(tr('settings.notifOff.title'), tr('settings.notifOff.body'));
       return;
     }
     settings.update({ dailyReminder: true });
   };
 
   const onDeleteMedia = () => {
-    Alert.alert(
-      'Delete downloaded media?',
-      'Illustrations and clips will be streamed again next time you need them, so this only frees space — no progress is lost.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: () => media.remove() },
-      ],
-    );
+    Alert.alert(tr('settings.deleteMedia.title'), tr('settings.deleteMedia.body'), [
+      { text: tr('common.cancel'), style: 'cancel' },
+      { text: tr('common.delete'), style: 'destructive', onPress: () => media.remove() },
+    ]);
   };
 
   const openLegal = async (url: string, title: string) => {
@@ -118,7 +107,7 @@ export default function SettingsScreen() {
     try {
       await Linking.openURL(url);
     } catch {
-      Alert.alert(title, `Could not open the browser. The document is at ${url}`);
+      Alert.alert(title, tr('settings.legal.openFailed', { url }));
     }
   };
 
@@ -129,7 +118,7 @@ export default function SettingsScreen() {
 
   return (
     <Screen>
-      <NavBar title="Settings" />
+      <NavBar title={tr('settings.title')} />
 
       <ScreenScroll style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={{ paddingHorizontal: 20, paddingTop: 8, gap: 22 }}>
@@ -151,15 +140,15 @@ export default function SettingsScreen() {
                 {settings.displayName}
               </Txt>
               <Txt size={12} color={t.colors.textSecondary}>
-                Progress is stored on this device
+                {tr('settings.progressOnDevice')}
               </Txt>
             </View>
           </Row>
 
           {COUNTRY_SELECTOR_ENABLED ? (
-            <SettingsSection title="Country" icon="map-pin">
+            <SettingsSection title={tr('settings.section.country')} icon="map-pin">
               <SettingsRow
-                label="Country"
+                label={tr('settings.row.country')}
                 value={`${country.name} ${country.flagEmoji}`}
                 onPress={() => router.push('/(modals)/change-country')}
                 last
@@ -167,38 +156,55 @@ export default function SettingsScreen() {
             </SettingsSection>
           ) : null}
 
-          <SettingsSection title="Language" icon="languages">
+          <SettingsSection title={tr('settings.section.language')} icon="languages">
             <SettingsRow
-              label="Translation language"
-              value={settings.localeName}
+              label={tr('settings.row.interfaceLanguage')}
+              value={settings.uiLocaleName}
+              onPress={() => router.push('/(modals)/change-ui-language')}
+            />
+            <SettingsRow
+              label={tr('settings.row.translationLanguage')}
+              value={settings.localeCode ? settings.localeName : tr('transLang.polishOnly')}
               onPress={() => router.push('/(modals)/change-language')}
               last
             />
           </SettingsSection>
 
-          <SettingsSection title="Exam date" icon="calendar-clock" iconColor={t.colors.amberDark}>
+          <SettingsSection
+            title={tr('settings.section.examDate')}
+            icon="calendar-clock"
+            iconColor={t.colors.amberDark}
+          >
             <SettingsRow
-              label="Test date"
-              value={settings.daysUntilExam !== null ? `${settings.daysUntilExam} days away` : 'Not set'}
+              label={tr('settings.row.testDate')}
+              value={
+                settings.daysUntilExam !== null
+                  ? tr('settings.daysAway', { days: settings.daysUntilExam })
+                  : tr('common.notSet')
+              }
               onPress={() => router.push('/settings/exam-date')}
               last
             />
           </SettingsSection>
 
-          <SettingsSection title="Notifications" icon="bell" iconColor={t.colors.amberDark}>
+          <SettingsSection
+            title={tr('settings.section.notifications')}
+            icon="bell"
+            iconColor={t.colors.amberDark}
+          >
             <SettingsRow
-              label="Daily reminder"
+              label={tr('settings.row.dailyReminder')}
               switchValue={settings.dailyReminder}
               onSwitchChange={(enabled) => void onToggleDailyReminder(enabled)}
             />
             <SettingsRow
-              label="Reminder time"
+              label={tr('settings.row.reminderTime')}
               value={formatTime(settings.reminderTime)}
               onPress={() => router.push('/settings/reminder-time')}
               disabled={!settings.dailyReminder}
             />
             <SettingsRow
-              label="Question of the Day"
+              label={tr('settings.row.questionOfTheDay')}
               switchValue={settings.questionOfTheDay}
               onSwitchChange={(questionOfTheDay) => settings.update({ questionOfTheDay })}
               last
@@ -209,45 +215,58 @@ export default function SettingsScreen() {
               by a ~200 KB content.json fetch, so they are never "downloaded" in
               any sense a learner would recognise. Only media is worth a real
               download — see src/features/media/mediaCache.ts. */}
-          <SettingsSection title="Offline" icon="download" iconColor={t.colors.successDark}>
-            <SettingsRow label="Questions and explanations" value="Included in the app" />
+          <SettingsSection
+            title={tr('settings.section.offline')}
+            icon="download"
+            iconColor={t.colors.successDark}
+          >
+            <SettingsRow
+              label={tr('settings.row.questionsExplanations')}
+              value={tr('settings.value.includedInApp')}
+            />
 
             {media.status.total === 0 ? (
               <SettingsRow
-                label="Images and clips"
-                subtitle="No illustrated questions in the current content — nothing to download."
+                label={tr('settings.row.imagesClips')}
+                subtitle={tr('settings.offline.nothingToDownload')}
                 chevron={false}
                 last
               />
             ) : (
               <>
                 <SettingsRow
-                  label="Images and clips"
-                  value={`${media.status.cached} of ${media.status.total} · ${formatSize(media.status.bytes)}`}
+                  label={tr('settings.row.imagesClips')}
+                  value={tr('settings.offline.cached', {
+                    cached: media.status.cached,
+                    total: media.status.total,
+                    size: formatSize(media.status.bytes),
+                  })}
                 />
                 <SettingsRow
                   label={
                     media.status.downloading
-                      ? `Downloading… ${Math.round((media.status.progress ?? 0) * 100)}%`
-                      : 'Download all media for offline use'
+                      ? tr('settings.offline.downloading', {
+                          percent: Math.round((media.status.progress ?? 0) * 100),
+                        })
+                      : tr('settings.offline.downloadAll')
                   }
                   subtitle={
                     media.status.failed > 0
-                      ? `${media.status.failed} file(s) could not be downloaded. Tap to try again.`
+                      ? tr('settings.offline.failed', { count: media.status.failed })
                       : media.status.cached === media.status.total
-                        ? 'Everything is on this device — illustrated questions work with no connection.'
+                        ? tr('settings.offline.allCached')
                         : undefined
                   }
                   accent
                   chevron={false}
                   disabled={media.status.downloading || media.status.cached === media.status.total}
                   onPress={media.download}
-                  accessibilityHint="Downloads every question illustration and video clip to this device"
+                  accessibilityHint={tr('settings.offline.downloadHint')}
                   last={media.status.cached === 0}
                 />
                 {media.status.cached > 0 && (
                   <SettingsRow
-                    label="Delete downloaded media"
+                    label={tr('settings.offline.delete')}
                     danger
                     chevron={false}
                     onPress={onDeleteMedia}
@@ -258,25 +277,38 @@ export default function SettingsScreen() {
             )}
           </SettingsSection>
 
-          <SettingsSection title="Purchases" icon="gem" iconColor={t.colors.amberDark}>
-            <SettingsRow label="Current plan" value={planLabel(subscription.state)} />
-            <SettingsRow label="Renewal date" value={formatDate(subscription.state.renewsAt)} />
+          <SettingsSection
+            title={tr('settings.section.purchases')}
+            icon="gem"
+            iconColor={t.colors.amberDark}
+          >
+            <SettingsRow label={tr('settings.row.currentPlan')} value={planLabel(subscription.state)} />
             <SettingsRow
-              label="Manage Subscription"
+              label={tr('settings.row.renewalDate')}
+              value={formatDate(subscription.state.renewsAt)}
+            />
+            <SettingsRow
+              label={tr('settings.row.manageSubscription')}
               onPress={() => router.push('/settings/subscription')}
             />
             <SettingsRow
-              label={restoring ? 'Restoring…' : 'Restore Purchase'}
-              accessibilityHint="Looks for a subscription bought with this store account"
+              label={tr(restoring ? 'settings.row.restoring' : 'settings.row.restorePurchase')}
+              accessibilityHint={tr('settings.restoreHint')}
               onPress={onRestore}
               disabled={restoring}
               chevron={false}
             />
-            <SettingsRow label="Reset progress" danger onPress={onResetProgress} chevron={false} last />
+            <SettingsRow
+              label={tr('settings.row.resetProgress')}
+              danger
+              onPress={onResetProgress}
+              chevron={false}
+              last
+            />
           </SettingsSection>
 
-          <SettingsSection title="Audio" icon="volume-2">
-            <SettingsRow label="Voice speed">
+          <SettingsSection title={tr('settings.section.audio')} icon="volume-2">
+            <SettingsRow label={tr('settings.row.voiceSpeed')}>
               <View style={{ gap: 4 }}>
                 <Txt size={15} weight="700" align="center" color={t.colors.successDark}>
                   {voiceSpeedDraft.toFixed(1)}×
@@ -290,22 +322,22 @@ export default function SettingsScreen() {
                   value={voiceSpeedDraft}
                   onValueChange={setVoiceSpeedDraft}
                   onSlidingComplete={(next) => settings.update({ voiceSpeed: next })}
-                  accessibilityLabel="Voice speed"
+                  accessibilityLabel={tr('settings.row.voiceSpeed')}
                 />
               </View>
             </SettingsRow>
             <SettingsRow
-              label="Auto-read questions"
+              label={tr('settings.row.autoRead')}
               switchValue={settings.autoReadQuestions}
               onSwitchChange={(autoReadQuestions) => settings.update({ autoReadQuestions })}
               last
             />
           </SettingsSection>
 
-          <SettingsSection title="Feedback" icon="vibrate">
+          <SettingsSection title={tr('settings.section.feedback')} icon="vibrate">
             <SettingsRow
-              label="Vibration"
-              subtitle="Buzz on a correct answer during lessons, quizzes and reviews"
+              label={tr('settings.row.vibration')}
+              subtitle={tr('settings.vibrationSubtitle')}
               switchValue={settings.hapticsEnabled}
               onSwitchChange={(hapticsEnabled) => {
                 settings.update({ hapticsEnabled });
@@ -319,11 +351,18 @@ export default function SettingsScreen() {
             />
           </SettingsSection>
 
-          <SettingsSection title="About" icon="info" iconColor={t.colors.textMuted}>
-            <SettingsRow label="App version" value={Constants.expoConfig?.version ?? '—'} />
+          <SettingsSection
+            title={tr('settings.section.about')}
+            icon="info"
+            iconColor={t.colors.textMuted}
+          >
             <SettingsRow
-              label="Privacy Policy"
-              onPress={() => void openLegal(PRIVACY_POLICY_URL, 'Privacy Policy')}
+              label={tr('settings.row.appVersion')}
+              value={Constants.expoConfig?.version ?? '—'}
+            />
+            <SettingsRow
+              label={tr('settings.row.privacyPolicy')}
+              onPress={() => void openLegal(PRIVACY_POLICY_URL, tr('settings.row.privacyPolicy'))}
               last
             />
           </SettingsSection>
