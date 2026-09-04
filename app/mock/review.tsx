@@ -13,7 +13,15 @@ type CellStatus = 'answered' | 'unanswered' | 'flagged';
 
 const COLUMNS = 5;
 
-/** Review Before Submit — mockup frame "Review Before Submit". */
+/**
+ * Review Before Submit.
+ *
+ * British-exam screen: it exists only where the paper can be revisited
+ * before submitting. Poland forbids that, so the run screen never routes
+ * here and the guard below scores the paper instead of showing a step the
+ * real exam does not have. The screen stays in the repository because the
+ * rule is a country's, not the product's (see MockTestConfig.allowReview).
+ */
 export default function MockReviewScreen() {
   const t = useTheme();
   const router = useRouter();
@@ -25,6 +33,14 @@ export default function MockReviewScreen() {
   React.useEffect(() => {
     if (!total) router.replace('/mock/setup');
   }, [total, router]);
+
+  // Reached by a stale link or a back gesture in a one-way exam: submit
+  // rather than offer a review the candidate is not entitled to.
+  React.useEffect(() => {
+    if (total && !session.allowReview) submit();
+  }, [total, session.allowReview, submit]);
+
+  if (total && !session.allowReview) return <Screen />;
 
   const skin: Record<CellStatus, { bg: string; border: string; width: number; fg: string; icon: IconName; word: string }> = {
     answered: {

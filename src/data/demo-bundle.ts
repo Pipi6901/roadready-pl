@@ -28,161 +28,100 @@ import type {
 /* Countries                                                                   */
 /* -------------------------------------------------------------------------- */
 
-const UNITED_KINGDOM: Country = {
-  code: 'GB',
-  name: 'United Kingdom',
-  flagEmoji: '🇬🇧',
-  authority: 'DVSA',
+const POLAND: Country = {
+  code: 'PL',
+  name: 'Polska',
+  flagEmoji: '🇵🇱',
+  authority: 'WORD',
+  // TODO: rewrite once the official Ministerstwo Infrastruktury catalogue is
+  // loaded. Until then this bank is written in-house, and the notice has to
+  // say so rather than borrow the authority of the real one.
   legalNotice:
-    'Highway Code material is Crown Copyright and is used under the Open Government Licence v3.0. Practice questions in this app are written independently by RoadReady from published road rules and are not examination items from any driving test authority.',
+    'Pytania w aplikacji sa opracowane niezaleznie przez RoadReady na podstawie opublikowanych przepisow ruchu drogowego i nie sa pytaniami egzaminacyjnymi zadnego urzedu. Aplikacja nie jest powiazana z WORD.',
   status: 'active',
-  // Patched below to QUESTIONS.length once that array exists — this literal
-  // is just the TypeScript-required initial value, never what actually
-  // ships. It used to sit at 800 (the eventual DVSA-licensed bank size) and
-  // was never updated as the demo bank grew, so the country picker quoted
-  // "800 questions available" while the app actually had 140.
+  // Patched below to QUESTIONS.length once that array exists.
   questionCount: 0,
   mockTest: {
-    questionCount: 50,
-    timeLimitMinutes: 57,
-    passMark: 43,
+    questionCount: 32,
+    timeLimitMinutes: 25,
+    // Points, not answers: 20 basic + 12 specialist questions weighted 1-3
+    // add up to 74, and 68 of them are needed. Six points of slack means two
+    // or three mistakes depending on which questions they land on.
+    passMark: 68,
+    maxPoints: 74,
+    timing: {
+      basic: { readSeconds: 20, answerSeconds: 15 },
+      specialist: { readSeconds: 0, answerSeconds: 50 },
+    },
+    composition: { basic: 20, specialist: 12 },
+    // The Polish exam moves forward only.
+    allowReview: false,
   },
-  currency: 'GBP',
+  currency: 'PLN',
 };
 
-export const COUNTRIES: Country[] = [
-  UNITED_KINGDOM,
-  {
-    code: 'US',
-    name: 'United States',
-    flagEmoji: '🇺🇸',
-    authority: 'State DMV',
-    legalNotice:
-      'Content pack in preparation. Questions will be written by RoadReady from published state driver handbooks.',
-    status: 'coming_soon',
-    questionCount: 0,
-    mockTest: {
-      questionCount: 40,
-      timeLimitMinutes: 60,
-      passMark: 32,
-    },
-    currency: 'USD',
-  },
-  {
-    code: 'CA',
-    name: 'Canada',
-    flagEmoji: '🇨🇦',
-    authority: 'Provincial licensing authority',
-    legalNotice:
-      'Content pack in preparation. Questions will be written by RoadReady from published provincial driver handbooks.',
-    status: 'coming_soon',
-    questionCount: 0,
-    mockTest: {
-      questionCount: 40,
-      timeLimitMinutes: 60,
-      passMark: 32,
-    },
-    currency: 'CAD',
-  },
-  {
-    code: 'AU',
-    name: 'Australia',
-    flagEmoji: '🇦🇺',
-    authority: 'State transport authority',
-    legalNotice:
-      'Content pack in preparation. Questions will be written by RoadReady from published state road rule handbooks.',
-    status: 'coming_soon',
-    questionCount: 0,
-    mockTest: {
-      questionCount: 45,
-      timeLimitMinutes: 60,
-      passMark: 39,
-    },
-    currency: 'AUD',
-  },
-  {
-    code: 'IE',
-    name: 'Ireland',
-    flagEmoji: '🇮🇪',
-    authority: 'Road Safety Authority',
-    legalNotice:
-      'Content pack in preparation. Questions will be written by RoadReady from the published Rules of the Road.',
-    status: 'coming_soon',
-    questionCount: 0,
-    mockTest: {
-      questionCount: 40,
-      timeLimitMinutes: 45,
-      passMark: 35,
-    },
-    currency: 'EUR',
-  },
-  {
-    code: 'DE',
-    name: 'Germany',
-    flagEmoji: '🇩🇪',
-    authority: 'Fahrerlaubnisbehörde',
-    legalNotice:
-      'Content pack in preparation. Questions will be written by RoadReady from the published Straßenverkehrs-Ordnung.',
-    status: 'coming_soon',
-    questionCount: 0,
-    mockTest: {
-      questionCount: 30,
-      timeLimitMinutes: 30,
-      passMark: 25,
-    },
-    currency: 'EUR',
-  },
-];
+/**
+ * One country per app build (ADR-013). The British list lived here while the
+ * app still had a country picker; this build is Poland's, and the picker is
+ * off, so carrying six inactive entries would only invite them to drift.
+ */
+export const COUNTRIES: Country[] = [POLAND];
 
 /* -------------------------------------------------------------------------- */
 /* Locales                                                                     */
 /* -------------------------------------------------------------------------- */
 
 /**
- * v1 launch languages — curator call: Polish, Urdu, Punjabi, Arabic,
- * Portuguese. Picked from the DVSA theory test's own official language list,
- * weighted toward the UK's largest non-English-speaking communities (2021
- * census: Polish and Punjabi are the two biggest by a wide margin, Urdu and
- * Arabic close behind). Hindi/Spanish/Spanish-LatAm/Portuguese-BR stay out
- * of the picker for now — see the matching V1_LOCALE_CODES filter in
- * roadready-admin's publishTestSet, which is the one that actually governs
- * this once the app is pulling live content.
+ * Translation languages, ordered by the size of the audience that reads them.
+ *
+ * The exam itself is sat in Polish, English, German or Polish sign language,
+ * so for everyone outside those four the app's job is to teach in one language
+ * and prepare them to answer in another. That gap is the product.
+ *
+ * Ukrainian first by a wide margin (1.55m residence permits, 77% of all
+ * foreigners); Russian second as the shared reading language of the
+ * post-Soviet groups — Belarusian, Georgian, Uzbek, Moldovan; then English
+ * (Indian, Filipino and Nepali workers, and an exam language in its own
+ * right), Spanish (Colombians, the fastest-growing group), and Belarusian.
+ *
+ * Polish itself is not in this list: it is the original the translations sit
+ * beside, offered as "no translation" rather than as a language choice.
  */
 export const LOCALES: Locale[] = [
   {
-    code: 'pl',
-    nameNative: 'Polski',
-    nameEnglish: 'Polish',
+    code: 'uk',
+    nameNative: 'Українська',
+    nameEnglish: 'Ukrainian',
     direction: 'ltr',
-    flagEmoji: '🇵🇱',
+    flagEmoji: '🇺🇦',
   },
   {
-    code: 'ur',
-    nameNative: 'اردو',
-    nameEnglish: 'Urdu',
-    direction: 'rtl',
-    flagEmoji: '🇵🇰',
-  },
-  {
-    code: 'pa',
-    nameNative: 'ਪੰਜਾਬੀ',
-    nameEnglish: 'Punjabi',
+    code: 'ru',
+    nameNative: 'Русский',
+    nameEnglish: 'Russian',
     direction: 'ltr',
-    flagEmoji: '🇮🇳',
+    flagEmoji: '🇷🇺',
   },
   {
-    code: 'ar',
-    nameNative: 'العربية',
-    nameEnglish: 'Arabic',
-    direction: 'rtl',
-    flagEmoji: '🇸🇦',
-  },
-  {
-    code: 'pt',
-    nameNative: 'Português',
-    nameEnglish: 'Portuguese',
+    code: 'en',
+    nameNative: 'English',
+    nameEnglish: 'English',
     direction: 'ltr',
-    flagEmoji: '🇵🇹',
+    flagEmoji: '🇬🇧',
+  },
+  {
+    code: 'es',
+    nameNative: 'Español',
+    nameEnglish: 'Spanish',
+    direction: 'ltr',
+    flagEmoji: '🇪🇸',
+  },
+  {
+    code: 'be',
+    nameNative: 'Беларуская',
+    nameEnglish: 'Belarusian',
+    direction: 'ltr',
+    flagEmoji: '🇧🇾',
   },
 ];
 
@@ -2914,10 +2853,10 @@ const QUESTIONS: Question[] = [
   },
 ];
 
-// See the comment on UNITED_KINGDOM.questionCount above — this keeps the
+// See the comment on POLAND.questionCount above — this keeps the
 // country picker's "N questions available" honest without hand-maintaining
 // a second number that drifts every time the bank grows.
-UNITED_KINGDOM.questionCount = QUESTIONS.length;
+POLAND.questionCount = QUESTIONS.length;
 
 /* -------------------------------------------------------------------------- */
 /* Translations                                                                */
@@ -3990,7 +3929,7 @@ const PL_TRANSLATIONS: Record<string, QuestionTranslation> = {
 /* -------------------------------------------------------------------------- */
 
 export const DEMO_BUNDLE: ContentBundle = {
-  country: UNITED_KINGDOM,
+  country: POLAND,
   topics: TOPICS,
   questions: QUESTIONS,
   translations: {

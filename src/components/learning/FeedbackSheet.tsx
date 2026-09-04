@@ -106,7 +106,7 @@ export function FeedbackSheet({
             Correct answer
           </Txt>
           <BilingualText
-            english={correctAnswer}
+            original={correctAnswer}
             translation={correctAnswerTranslation}
             size={14}
             weight="600"
@@ -118,7 +118,7 @@ export function FeedbackSheet({
       ) : null}
 
       <BilingualText
-        english={explanation}
+        original={explanation}
         translation={explanationTranslation}
         size={14}
         weight="400"

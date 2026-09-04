@@ -151,7 +151,7 @@ export function AnswerOption({
 
       <View style={{ flex: 1 }}>
         <BilingualText
-          english={text}
+          original={text}
           translation={translation}
           size={15}
           weight="600"

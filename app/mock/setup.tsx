@@ -22,7 +22,11 @@ export default function MockSetupScreen() {
   const progress = useProgress();
   const { localeName, translationEnabled } = useSettings();
 
-  const { questionCount, timeLimitMinutes, passMark } = country.mockTest;
+  const { questionCount, timeLimitMinutes, passMark, maxPoints, timing } = country.mockTest;
+  // Poland scores in points, not answers, so the pass mark reads 68 / 74
+  // rather than 68 / 32. Falls back to the question count where every
+  // question is worth one.
+  const scoreMax = maxPoints ?? questionCount;
 
   const rows: { icon: IconName; iconBg: string; iconColor: string; label: string; value: string }[] = [
     {
@@ -44,12 +48,23 @@ export default function MockSetupScreen() {
       iconBg: t.colors.successBg,
       iconColor: t.colors.successText,
       label: 'Pass mark',
-      value: `${passMark} / ${questionCount}`,
+      value: `${passMark} / ${scoreMax} pts`,
     },
+    ...(timing
+      ? [
+          {
+            icon: 'hourglass' as IconName,
+            iconBg: t.colors.errorBg,
+            iconColor: t.colors.error,
+            label: 'Per question',
+            value: `${timing.basic.readSeconds + timing.basic.answerSeconds} s / ${timing.specialist.readSeconds + timing.specialist.answerSeconds} s`,
+          },
+        ]
+      : []),
   ];
 
   const start = () => {
-    mockSession.start(mockQuestions(), timeLimitMinutes);
+    mockSession.start(mockQuestions(), country.mockTest);
     track(EVENTS.mockTestStarted, { time_limit_minutes: timeLimitMinutes });
     // replace(): the running exam must not be escapable with a back swipe.
     router.replace('/mock/run');
@@ -148,7 +163,7 @@ export default function MockSetupScreen() {
         <ScoreHistoryChart
           attempts={progress.state.mockAttempts}
           passMark={passMark}
-          questionCount={questionCount}
+          scoreMax={scoreMax}
         />
 
         <Row style={{ gap: 6 }}>
@@ -156,7 +171,7 @@ export default function MockSetupScreen() {
           <Txt size={12} color={t.colors.textMuted} style={{ flex: 1 }}>
             {translationEnabled
               ? `Questions shown in English + ${localeName}`
-              : 'Questions shown in English only'}
+              : 'Questions shown in Polish only'}
           </Txt>
         </Row>
       </ScreenScroll>

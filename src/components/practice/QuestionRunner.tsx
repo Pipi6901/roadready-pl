@@ -191,7 +191,7 @@ export function QuestionRunner({
         <Row style={{ gap: 10, alignItems: 'flex-start' }}>
           <View style={{ flex: 1 }}>
             <BilingualText
-              english={question.text}
+              original={question.text}
               translation={question.translation?.text}
               size={20}
               weight="700"
@@ -323,7 +323,7 @@ function FeedbackSheet({ correct, xp, explanation, explanationTranslation, onCon
       </Row>
 
       <BilingualText
-        english={explanation}
+        original={explanation}
         translation={explanationTranslation}
         size={14}
         weight="400"

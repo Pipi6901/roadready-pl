@@ -7,7 +7,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { cardShadow } from './shadow';
 
 /**
- * Mock test scores over time — a bar per attempt, percentage above, date below.
+ * Mock test scores over time — a bar per attempt, points above, date below.
  *
  * Answers the complaint that came up in all five competitor interviews: a
  * single readiness number tells you nothing. A row of dated results shows
@@ -29,10 +29,11 @@ function dayLabel(iso: string): string {
 interface Props {
   attempts: MockAttempt[];
   passMark: number;
-  questionCount: number;
+  /** Points on offer in a full paper — 74 in Poland, the question count elsewhere. */
+  scoreMax: number;
 }
 
-export function ScoreHistoryChart({ attempts, passMark, questionCount }: Props) {
+export function ScoreHistoryChart({ attempts, passMark, scoreMax }: Props) {
   const t = useTheme();
 
   // mockAttempts is stored newest-first; a chart has to read left to right in
@@ -42,7 +43,7 @@ export function ScoreHistoryChart({ attempts, passMark, questionCount }: Props) 
   // One bar is not a history — it invites comparing a result against nothing.
   if (shown.length < 2) return null;
 
-  const passPct = Math.round((passMark / questionCount) * 100);
+  const passPct = Math.round((passMark / scoreMax) * 100);
 
   return (
     <View
@@ -63,7 +64,7 @@ export function ScoreHistoryChart({ attempts, passMark, questionCount }: Props) 
           Your last results
         </Txt>
         <Txt size={12} color={t.colors.textSecondary}>
-          Pass mark {passPct}%
+          Pass mark {passMark} / {scoreMax}
         </Txt>
       </Row>
 
@@ -71,13 +72,15 @@ export function ScoreHistoryChart({ attempts, passMark, questionCount }: Props) 
           the columns are different heights, only their bottoms line up. */}
       <Row style={{ alignItems: 'flex-end', gap: 8 }}>
         {shown.map((a) => {
+          // Points, not answers: a.score and a.total both come out of
+          // scoreMockSession already weighted.
           const pct = a.total > 0 ? Math.round((a.score / a.total) * 100) : 0;
           const date = dayLabel(a.finishedAt);
           return (
             <View
               key={a.finishedAt}
               accessible
-              accessibilityLabel={`${date}: ${pct} percent, ${a.passed ? 'passed' : 'not passed'}`}
+              accessibilityLabel={`${date}: ${a.score} of ${a.total} points, ${a.passed ? 'passed' : 'not passed'}`}
               style={{ flex: 1, alignItems: 'center', gap: 6 }}
             >
               <Txt
@@ -85,7 +88,7 @@ export function ScoreHistoryChart({ attempts, passMark, questionCount }: Props) 
                 weight="700"
                 color={a.passed ? t.colors.successText : t.colors.textSecondary}
               >
-                {pct}%
+                {a.score}
               </Txt>
               <View
                 style={{
@@ -108,7 +111,8 @@ export function ScoreHistoryChart({ attempts, passMark, questionCount }: Props) 
 
       {/* NFR-07: pass and fail must not be signalled by colour alone. */}
       <Txt size={11} color={t.colors.textSecondary}>
-        Green marks a pass — {passPct}% or above.
+        Bars show points scored. Green marks a pass — {passPct}% of the points on
+        offer or above.
       </Txt>
     </View>
   );

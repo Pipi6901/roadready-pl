@@ -3,7 +3,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo } fro
 import { COUNTRIES, DEMO_BUNDLE } from '@/data/demo-bundle';
 import { initRemoteContent, remoteContentStore } from '@/data/remoteContent';
 import { LESSON_SIZE } from '@/constants/rules';
-import type { Country, DisplayQuestion, Question, Topic } from '@/types/content';
+import { questionCategory, type Country, type DisplayQuestion, type Question, type Topic } from '@/types/content';
 import { useProgress } from './ProgressProvider';
 import { useSettings } from './SettingsProvider';
 import { useSubscription } from './SubscriptionProvider';
@@ -111,8 +111,29 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         return shuffled(pool, count).map(decorate);
       },
       mockQuestions: () => {
+        const { questionCount: target, composition } = country.mockTest;
+
+        // Where the exam fixes the make-up of a paper — Poland's 20 basic and
+        // 12 specialist — the split comes first and topic spread second: a
+        // paper with the wrong number of specialist questions is the wrong
+        // exam, however well it covers the syllabus.
+        if (composition) {
+          const picked: Question[] = [];
+          for (const [category, wanted] of Object.entries(composition)) {
+            const pool = DEMO_BUNDLE.questions.filter((q) => questionCategory(q) === category);
+            picked.push(...shuffled(pool, wanted));
+          }
+          // A bank short of one class (the seed bundle has no specialist
+          // questions at all) would otherwise serve a paper too short to be
+          // worth sitting, so the shortfall is topped up from whatever is left.
+          if (picked.length < target) {
+            const rest = DEMO_BUNDLE.questions.filter((q) => !picked.includes(q));
+            picked.push(...shuffled(rest, target - picked.length));
+          }
+          return shuffled(picked, Math.min(target, picked.length)).map(decorate);
+        }
+
         // Proportional sampling across topics, as the real exam does.
-        const target = country.mockTest.questionCount;
         const perTopic = Math.max(1, Math.floor(target / DEMO_BUNDLE.topics.length));
         const picked: Question[] = [];
         for (const topic of DEMO_BUNDLE.topics) {

@@ -20,8 +20,8 @@ export const ONBOARDING_ENABLED = true;
  * Learn tab's country pill).
  *
  * OFF (ADR-013): the product now ships one country per app build instead of
- * one app covering many countries — RoadReady is UK-only. `countryCode`
- * stays hardcoded to `'GB'` (see ONBOARDING_SKIP_DEFAULTS and
+ * one app covering many countries — this build is Poland-only. `countryCode`
+ * stays hardcoded to `'PL'` (see ONBOARDING_SKIP_DEFAULTS and
  * SettingsProvider's DEFAULTS). Unlike the other flags here, this one isn't
  * expected to flip back to `true` in this codebase — a second country means a
  * new app, not a re-enabled picker — but the screens stay in place in case
@@ -47,14 +47,15 @@ export const COUNTRY_SELECTOR_ENABLED = false;
 export const PAYWALL_ENABLED = true;
 
 /**
- * Hazard Perception (ADR-006). The clips ship with the DVSA licence pack we do
- * not have yet, so the screen exists but is unreachable.
+ * Hazard Perception (ADR-006). British module: Poland has no separate hazard
+ * exam, only ordinary questions that happen to carry a video clip, so this
+ * stays off and the video questions run through the normal question screen.
  */
 export const HAZARD_ENABLED = false;
 
 /** Defaults applied when onboarding is skipped. */
 export const ONBOARDING_SKIP_DEFAULTS = {
-  countryCode: 'GB',
-  /** null = "English only (no translation)". */
+  countryCode: 'PL',
+  /** null = "Polish only (no translation)". */
   localeCode: null as string | null,
 } as const;

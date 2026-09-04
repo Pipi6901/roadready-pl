@@ -21,6 +21,12 @@ export interface QuestionProgress {
 
 export interface MockAttempt {
   finishedAt: string;
+  /**
+   * Points scored, and points that were on offer. Where a country weights
+   * its questions these are not answer counts: a Polish paper is 32
+   * questions but 74 points, so `total` is 74 and `score` can jump by three
+   * for a single answer. `perTopic` below still counts answers.
+   */
   score: number;
   total: number;
   passed: boolean;

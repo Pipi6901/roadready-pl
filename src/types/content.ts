@@ -9,10 +9,53 @@
 export type CountryStatus = 'active' | 'coming_soon' | 'archived';
 export type QuestionType = 'single_choice' | 'case_study' | 'hazard_video';
 
+/**
+ * Polish exam question classes. The British exam has one class, so a bundle
+ * that omits this everywhere behaves exactly as before (see QUESTION_DEFAULTS).
+ *
+ * `basic` — 20 of the 32 questions, answered TAK/NIE.
+ * `specialist` — the other 12, three lettered options.
+ */
+export type QuestionCategory = 'basic' | 'specialist';
+
+/** Per-question clock, in seconds. */
+export interface QuestionTiming {
+  /** Reading time before answering opens. 0 = answering is open immediately. */
+  readSeconds: number;
+  /** Answering time once reading ends. */
+  answerSeconds: number;
+}
+
 export interface MockTestConfig {
   questionCount: number;
   timeLimitMinutes: number;
+  /**
+   * The bar to clear, in the same unit as a scored attempt: points where the
+   * country weights its questions, plain correct answers where it does not.
+   * UK 43 of 50 answers; Poland 68 of 74 points.
+   */
   passMark: number;
+  /**
+   * Total points on offer. Absent where every question is worth one, in which
+   * case the maximum is just the number of questions.
+   */
+  maxPoints?: number;
+  /**
+   * Per-question time limits by class. Absent = the country only caps the
+   * whole paper (UK), which is what `timeLimitMinutes` already does.
+   */
+  timing?: Record<QuestionCategory, QuestionTiming>;
+  /**
+   * How many questions of each class make up a paper — Poland fixes 20 basic
+   * and 12 specialist. Absent = one class, sample the bank freely.
+   */
+  composition?: Record<QuestionCategory, number>;
+  /**
+   * Whether answered questions can be revisited before submitting. Poland
+   * forbids it, which removes the review screen and the Previous button —
+   * not as a design preference but because the exam has no such step.
+   */
+  allowReview: boolean;
 }
 
 export interface Country {
@@ -60,6 +103,27 @@ export interface Question {
   mediaId: string | null;
   subtopic: string | null;
   sourceRef: string;
+  /**
+   * Polish exam class. Optional so a single-class bank (the UK one, and the
+   * demo bundle) stays valid without stamping a made-up value onto every
+   * question. Read it through `questionCategory`, never directly.
+   */
+  category?: QuestionCategory;
+  /**
+   * What the question is worth: 1, 2 or 3 in Poland, 1 everywhere else.
+   * Optional for the same reason as `category`; read it through
+   * `questionPoints`.
+   */
+  points?: number;
+}
+
+/** Fallbacks for bundles from countries that do not classify or weight questions. */
+export function questionCategory(question: Pick<Question, 'category'>): QuestionCategory {
+  return question.category ?? 'basic';
+}
+
+export function questionPoints(question: Pick<Question, 'points'>): number {
+  return question.points ?? 1;
 }
 
 /** A media asset referenced by a question's mediaId, keyed by id in ContentBundle.media. */

@@ -6,9 +6,9 @@ import { Txt } from '@/components/ui/primitives';
 import { useSettings } from '@/store/SettingsProvider';
 
 interface BilingualTextProps {
-  english: string;
+  original: string;
   translation?: string | null;
-  /** Font size of the English line; the translation renders smaller. */
+  /** Font size of the original line; the translation renders smaller. */
   size?: number;
   weight?: TextStyle['fontWeight'];
   translationSize?: number;
@@ -21,12 +21,16 @@ interface BilingualTextProps {
 /**
  * The ONLY sanctioned way to show two languages (ТЗ 10.3, 10.4).
  *
- * English is primary: larger and higher contrast. The translation sits BELOW
- * it, smaller and dimmer. Side-by-side columns are explicitly forbidden.
- * In "English only" mode the second line is not rendered at all.
+ * The original wording is primary: larger and higher contrast. The translation
+ * sits BELOW it, smaller and dimmer. Side-by-side columns are explicitly
+ * forbidden. In "no translation" mode the second line is not rendered at all.
+ *
+ * The original is Polish here, not English: the exam is sat in Polish, so the
+ * wording the candidate must recognise on the day is the one that has to stay
+ * on top.
  */
 export function BilingualText({
-  english, translation, size = 17, weight = '600', translationSize, gap = 6, align,
+  original, translation, size = 17, weight = '600', translationSize, gap = 6, align,
   color, translationColor,
 }: BilingualTextProps) {
   const t = useTheme();
@@ -37,7 +41,7 @@ export function BilingualText({
   return (
     <View style={{ gap }}>
       <Txt size={size} weight={weight} color={color ?? t.colors.textPrimary} align={align}>
-        {english}
+        {original}
       </Txt>
       {showTranslation ? (
         <Txt

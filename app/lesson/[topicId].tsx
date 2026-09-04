@@ -340,7 +340,7 @@ export default function LessonScreen() {
         <Row style={{ gap: 10, alignItems: 'flex-start' }}>
           <View style={{ flex: 1 }}>
             <BilingualText
-              english={question.text}
+              original={question.text}
               translation={question.translation?.text}
               size={17}
               weight="600"

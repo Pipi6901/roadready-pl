@@ -3,7 +3,7 @@ import React from 'react';
 
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
-import { mockSession, requiredToPass, scoreMockSession } from './mockSession';
+import { mockSession, pointsServed, requiredToPass, scoreMockSession } from './mockSession';
 import { EVENTS, track } from '@/features/analytics/analytics';
 
 /**
@@ -22,9 +22,11 @@ export function useSubmitMock(): () => void {
     if (!state.questions.length) return;
     if (!mockSession.claimSubmit()) return;
 
+    // Points, not question count: the bar scales with what was actually on
+    // offer, and in Poland a question can be worth up to three.
     const attempt = scoreMockSession(
       state,
-      requiredToPass(country.mockTest, state.questions.length),
+      requiredToPass(country.mockTest, pointsServed(state.questions)),
     );
 
     // Answered questions feed the spaced-review system; skipped ones do not —

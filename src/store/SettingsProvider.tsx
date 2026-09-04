@@ -7,7 +7,7 @@ import { KEYS, load, save } from './storage';
 export interface Settings {
   onboarded: boolean;
   countryCode: string;
-  /** null = "English only (no translation)" */
+  /** null = "Polish only (no translation)" */
   localeCode: string | null;
   examDate: string | null;
   displayName: string;
@@ -27,7 +27,7 @@ export interface Settings {
 
 const DEFAULTS: Settings = {
   onboarded: false,
-  countryCode: 'GB',
+  countryCode: 'PL',
   localeCode: null,
   examDate: null,
   displayName: 'Learner',
@@ -116,7 +116,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       reset,
       translationEnabled: !!locale,
       localeDirection: locale?.direction ?? 'ltr',
-      localeName: locale?.nameNative ?? 'English only',
+      localeName: locale?.nameNative ?? 'Polish only',
       daysUntilExam,
     };
   }, [settings, ready, update, reset]);

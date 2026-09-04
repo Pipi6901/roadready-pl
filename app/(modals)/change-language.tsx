@@ -53,11 +53,11 @@ export default function LanguageModal() {
           study aid — contact DVSA directly if you need language support for the real exam.
         </Txt>
 
-        {/* "English only" first — it is the default and the way back out. */}
+        {/* "Polish only" first — it is the default and the way back out. */}
         <Pressable
           onPress={() => select(null)}
           accessibilityRole="button"
-          accessibilityLabel="English only, no translation"
+          accessibilityLabel="Polish only, no translation"
           accessibilityState={{ selected: localeCode === null }}
           style={({ pressed }) => ({
             flexDirection: 'row',
@@ -74,7 +74,7 @@ export default function LanguageModal() {
         >
           <Icon name="languages" size={20} color={t.colors.onSurfaceAlt} />
           <Txt size={14} weight="700" style={{ flex: 1 }}>
-            English only (no translation)
+            Polish only (no translation)
           </Txt>
           {localeCode === null ? (
             <Icon name="circle-check" size={20} color={t.colors.accentDark} />

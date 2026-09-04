@@ -77,7 +77,7 @@ export default function MockResultsScreen() {
           {/* Icon + word carry the verdict; the colour only reinforces it. */}
           <Row
             accessible
-            accessibilityLabel={`${attempt.passed ? 'Passed' : 'Failed'}. Score ${attempt.score} out of ${attempt.total}`}
+            accessibilityLabel={`${attempt.passed ? 'Passed' : 'Failed'}. Score ${attempt.score} out of ${attempt.total} points`}
             style={{
               gap: 6,
               paddingVertical: 6,
@@ -93,7 +93,7 @@ export default function MockResultsScreen() {
           </Row>
 
           <Txt size={12} color={t.colors.textSecondary}>
-            {required}/{attempt.total} needed to pass
+            {required} of {attempt.total} points needed to pass
           </Txt>
         </View>
 
