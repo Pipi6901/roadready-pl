@@ -82,7 +82,14 @@ export const COUNTRIES: Country[] = [POLAND];
  * foreigners); Russian second as the shared reading language of the
  * post-Soviet groups — Belarusian, Georgian, Uzbek, Moldovan; then English
  * (Indian, Filipino and Nepali workers, and an exam language in its own
- * right), Spanish (Colombians, the fastest-growing group), and Belarusian.
+ * right), Spanish (Colombians, the fastest-growing group), and Turkish.
+ *
+ * The test for the tail of this list is not headcount but coverage: a language
+ * earns a place if it reaches readers no other language here reaches. Belarusian
+ * is the second-largest group in Poland and still does not qualify — that
+ * audience reads Russian, which is already on the list, so a Belarusian
+ * catalogue would double the translation bill for the same readers. Georgian and
+ * Romanian fail the same test. Turkish passes it.
  *
  * Polish itself is not in this list: it is the original the translations sit
  * beside, offered as "no translation" rather than as a language choice.
@@ -117,11 +124,11 @@ export const LOCALES: Locale[] = [
     flagEmoji: '🇪🇸',
   },
   {
-    code: 'be',
-    nameNative: 'Беларуская',
-    nameEnglish: 'Belarusian',
+    code: 'tr',
+    nameNative: 'Türkçe',
+    nameEnglish: 'Turkish',
     direction: 'ltr',
-    flagEmoji: '🇧🇾',
+    flagEmoji: '🇹🇷',
   },
 ];
 

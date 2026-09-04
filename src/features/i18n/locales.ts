@@ -24,7 +24,7 @@ export const UI_LOCALES: UiLocale[] = [
   { code: 'ru', nameNative: 'Русский', nameEnglish: 'Russian', flagEmoji: '🇷🇺' },
   { code: 'en', nameNative: 'English', nameEnglish: 'English', flagEmoji: '🇬🇧' },
   { code: 'es', nameNative: 'Español', nameEnglish: 'Spanish', flagEmoji: '🇪🇸' },
-  { code: 'be', nameNative: 'Беларуская', nameEnglish: 'Belarusian', flagEmoji: '🇧🇾' },
+  { code: 'tr', nameNative: 'Türkçe', nameEnglish: 'Turkish', flagEmoji: '🇹🇷' },
 ];
 
 /**
