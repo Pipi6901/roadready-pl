@@ -13,6 +13,41 @@
 #   TestFlight upload.
 
 workflows:
+  # ---------------------------------------------------------------------------
+  # Run this one when signing fails. It carries no ios_signing block, so it
+  # actually reaches its scripts instead of dying during workflow setup, and it
+  # answers the four questions the "No matching profiles found" message refuses
+  # to distinguish between: does the key reach Codemagic, does Apple accept it,
+  # is the bundle id registered, and is there a certificate to sign with.
+  # ---------------------------------------------------------------------------
+  diagnose-signing:
+    name: Diagnose — Apple key
+    instance_type: mac_mini_m2
+    max_build_duration: 15
+
+    integrations:
+      app_store_connect: RoadReadyPL
+
+    scripts:
+      - name: Are the credentials even here
+        script: |
+          echo "ISSUER ID present : ${APP_STORE_CONNECT_ISSUER_ID:+yes}"
+          echo "KEY ID present    : ${APP_STORE_CONNECT_KEY_IDENTIFIER:+yes}"
+          echo "PRIVATE KEY present: ${APP_STORE_CONNECT_PRIVATE_KEY:+yes}"
+          echo "KEY ID value      : $APP_STORE_CONNECT_KEY_IDENTIFIER"
+
+      - name: Does Apple accept them
+        script: |
+          echo "--- bundle ids ---"
+          app-store-connect bundle-ids list || true
+
+      - name: Is there anything to sign with
+        script: |
+          echo "--- distribution certificates ---"
+          app-store-connect certificates list --type IOS_DISTRIBUTION || true
+          echo "--- profiles ---"
+          app-store-connect profiles list --type IOS_APP_STORE || true
+
   ios-testflight:
     name: iOS — TestFlight
     instance_type: mac_mini_m2
