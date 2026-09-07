@@ -62,6 +62,18 @@ workflows:
           cd ios
           agvtool new-version -all $BUILD_NUMBER
 
+      - name: What can the API key actually see
+        # TEMPORARY. Prints the bundle identifiers and profiles the App Store
+        # Connect key has access to, so a signing failure names its own cause
+        # instead of being guessed at. Delete once the build is green.
+        script: |
+          echo "--- bundle ids visible to this key ---"
+          app-store-connect list-bundle-ids --bundle-id-identifier "com.astonio.roadreadypl" || true
+          echo "--- all bundle ids ---"
+          app-store-connect list-bundle-ids || true
+          echo "--- profiles ---"
+          app-store-connect list-profiles || true
+
       - name: Set up code signing
         script: xcode-project use-profiles
 
