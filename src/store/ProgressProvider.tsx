@@ -65,7 +65,21 @@ export interface TopicStats {
   accuracy: number;
   completedLessons: number;
   totalLessons: number;
-  unlocked: boolean;
+  /**
+   * Whether the learner has answered anything in this topic yet.
+   *
+   * This used to gate the topic: `index === 0 || previous topic complete`. That
+   * is the right rule for a language course, where lesson 8 genuinely needs
+   * lesson 7, and the wrong one for road rules — prohibition signs do not
+   * depend on warning signs, and first aid depends on nothing at all. It also
+   * contradicted the rest of the app, because the mock test has always drawn
+   * from every topic regardless. Worst of all it hit the paying case hardest:
+   * an exam in a week and a known weakness in priority rules, and the app
+   * answers with a padlock on section eight.
+   *
+   * Nothing is locked now. The route is a recommended order, not a fence.
+   */
+  started: boolean;
   completed: boolean;
   weakestSubtopic: string | null;
 }
@@ -295,14 +309,6 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       const totalLessons = Math.max(1, Math.ceil(total / LESSON_SIZE));
       const completedLessons = Math.min(state.lessons[topicId] ?? 0, totalLessons);
 
-      // Sequential unlock: a topic opens once the previous one is finished.
-      const index = DEMO_BUNDLE.topics.findIndex((t) => t.id === topicId);
-      const prevTopic = index > 0 ? DEMO_BUNDLE.topics[index - 1] : null;
-      const prevDone = prevTopic
-        ? (state.lessons[prevTopic.id] ?? 0) >= Math.ceil(
-            DEMO_BUNDLE.questions.filter((q) => q.topicId === prevTopic.id).length / LESSON_SIZE,
-          )
-        : true;
 
       // Weakest subtopic = highest error rate among answered questions.
       const bySubtopic = new Map<string, { attempts: number; wrong: number }>();
@@ -331,7 +337,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         accuracy: topicAttempts ? Math.round((topicCorrect / topicAttempts) * 100) : 0,
         completedLessons,
         totalLessons,
-        unlocked: index === 0 || prevDone,
+        started: completedLessons > 0 || topicAttempts > 0,
         completed: completedLessons >= totalLessons && total > 0,
         weakestSubtopic,
       };
@@ -345,7 +351,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     // finished topic, landing on the lesson screen's dead-end "No lessons
     // left" state. `null` here means "genuinely nothing left to do", and
     // callers must render a completion state for it instead of guessing.
-    const nextTopic = stats.find((s) => s.unlocked && !s.completed) ?? null;
+    const nextTopic = stats.find((s) => !s.completed) ?? null;
 
     return {
       ready,

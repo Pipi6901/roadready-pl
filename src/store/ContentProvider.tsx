@@ -105,18 +105,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         questionsForTopic(topicId)
           .slice(lessonIndex * LESSON_SIZE, lessonIndex * LESSON_SIZE + LESSON_SIZE)
           .map(decorate),
-      // Quick Quiz only draws from topics the learner has actually unlocked
-      // on the Learn map — otherwise it could quiz someone on "Vehicle
-      // Loading" before they've even started "Road Signs", undermining the
-      // sequential-unlock structure the map is built around. Topic 0 is
-      // always unlocked, so this is never empty.
-      randomQuestions: (count) => {
-        const unlockedTopicIds = new Set(
-          DEMO_BUNDLE.topics.filter((t) => progress.topicStats(t.id).unlocked).map((t) => t.id),
-        );
-        const pool = DEMO_BUNDLE.questions.filter((q) => unlockedTopicIds.has(q.topicId));
-        return shuffled(pool, count).map(decorate);
-      },
+      // Quick Quiz draws from the whole bank, which is what the exam does from
+      // the first day. It used to be restricted to topics unlocked on the Learn
+      // map, back when the map gated them sequentially; with that gate gone
+      // there is nothing left to respect, and holding questions back would only
+      // make the quiz an easier exam than the real one.
+      randomQuestions: (count) => shuffled(DEMO_BUNDLE.questions, count).map(decorate),
       mockQuestions: () => {
         const { questionCount: target, composition, weights } = country.mockTest;
 

@@ -5,7 +5,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
 import { useTheme } from '@/theme/ThemeProvider';
 
-export type TopicNodeState = 'completed' | 'current' | 'available' | 'locked';
+export type TopicNodeState = 'completed' | 'current' | 'started' | 'available';
 
 /** Mockup component "Topic Node" (72×72, radius 24). The current node is drawn larger. */
 export const NODE_SIZE = 72;
@@ -26,14 +26,13 @@ const STATE_TEXT: Record<TopicNodeState, string> = {
   completed: 'completed',
   current: 'in progress',
   available: 'not started',
-  locked: 'locked',
+  started: 'in progress',
 };
 
 export function TopicNode({ state, icon, name, mastered, total, onPress }: TopicNodeProps) {
   const t = useTheme();
 
   const size = state === 'current' ? NODE_SIZE_CURRENT : NODE_SIZE;
-  const locked = state === 'locked';
 
   // Fill / edge / icon per state. The edge is the 3–4px bottom stroke the
   // mockup uses to make every node read as a physical slab.
@@ -59,12 +58,15 @@ export function TopicNode({ state, icon, name, mastered, total, onPress }: Topic
       fg: t.colors.accentDark,
       iconName: icon,
     },
-    locked: {
-      bg: t.colors.sage100,
-      edge: t.colors.border,
-      edgeWidth: 3,
-      fg: t.colors.textMuted,
-      iconName: 'lock',
+    // Started but not finished: same slab as an untouched section, drawn in
+    // the accent so a glance down the route separates "not opened yet" from
+    // "opened, still owing". No padlock any more — nothing is gated.
+    started: {
+      bg: t.colors.sage50,
+      edge: t.colors.accentDark,
+      edgeWidth: 4,
+      fg: t.colors.accentDark,
+      iconName: icon,
     },
   }[state];
 
@@ -72,12 +74,12 @@ export function TopicNode({ state, icon, name, mastered, total, onPress }: Topic
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`${name}, ${mastered} of ${total} questions mastered, ${STATE_TEXT[state]}`}
-      accessibilityState={{ disabled: locked }}
-      disabled={locked || !onPress}
+      accessibilityState={{ disabled: !onPress }}
+      disabled={!onPress}
       onPress={onPress}
       style={({ pressed }) => ({
         alignItems: 'center',
-        transform: [{ translateY: pressed && !locked ? 2 : 0 }],
+        transform: [{ translateY: pressed ? 2 : 0 }],
       })}
     >
       <View
@@ -92,9 +94,9 @@ export function TopicNode({ state, icon, name, mastered, total, onPress }: Topic
           borderBottomColor: skin.edge,
           shadowColor: state === 'current' ? t.colors.accentDark : t.colors.blue900,
           shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: locked ? 0.08 : 0.2,
+          shadowOpacity: 0.2,
           shadowRadius: 10,
-          elevation: locked ? 2 : 4,
+          elevation: 4,
         }}
       >
         <Icon name={skin.iconName} size={state === 'current' ? 34 : 30} color={skin.fg} />
@@ -108,10 +110,10 @@ export function TopicNode({ state, icon, name, mastered, total, onPress }: Topic
         ) : null}
         <Txt
           size={11}
-          weight={locked ? '400' : '600'}
+          weight="600"
           align="center"
           lineHeight={14}
-          color={locked ? t.colors.textMuted : t.colors.textPrimary}
+          color={t.colors.textPrimary}
         >
           {name}
           {'\n'}

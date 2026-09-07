@@ -66,7 +66,7 @@ export default function LearnScreen() {
 
   const nodes = React.useMemo(() => {
     const stats = topics.map((topic) => ({ topic, stat: progress.topicStats(topic.id) }));
-    const currentIndex = stats.findIndex((s) => s.stat.unlocked && !s.stat.completed);
+    const currentIndex = stats.findIndex((s) => !s.stat.completed);
 
     // A trail, not a ladder: horizontal drift is a smoothed pseudo-random
     // walk (each offset leans 35% toward the previous one) so the path
@@ -79,9 +79,10 @@ export default function LearnScreen() {
     let y = NODE_SIZE / 2;
 
     return stats.map(({ topic, stat }, i) => {
-      let state: TopicNodeState = 'available';
-      if (!stat.unlocked) state = 'locked';
-      else if (stat.completed) state = 'completed';
+      // No locked state any more: every section is open from the first
+      // launch. What the node shows is how far through it the learner is.
+      let state: TopicNodeState = stat.started ? 'started' : 'available';
+      if (stat.completed) state = 'completed';
       else if (i === currentIndex) state = 'current';
 
       // The route runs through the basic sections first and the specialist
@@ -228,7 +229,7 @@ export default function LearnScreen() {
                         name={n.topic.name}
                         mastered={n.stat.mastered}
                         total={n.stat.total}
-                        onPress={n.state === 'locked' ? undefined : () => router.push(`/topic/${n.topic.id}`)}
+                        onPress={() => router.push(`/topic/${n.topic.id}`)}
                       />
                     </View>
                   </React.Fragment>
