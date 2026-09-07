@@ -6,6 +6,7 @@ import {
   NODE_SIZE, TopicNode, type TopicNodeState,
 } from '@/components/learning/TopicNode';
 import { TopicRoute, type RoutePoint } from '@/components/learning/TopicRoute';
+import { useT } from '@/features/i18n/useT';
 import { cardShadow } from '@/components/practice/shadow';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { ProgressRing } from '@/components/ui/ProgressRing';
@@ -15,6 +16,8 @@ import { useProgress } from '@/store/ProgressProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 
 const SCREEN_PADDING = 20;
+/** Extra vertical room on the trail where the question class changes. */
+const SECTION_GAP = 64;
 /** Baseline vertical distance between node centres — actual spacing jitters
  *  around this, see nodes useMemo below. */
 const ROW_PITCH = 124;
@@ -53,6 +56,7 @@ export default function LearnScreen() {
   const t = useTheme();
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const tr = useT();
   const { topics } = useContent();
   const progress = useProgress();
   const isFocused = useIsFocused();
@@ -80,8 +84,14 @@ export default function LearnScreen() {
       else if (stat.completed) state = 'completed';
       else if (i === currentIndex) state = 'current';
 
+      // The route runs through the basic sections first and the specialist
+      // ones after, because that is the order of the paper itself. Where the
+      // class changes the trail gets extra room for a marker: the candidate
+      // should be able to see, while scrolling, that the exam has two halves.
+      const startsSpecialist = i > 0 && stats[i - 1].topic.category !== topic.category;
       if (i > 0) {
         y += ROW_PITCH + (pseudoRandom(i * 3.17 + 11) * 2 - 1) * PITCH_JITTER;
+        if (startsSpecialist) y += SECTION_GAP;
       }
       const offset = i === 0 ? 0 : Math.round(
         prevOffset * 0.35 + (pseudoRandom(i * 7.31 + 1) * 2 - 1) * MAX_OFFSET * 0.65,
@@ -92,6 +102,7 @@ export default function LearnScreen() {
         topic,
         stat,
         state,
+        startsSpecialist,
         x: centreX + offset,
         y,
       };
@@ -135,7 +146,7 @@ export default function LearnScreen() {
         }}
       >
         <Txt size={26} weight="700">
-          Topics
+          {tr('learn.title')}
         </Txt>
       </View>
 
@@ -150,6 +161,32 @@ export default function LearnScreen() {
               onLayout={(e) => setMapOffsetY(e.nativeEvent.layout.y)}
             >
               <TopicRoute points={routePoints} width={mapWidth} height={mapHeight} />
+
+              {/* Class marker. Not decoration: 12 of the 32 questions on the
+                  paper come from below this line, and they are scored and
+                  timed differently from the ones above it. */}
+              {nodes.map((n) =>
+                n.startsSpecialist ? (
+                  <View
+                    key={`${n.topic.id}-divider`}
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                      top: n.y - NODE_SIZE / 2 - SECTION_GAP + 10,
+                      alignItems: 'center',
+                      gap: 2,
+                    }}
+                  >
+                    <Txt size={13} weight="700" color={t.colors.onSurfaceAlt}>
+                      {tr('learn.specialistSection')}
+                    </Txt>
+                    <Txt size={11} color={t.colors.textSecondary}>
+                      {tr('learn.specialistHint')}
+                    </Txt>
+                  </View>
+                ) : null,
+              )}
 
               {nodes.map((n, i) => {
                 const decor = [DECORATIONS[i % DECORATIONS.length], DECORATIONS[(i + 2) % DECORATIONS.length]];

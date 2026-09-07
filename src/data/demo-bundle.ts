@@ -54,6 +54,14 @@ const POLAND: Country = {
       specialist: { readSeconds: 0, answerSeconds: 50 },
     },
     composition: { basic: 20, specialist: 12 },
+    // Fixed by regulation, and the reason a paper cannot be sampled at random:
+    // 10x3 + 6x2 + 4x1 = 46 basic points, 6x3 + 4x2 + 2x1 = 28 specialist,
+    // 74 in total. Change any cell and the pass mark of 68 stops meaning
+    // anything.
+    weights: {
+      basic: { '3': 10, '2': 6, '1': 4 },
+      specialist: { '3': 6, '2': 4, '1': 2 },
+    },
     // The Polish exam moves forward only.
     allowReview: false,
   },
@@ -136,118 +144,241 @@ export const LOCALES: Locale[] = [
 /* Topics                                                                      */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * The 22 sections of the Polish category-B bank: 16 basic and 6 specialist.
+ *
+ * The split by class is not decoration. A basic section is answered TAK/NIE
+ * and carries general road-safety knowledge; a specialist one has three
+ * lettered options and covers what is specific to the licence category. They
+ * are scored into two separate halves of the paper, so a candidate weak in one
+ * half is in a different kind of trouble than one weak in the other, and a flat
+ * list of 22 hides exactly that.
+ *
+ * The section names themselves are a product decision. The regulation fixes the
+ * classes, the weights and the counts, but it does not publish a thematic
+ * taxonomy, and no competitor publishes theirs either. This one follows the
+ * structure of the traffic code, which is what the questions are drawn from.
+ */
 const TOPICS: Topic[] = [
   {
-    id: 'road-signs',
-    name: 'Road Signs',
-    slug: 'road-signs',
-    icon: 'signpost',
-    sortOrder: 1,
-    questionCount: 10,
-  },
-  {
-    id: 'junctions',
-    name: 'Junctions',
-    slug: 'junctions',
-    icon: 'git-fork',
-    sortOrder: 2,
-    questionCount: 10,
-  },
-  {
-    id: 'motorways',
-    name: 'Motorways',
-    slug: 'motorways',
-    icon: 'route',
-    sortOrder: 3,
-    questionCount: 10,
-  },
-  {
-    id: 'hazard-awareness',
-    name: 'Hazard Awareness',
-    slug: 'hazard-awareness',
-    icon: 'triangle-alert',
-    sortOrder: 4,
-    questionCount: 10,
-  },
-  {
-    id: 'vehicle-safety',
-    name: 'Vehicle Safety',
-    slug: 'vehicle-safety',
-    icon: 'shield-check',
-    sortOrder: 5,
-    questionCount: 10,
-  },
-  {
-    id: 'rules-of-the-road',
-    name: 'Rules of the Road',
-    slug: 'rules-of-the-road',
+    id: 'zasady-ogolne',
+    name: 'Zasady ogólne i pojęcia',
+    slug: 'zasady-ogolne',
     icon: 'book-open',
+    category: 'basic',
+    sortOrder: 1,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'znaki-ostrzegawcze',
+    name: 'Znaki ostrzegawcze',
+    slug: 'znaki-ostrzegawcze',
+    icon: 'triangle-alert',
+    category: 'basic',
+    sortOrder: 2,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'znaki-zakazu',
+    name: 'Znaki zakazu',
+    slug: 'znaki-zakazu',
+    icon: 'circle-slash',
+    category: 'basic',
+    sortOrder: 3,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'znaki-nakazu',
+    name: 'Znaki nakazu',
+    slug: 'znaki-nakazu',
+    icon: 'circle-arrow-right',
+    category: 'basic',
+    sortOrder: 4,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'znaki-informacyjne',
+    name: 'Znaki informacyjne i kierunku',
+    slug: 'znaki-informacyjne',
+    icon: 'info',
+    category: 'basic',
+    sortOrder: 5,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'znaki-poziome',
+    name: 'Znaki poziome i tabliczki',
+    slug: 'znaki-poziome',
+    icon: 'route',
+    category: 'basic',
     sortOrder: 6,
-    questionCount: 10,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
   },
   {
-    id: 'vulnerable-road-users',
-    name: 'Vulnerable Road Users',
-    slug: 'vulnerable-road-users',
-    icon: 'users',
+    id: 'sygnalizacja',
+    name: 'Sygnalizacja i sygnały kierującego',
+    slug: 'sygnalizacja',
+    icon: 'circle-dot',
+    category: 'basic',
     sortOrder: 7,
-    questionCount: 10,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
   },
   {
-    id: 'vehicle-handling',
-    name: 'Vehicle Handling',
-    slug: 'vehicle-handling',
-    icon: 'gauge',
+    id: 'pierwszenstwo',
+    name: 'Pierwszeństwo i skrzyżowania',
+    slug: 'pierwszenstwo',
+    icon: 'git-fork',
+    category: 'basic',
     sortOrder: 8,
-    questionCount: 10,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
   },
   {
-    id: 'documents',
-    name: 'Documents',
-    slug: 'documents',
-    icon: 'file-text',
+    id: 'wlaczanie-zmiana',
+    name: 'Włączanie się do ruchu i zmiana kierunku',
+    slug: 'wlaczanie-zmiana',
+    icon: 'corner-up-right',
+    category: 'basic',
     sortOrder: 9,
-    questionCount: 10,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
   },
   {
-    id: 'incidents',
-    name: 'Incidents',
-    slug: 'incidents',
-    icon: 'siren',
+    id: 'wyprzedzanie',
+    name: 'Wyprzedzanie, omijanie, wymijanie',
+    slug: 'wyprzedzanie',
+    icon: 'arrow-left-right',
+    category: 'basic',
     sortOrder: 10,
-    questionCount: 10,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
   },
   {
-    id: 'vehicle-loading',
-    name: 'Vehicle Loading',
-    slug: 'vehicle-loading',
-    icon: 'package',
+    id: 'predkosc',
+    name: 'Prędkość i odstępy',
+    slug: 'predkosc',
+    icon: 'gauge',
+    category: 'basic',
     sortOrder: 11,
-    questionCount: 10,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
   },
   {
-    id: 'road-conditions',
-    name: 'Road Conditions',
-    slug: 'road-conditions',
-    icon: 'cloud-rain',
+    id: 'zatrzymanie-postoj',
+    name: 'Zatrzymanie i postój',
+    slug: 'zatrzymanie-postoj',
+    icon: 'circle-parking',
+    category: 'basic',
     sortOrder: 12,
-    questionCount: 10,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
   },
   {
-    id: 'signals-and-controls',
-    name: 'Signals and Controls',
-    slug: 'signals-and-controls',
-    icon: 'traffic-cone',
-    sortOrder: 13,
-    questionCount: 10,
-  },
-  {
-    id: 'other-road-users',
-    name: 'Other Road Users',
-    slug: 'other-road-users',
+    id: 'piesi-rowerzysci',
+    name: 'Piesi, rowerzyści, przejazdy kolejowe',
+    slug: 'piesi-rowerzysci',
     icon: 'bike',
+    category: 'basic',
+    sortOrder: 13,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'sytuacje-szczegolne',
+    name: 'Sytuacje szczególne i trudne warunki',
+    slug: 'sytuacje-szczegolne',
+    icon: 'cloud-rain',
+    category: 'basic',
     sortOrder: 14,
-    questionCount: 10,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'pierwsza-pomoc',
+    name: 'Pierwsza pomoc',
+    slug: 'pierwsza-pomoc',
+    icon: 'heart-pulse',
+    category: 'basic',
+    sortOrder: 15,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'ekologia',
+    name: 'Ekologia i kultura jazdy',
+    slug: 'ekologia',
+    icon: 'leaf',
+    category: 'basic',
+    sortOrder: 16,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'technika-manewry',
+    name: 'Technika kierowania i manewry',
+    slug: 'technika-manewry',
+    icon: 'car',
+    category: 'specialist',
+    sortOrder: 17,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'warunki-techniczne',
+    name: 'Warunki techniczne pojazdu',
+    slug: 'warunki-techniczne',
+    icon: 'wrench',
+    category: 'specialist',
+    sortOrder: 18,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'wyposazenie',
+    name: 'Wyposażenie i obciążenie pojazdu',
+    slug: 'wyposazenie',
+    icon: 'package',
+    category: 'specialist',
+    sortOrder: 19,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'dokumenty',
+    name: 'Dokumenty i obowiązki kierującego',
+    slug: 'dokumenty',
+    icon: 'file-text',
+    category: 'specialist',
+    sortOrder: 20,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'przewoz',
+    name: 'Przewóz osób, ładunku i holowanie',
+    slug: 'przewoz',
+    icon: 'truck',
+    category: 'specialist',
+    sortOrder: 21,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
+    id: 'autostrady',
+    name: 'Autostrady i drogi ekspresowe',
+    slug: 'autostrady',
+    icon: 'milestone',
+    category: 'specialist',
+    sortOrder: 22,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
   },
 ];
 
@@ -259,7 +390,7 @@ const QUESTIONS: Question[] = [
   /* --- Road Signs ------------------------------------------------------- */
   {
     id: 'q-road-signs-01',
-    topicId: 'road-signs',
+    topicId: 'znaki-ostrzegawcze',
     type: 'single_choice',
     text: 'A road sign is triangular with a red border. What is it telling you?',
     options: [
@@ -277,7 +408,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-signs-02',
-    topicId: 'road-signs',
+    topicId: 'znaki-ostrzegawcze',
     type: 'single_choice',
     text: 'You come to a sign that is eight-sided with a red background. What must you do?',
     options: [
@@ -295,7 +426,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-signs-03',
-    topicId: 'road-signs',
+    topicId: 'znaki-ostrzegawcze',
     type: 'single_choice',
     text: 'Most circular signs with a red border are there to do what?',
     options: [
@@ -313,7 +444,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-signs-04',
-    topicId: 'road-signs',
+    topicId: 'znaki-ostrzegawcze',
     type: 'single_choice',
     text: 'What does a blue circular sign usually mean?',
     options: [
@@ -334,7 +465,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-signs-05',
-    topicId: 'road-signs',
+    topicId: 'znaki-ostrzegawcze',
     type: 'single_choice',
     text: 'A white circular sign with a single black diagonal stripe appears at the side of the road. What does it mean?',
     options: [
@@ -356,7 +487,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-road-signs-06',
-    topicId: 'road-signs',
+    topicId: 'znaki-ostrzegawcze',
     type: 'single_choice',
     text: 'What is the purpose of a blue rectangular road sign?',
     options: [
@@ -374,7 +505,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-signs-07',
-    topicId: 'road-signs',
+    topicId: 'znaki-ostrzegawcze',
     type: 'single_choice',
     text: 'You want to overtake, but there are double white lines along the middle of the road with the line nearest you solid. What must you do?',
     options: [
@@ -392,7 +523,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-signs-08',
-    topicId: 'road-signs',
+    topicId: 'znaki-ostrzegawcze',
     type: 'single_choice',
     text: 'You approach a yellow box junction and the road ahead is congested. What should you do?',
     options: [
@@ -410,7 +541,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-signs-09',
-    topicId: 'road-signs',
+    topicId: 'znaki-ostrzegawcze',
     type: 'single_choice',
     text: 'What do yellow zigzag lines on the road approaching a pedestrian crossing mean for a driver?',
     options: [
@@ -428,7 +559,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-signs-10',
-    topicId: 'road-signs',
+    topicId: 'znaki-ostrzegawcze',
     type: 'single_choice',
     text: 'A temporary sign at roadworks is triangular, red-bordered, and shows a symbol of a person with a shovel. What does it warn you of?',
     options: [
@@ -448,7 +579,7 @@ const QUESTIONS: Question[] = [
   /* --- Junctions -------------------------------------------------------- */
   {
     id: 'q-junctions-01',
-    topicId: 'junctions',
+    topicId: 'pierwszenstwo',
     type: 'single_choice',
     text: 'You are taking the first exit, to the left, at a roundabout. How should you approach it?',
     options: [
@@ -466,7 +597,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-junctions-02',
-    topicId: 'junctions',
+    topicId: 'pierwszenstwo',
     type: 'single_choice',
     text: 'You intend to take an exit past the twelve o’clock position at a roundabout. What is the normal procedure?',
     options: [
@@ -487,7 +618,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-junctions-03',
-    topicId: 'junctions',
+    topicId: 'pierwszenstwo',
     type: 'single_choice',
     text: 'What do broken white lines across the mouth of a side road mean?',
     options: [
@@ -505,7 +636,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-junctions-04',
-    topicId: 'junctions',
+    topicId: 'pierwszenstwo',
     type: 'single_choice',
     text: 'You reach a junction with a solid white line across your lane and an eight-sided sign. What must you do?',
     options: [
@@ -523,7 +654,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-junctions-05',
-    topicId: 'junctions',
+    topicId: 'pierwszenstwo',
     type: 'single_choice',
     text: 'You are waiting at crossroads to turn right and an oncoming vehicle is also turning right. Which arrangement usually gives both drivers the better view?',
     options: [
@@ -545,7 +676,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-junctions-06',
-    topicId: 'junctions',
+    topicId: 'pierwszenstwo',
     type: 'single_choice',
     text: 'You are approaching a mini-roundabout. How should you treat it?',
     options: [
@@ -563,7 +694,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-junctions-07',
-    topicId: 'junctions',
+    topicId: 'pierwszenstwo',
     type: 'single_choice',
     text: 'You reach a staggered junction where the road opposite is offset to the right. Which turn normally has priority over the other?',
     options: [
@@ -581,7 +712,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-junctions-08',
-    topicId: 'junctions',
+    topicId: 'pierwszenstwo',
     type: 'single_choice',
     text: 'The main signal at traffic lights is red, but a green filter arrow pointing left is also lit. What may you do?',
     options: [
@@ -599,7 +730,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-junctions-09',
-    topicId: 'junctions',
+    topicId: 'pierwszenstwo',
     type: 'single_choice',
     text: 'Parked vehicles are blocking your view as you emerge from a side road. What is the safest approach?',
     options: [
@@ -617,7 +748,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-junctions-10',
-    topicId: 'junctions',
+    topicId: 'pierwszenstwo',
     type: 'single_choice',
     text: 'You need to cross a dual carriageway from a side road, and the central reservation is too narrow for your car. What should you do?',
     options: [
@@ -637,7 +768,7 @@ const QUESTIONS: Question[] = [
   /* --- Motorways -------------------------------------------------------- */
   {
     id: 'q-motorways-01',
-    topicId: 'motorways',
+    topicId: 'autostrady',
     type: 'single_choice',
     text: 'What is the national speed limit for a car on a motorway?',
     options: [
@@ -655,7 +786,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-motorways-02',
-    topicId: 'motorways',
+    topicId: 'autostrady',
     type: 'single_choice',
     text: 'When may you drive on the hard shoulder of a motorway?',
     options: [
@@ -676,7 +807,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-motorways-03',
-    topicId: 'motorways',
+    topicId: 'autostrady',
     type: 'single_choice',
     text: 'Which of these is not allowed on a motorway?',
     options: [
@@ -694,7 +825,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-motorways-04',
-    topicId: 'motorways',
+    topicId: 'autostrady',
     type: 'single_choice',
     text: 'A red X is displayed on the overhead sign above your lane. What does it mean?',
     options: [
@@ -712,7 +843,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-motorways-05',
-    topicId: 'motorways',
+    topicId: 'autostrady',
     type: 'single_choice',
     text: 'How large a gap should you normally leave from the vehicle in front on a dry motorway?',
     options: [
@@ -734,7 +865,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-motorways-06',
-    topicId: 'motorways',
+    topicId: 'autostrady',
     type: 'single_choice',
     text: 'You are joining a motorway from a slip road. What should you do?',
     options: [
@@ -752,7 +883,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-motorways-07',
-    topicId: 'motorways',
+    topicId: 'autostrady',
     type: 'single_choice',
     text: 'On a smart motorway with all lanes running as normal lanes, how do you know the current speed limit?',
     options: [
@@ -770,7 +901,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-motorways-08',
-    topicId: 'motorways',
+    topicId: 'autostrady',
     type: 'single_choice',
     text: 'Your vehicle breaks down on a motorway with no hard shoulder available. What should you do?',
     options: [
@@ -788,7 +919,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-motorways-09',
-    topicId: 'motorways',
+    topicId: 'autostrady',
     type: 'single_choice',
     text: 'You want to leave the motorway at the next exit. When should you move into the left-hand lane?',
     options: [
@@ -806,7 +937,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-motorways-10',
-    topicId: 'motorways',
+    topicId: 'autostrady',
     type: 'single_choice',
     text: 'You are travelling in the middle lane of a three-lane motorway with no traffic to your left. What should you do?',
     options: [
@@ -826,7 +957,7 @@ const QUESTIONS: Question[] = [
   /* --- Hazard Awareness ------------------------------------------------- */
   {
     id: 'q-hazard-awareness-01',
-    topicId: 'hazard-awareness',
+    topicId: 'sytuacje-szczegolne',
     type: 'single_choice',
     text: 'Overall stopping distance is made up of which two parts?',
     options: [
@@ -844,7 +975,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-hazard-awareness-02',
-    topicId: 'hazard-awareness',
+    topicId: 'sytuacje-szczegolne',
     type: 'single_choice',
     text: 'In good dry conditions, what is the typical overall stopping distance for a car travelling at 70 mph?',
     options: [
@@ -862,7 +993,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-hazard-awareness-03',
-    topicId: 'hazard-awareness',
+    topicId: 'sytuacje-szczegolne',
     type: 'single_choice',
     text: 'You begin to feel drowsy on a long motorway drive. What should you do?',
     options: [
@@ -880,7 +1011,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-hazard-awareness-04',
-    topicId: 'hazard-awareness',
+    topicId: 'sytuacje-szczegolne',
     type: 'single_choice',
     text: 'What is the recommended minimum time gap to leave from the vehicle in front in good conditions?',
     options: [
@@ -899,7 +1030,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-hazard-awareness-05',
-    topicId: 'hazard-awareness',
+    topicId: 'sytuacje-szczegolne',
     type: 'single_choice',
     text: 'How does wet weather affect your overall stopping distance compared with a dry road?',
     options: [
@@ -917,7 +1048,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-hazard-awareness-06',
-    topicId: 'hazard-awareness',
+    topicId: 'sytuacje-szczegolne',
     type: 'single_choice',
     text: 'You feel the steering go suddenly light on a wet road at speed. What is this a sign of?',
     options: [
@@ -935,7 +1066,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-hazard-awareness-07',
-    topicId: 'hazard-awareness',
+    topicId: 'sytuacje-szczegolne',
     type: 'single_choice',
     text: 'You are driving and a call comes in on your hands-free phone. What is the safest approach to hazard awareness?',
     options: [
@@ -953,7 +1084,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-hazard-awareness-08',
-    topicId: 'hazard-awareness',
+    topicId: 'sytuacje-szczegolne',
     type: 'single_choice',
     text: 'You are driving past a row of parked cars near a school at home-time. What should you anticipate?',
     options: [
@@ -971,7 +1102,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-hazard-awareness-09',
-    topicId: 'hazard-awareness',
+    topicId: 'sytuacje-szczegolne',
     type: 'single_choice',
     text: 'On a long motorway journey, how often is it recommended that you take a break to stay alert?',
     options: [
@@ -989,7 +1120,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-hazard-awareness-10',
-    topicId: 'hazard-awareness',
+    topicId: 'sytuacje-szczegolne',
     type: 'single_choice',
     text: 'Fog has reduced visibility to less than 100 metres. What should you do?',
     options: [
@@ -1009,7 +1140,7 @@ const QUESTIONS: Question[] = [
   /* --- Vehicle Safety --------------------------------------------------- */
   {
     id: 'q-vehicle-safety-01',
-    topicId: 'vehicle-safety',
+    topicId: 'warunki-techniczne',
     type: 'single_choice',
     text: 'What is the minimum legal tread depth for a car tyre across the central three-quarters of its width?',
     options: [
@@ -1027,7 +1158,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-safety-02',
-    topicId: 'vehicle-safety',
+    topicId: 'warunki-techniczne',
     type: 'single_choice',
     text: 'When does a car first need an MOT test?',
     options: [
@@ -1045,7 +1176,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-safety-03',
-    topicId: 'vehicle-safety',
+    topicId: 'warunki-techniczne',
     type: 'single_choice',
     text: 'What is the legal alcohol limit for drivers in England and Wales when measured in breath?',
     options: [
@@ -1063,7 +1194,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-safety-04',
-    topicId: 'vehicle-safety',
+    topicId: 'warunki-techniczne',
     type: 'single_choice',
     text: 'You are carrying a child under three years old in the front seat of your car. What must you use?',
     options: [
@@ -1082,7 +1213,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-vehicle-safety-05',
-    topicId: 'vehicle-safety',
+    topicId: 'warunki-techniczne',
     type: 'single_choice',
     text: 'You must be able to read a vehicle number plate from what distance to meet the standard eyesight requirement?',
     options: [
@@ -1100,7 +1231,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-safety-06',
-    topicId: 'vehicle-safety',
+    topicId: 'warunki-techniczne',
     type: 'single_choice',
     text: 'Before a long journey, why should you check your tyre pressures when the tyres are cold?',
     options: [
@@ -1118,7 +1249,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-safety-07',
-    topicId: 'vehicle-safety',
+    topicId: 'warunki-techniczne',
     type: 'single_choice',
     text: 'Your windscreen washer bottle runs dry during a journey on a salted, muddy road. What is the main risk?',
     options: [
@@ -1136,7 +1267,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-safety-08',
-    topicId: 'vehicle-safety',
+    topicId: 'warunki-techniczne',
     type: 'single_choice',
     text: 'You have been prescribed a medicine with a label warning it may cause drowsiness. What should you do before driving?',
     options: [
@@ -1154,7 +1285,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-safety-09',
-    topicId: 'vehicle-safety',
+    topicId: 'warunki-techniczne',
     type: 'single_choice',
     text: 'All passengers, including those in the rear, are required by law to do what while the car is moving?',
     options: [
@@ -1172,7 +1303,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-safety-10',
-    topicId: 'vehicle-safety',
+    topicId: 'warunki-techniczne',
     type: 'single_choice',
     text: 'Your exhaust is producing thick blue or black smoke. What does this usually indicate?',
     options: [
@@ -1192,7 +1323,7 @@ const QUESTIONS: Question[] = [
   /* --- Rules of the Road ------------------------------------------------ */
   {
     id: 'q-rules-of-the-road-01',
-    topicId: 'rules-of-the-road',
+    topicId: 'zasady-ogolne',
     type: 'single_choice',
     text: 'You are driving on a road with street lights but no speed limit signs. What limit applies?',
     options: [
@@ -1210,7 +1341,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-rules-of-the-road-02',
-    topicId: 'rules-of-the-road',
+    topicId: 'zasady-ogolne',
     type: 'single_choice',
     text: 'What is the national speed limit for a car on a single carriageway road?',
     options: [
@@ -1228,7 +1359,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-rules-of-the-road-03',
-    topicId: 'rules-of-the-road',
+    topicId: 'zasady-ogolne',
     type: 'single_choice',
     text: 'What is the national speed limit for a car on a dual carriageway?',
     options: [
@@ -1247,7 +1378,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-rules-of-the-road-04',
-    topicId: 'rules-of-the-road',
+    topicId: 'zasady-ogolne',
     type: 'single_choice',
     text: 'You see double yellow lines along the edge of the road. What do they mean?',
     options: [
@@ -1265,7 +1396,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-rules-of-the-road-05',
-    topicId: 'rules-of-the-road',
+    topicId: 'zasady-ogolne',
     type: 'single_choice',
     text: 'You enter a one-way street. How can you tell which lane to use if you plan to turn right further along?',
     options: [
@@ -1283,7 +1414,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-rules-of-the-road-06',
-    topicId: 'rules-of-the-road',
+    topicId: 'zasady-ogolne',
     type: 'single_choice',
     text: 'You are stationary in traffic with the engine running. Is it legal to use a hand-held mobile phone?',
     options: [
@@ -1301,7 +1432,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-rules-of-the-road-07',
-    topicId: 'rules-of-the-road',
+    topicId: 'zasady-ogolne',
     type: 'single_choice',
     text: 'You are approaching a zebra crossing where a pedestrian is waiting to cross. Where must you avoid overtaking?',
     options: [
@@ -1319,7 +1450,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-rules-of-the-road-08',
-    topicId: 'rules-of-the-road',
+    topicId: 'zasady-ogolne',
     type: 'single_choice',
     text: 'A bus at a bus stop ahead signals to pull out into traffic. What should you do?',
     options: [
@@ -1337,7 +1468,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-rules-of-the-road-09',
-    topicId: 'rules-of-the-road',
+    topicId: 'zasady-ogolne',
     type: 'single_choice',
     text: 'You approach a level crossing and the amber light begins to flash, followed by red. What must you do?',
     options: [
@@ -1355,7 +1486,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-rules-of-the-road-10',
-    topicId: 'rules-of-the-road',
+    topicId: 'zasady-ogolne',
     type: 'single_choice',
     text: 'You hear a siren and see flashing blue lights approaching from behind. What should you do?',
     options: [
@@ -1375,7 +1506,7 @@ const QUESTIONS: Question[] = [
   /* --- Vulnerable Road Users -------------------------------------------- */
   {
     id: 'q-vulnerable-road-users-01',
-    topicId: 'vulnerable-road-users',
+    topicId: 'piesi-rowerzysci',
     type: 'single_choice',
     text: 'You are about to overtake a cyclist at around 30 mph. How much room should you allow?',
     options: [
@@ -1393,7 +1524,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vulnerable-road-users-02',
-    topicId: 'vulnerable-road-users',
+    topicId: 'piesi-rowerzysci',
     type: 'single_choice',
     text: 'You are following a horse and rider on a country lane. How should you pass?',
     options: [
@@ -1411,7 +1542,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vulnerable-road-users-03',
-    topicId: 'vulnerable-road-users',
+    topicId: 'piesi-rowerzysci',
     type: 'single_choice',
     text: 'An elderly pedestrian is crossing slowly in front of you at the junction you are turning into. What should you do?',
     options: [
@@ -1430,7 +1561,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-vulnerable-road-users-04',
-    topicId: 'vulnerable-road-users',
+    topicId: 'piesi-rowerzysci',
     type: 'single_choice',
     text: 'You are turning at a junction and a motorcyclist is approaching. Why should you look especially carefully before turning?',
     options: [
@@ -1448,7 +1579,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vulnerable-road-users-05',
-    topicId: 'vulnerable-road-users',
+    topicId: 'piesi-rowerzysci',
     type: 'single_choice',
     text: 'A school crossing patrol steps out and displays a "Stop, children crossing" sign. What must you do?',
     options: [
@@ -1466,7 +1597,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vulnerable-road-users-06',
-    topicId: 'vulnerable-road-users',
+    topicId: 'piesi-rowerzysci',
     type: 'single_choice',
     text: 'You see a pedestrian carrying a white stick with a red band, or being guided by a dog wearing a distinctive harness. What does this indicate?',
     options: [
@@ -1484,7 +1615,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vulnerable-road-users-07',
-    topicId: 'vulnerable-road-users',
+    topicId: 'piesi-rowerzysci',
     type: 'single_choice',
     text: 'You are behind a driver clearly displaying a green "P" plate. What does this tell you?',
     options: [
@@ -1502,7 +1633,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vulnerable-road-users-08',
-    topicId: 'vulnerable-road-users',
+    topicId: 'piesi-rowerzysci',
     type: 'single_choice',
     text: 'You approach a mobility scooter travelling on the road. How should you treat it?',
     options: [
@@ -1520,7 +1651,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vulnerable-road-users-09',
-    topicId: 'vulnerable-road-users',
+    topicId: 'piesi-rowerzysci',
     type: 'single_choice',
     text: 'You are driving along a country lane with no pavement and see pedestrians walking in the road ahead, facing away from you. What should you expect?',
     options: [
@@ -1538,7 +1669,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vulnerable-road-users-10',
-    topicId: 'vulnerable-road-users',
+    topicId: 'piesi-rowerzysci',
     type: 'single_choice',
     text: 'At traffic lights you see a marked cycle box (advanced stop line) ahead of the normal stop line. What should you do when the light is red?',
     options: [
@@ -1558,7 +1689,7 @@ const QUESTIONS: Question[] = [
   /* --- Vehicle Handling ------------------------------------------------- */
   {
     id: 'q-vehicle-handling-01',
-    topicId: 'vehicle-handling',
+    topicId: 'technika-manewry',
     type: 'single_choice',
     text: 'When may you use your rear fog lights?',
     options: [
@@ -1576,7 +1707,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-handling-02',
-    topicId: 'vehicle-handling',
+    topicId: 'technika-manewry',
     type: 'single_choice',
     text: 'How does a wet road affect your stopping distance?',
     options: [
@@ -1594,7 +1725,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-handling-03',
-    topicId: 'vehicle-handling',
+    topicId: 'technika-manewry',
     type: 'single_choice',
     text: 'Why is coasting downhill with the clutch held down a bad idea?',
     options: [
@@ -1613,7 +1744,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-vehicle-handling-04',
-    topicId: 'vehicle-handling',
+    topicId: 'technika-manewry',
     type: 'single_choice',
     text: 'The rear of your car begins to skid to the right. What is the correct initial response?',
     options: [
@@ -1631,7 +1762,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-handling-05',
-    topicId: 'vehicle-handling',
+    topicId: 'technika-manewry',
     type: 'single_choice',
     text: 'You are driving down a long, steep hill. Why should you select a lower gear rather than relying on the brakes alone?',
     options: [
@@ -1649,7 +1780,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-handling-06',
-    topicId: 'vehicle-handling',
+    topicId: 'technika-manewry',
     type: 'single_choice',
     text: 'Your car has ABS and you need to brake hard in an emergency. What is the correct technique?',
     options: [
@@ -1667,7 +1798,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-handling-07',
-    topicId: 'vehicle-handling',
+    topicId: 'technika-manewry',
     type: 'single_choice',
     text: 'You are overtaking a high-sided lorry on a motorway in strong side winds. What should you be ready for?',
     options: [
@@ -1685,7 +1816,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-handling-08',
-    topicId: 'vehicle-handling',
+    topicId: 'technika-manewry',
     type: 'single_choice',
     text: 'You are moving off in snow and the driving wheels are starting to spin. What should you do?',
     options: [
@@ -1703,7 +1834,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-handling-09',
-    topicId: 'vehicle-handling',
+    topicId: 'technika-manewry',
     type: 'single_choice',
     text: 'When is the correct time to reduce your speed for a bend in the road?',
     options: [
@@ -1721,7 +1852,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-handling-10',
-    topicId: 'vehicle-handling',
+    topicId: 'technika-manewry',
     type: 'single_choice',
     text: 'Before reversing your car around a corner, what should you do first?',
     options: [
@@ -1741,7 +1872,7 @@ const QUESTIONS: Question[] = [
   /* --- Documents -------------------------------------------------------- */
   {
     id: 'q-documents-01',
-    topicId: 'documents',
+    topicId: 'dokumenty',
     type: 'single_choice',
     text: 'What is the minimum level of insurance you must have to drive on a public road?',
     options: [
@@ -1759,7 +1890,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-documents-02',
-    topicId: 'documents',
+    topicId: 'dokumenty',
     type: 'single_choice',
     text: 'How long is a photocard driving licence normally valid before it must be renewed?',
     options: [
@@ -1777,7 +1908,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-documents-03',
-    topicId: 'documents',
+    topicId: 'dokumenty',
     type: 'single_choice',
     text: 'Which of these must you tell the DVLA about?',
     options: [
@@ -1799,7 +1930,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-documents-04',
-    topicId: 'documents',
+    topicId: 'dokumenty',
     type: 'single_choice',
     text: 'You sell your car. What must you do with the Vehicle Registration Certificate (V5C)?',
     options: [
@@ -1817,7 +1948,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-documents-05',
-    topicId: 'documents',
+    topicId: 'dokumenty',
     type: 'single_choice',
     text: 'As a provisional licence holder, who is allowed to supervise you while driving a car?',
     options: [
@@ -1835,7 +1966,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-documents-06',
-    topicId: 'documents',
+    topicId: 'dokumenty',
     type: 'single_choice',
     text: 'When must L plates (or D plates in Wales) be displayed on a car?',
     options: [
@@ -1853,7 +1984,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-documents-07',
-    topicId: 'documents',
+    topicId: 'dokumenty',
     type: 'single_choice',
     text: 'You are not going to use or keep your car on the public road for a while. What must you do if you do not have valid insurance and tax on it?',
     options: [
@@ -1871,7 +2002,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-documents-08',
-    topicId: 'documents',
+    topicId: 'dokumenty',
     type: 'single_choice',
     text: 'You are planning to drive your own car in several EU countries. What is it sensible to check with your insurer beforehand?',
     options: [
@@ -1889,7 +2020,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-documents-09',
-    topicId: 'documents',
+    topicId: 'dokumenty',
     type: 'single_choice',
     text: 'A police officer asks to see your documents but you do not have them with you. What normally happens?',
     options: [
@@ -1907,7 +2038,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-documents-10',
-    topicId: 'documents',
+    topicId: 'dokumenty',
     type: 'single_choice',
     text: 'Your car fails its MOT test with a "dangerous" defect. Can you still legally drive it away from the test centre?',
     options: [
@@ -1927,7 +2058,7 @@ const QUESTIONS: Question[] = [
   /* --- Incidents -------------------------------------------------------- */
   {
     id: 'q-incidents-01',
-    topicId: 'incidents',
+    topicId: 'pierwsza-pomoc',
     type: 'single_choice',
     text: 'You arrive at the scene of a collision before the emergency services. What should you do first?',
     options: [
@@ -1945,7 +2076,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-incidents-02',
-    topicId: 'incidents',
+    topicId: 'pierwsza-pomoc',
     type: 'single_choice',
     text: 'An adult casualty is unconscious and not breathing. What should you do?',
     options: [
@@ -1966,7 +2097,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-incidents-03',
-    topicId: 'incidents',
+    topicId: 'pierwsza-pomoc',
     type: 'single_choice',
     text: 'A motorcyclist has come off and is lying injured in the road. What should you do about the helmet?',
     options: [
@@ -1988,7 +2119,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-incidents-04',
-    topicId: 'incidents',
+    topicId: 'pierwsza-pomoc',
     type: 'single_choice',
     text: 'Smoke starts coming from under the bonnet after a collision. What should you do?',
     options: [
@@ -2006,7 +2137,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-incidents-05',
-    topicId: 'incidents',
+    topicId: 'pierwsza-pomoc',
     type: 'single_choice',
     text: 'You are involved in a minor collision but the other driver leaves without exchanging details. What should you do?',
     options: [
@@ -2024,7 +2155,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-incidents-06',
-    topicId: 'incidents',
+    topicId: 'pierwsza-pomoc',
     type: 'single_choice',
     text: 'A casualty at the scene is conscious but shows signs of shock — pale, cold, and sweating. What should you do?',
     options: [
@@ -2042,7 +2173,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-incidents-07',
-    topicId: 'incidents',
+    topicId: 'pierwsza-pomoc',
     type: 'single_choice',
     text: 'You notice fuel has spilled across the road at the scene of an incident. What is the main hazard this creates?',
     options: [
@@ -2060,7 +2191,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-incidents-08',
-    topicId: 'incidents',
+    topicId: 'pierwsza-pomoc',
     type: 'single_choice',
     text: 'A casualty has a wound that is bleeding heavily. What is the first thing you should do, once you have called for help?',
     options: [
@@ -2078,7 +2209,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-incidents-09',
-    topicId: 'incidents',
+    topicId: 'pierwsza-pomoc',
     type: 'single_choice',
     text: 'Your car breaks down on a busy ordinary road (not a motorway) and you cannot move it off the carriageway. What should you do?',
     options: [
@@ -2096,7 +2227,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-incidents-10',
-    topicId: 'incidents',
+    topicId: 'pierwsza-pomoc',
     type: 'single_choice',
     text: 'At the scene of a collision, when is it appropriate to move an injured casualty?',
     options: [
@@ -2116,7 +2247,7 @@ const QUESTIONS: Question[] = [
   /* --- Vehicle Loading -------------------------------------------------- */
   {
     id: 'q-vehicle-loading-01',
-    topicId: 'vehicle-loading',
+    topicId: 'przewoz',
     type: 'single_choice',
     text: 'Who is responsible for making sure a vehicle is not overloaded and that the load is secure?',
     options: [
@@ -2134,7 +2265,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-loading-02',
-    topicId: 'vehicle-loading',
+    topicId: 'przewoz',
     type: 'single_choice',
     text: 'How does a heavy load change the way a car drives?',
     options: [
@@ -2152,7 +2283,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-loading-03',
-    topicId: 'vehicle-loading',
+    topicId: 'przewoz',
     type: 'single_choice',
     text: 'You are towing a caravan and your normal mirrors do not show the road behind it. What should you do?',
     options: [
@@ -2171,7 +2302,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-vehicle-loading-04',
-    topicId: 'vehicle-loading',
+    topicId: 'przewoz',
     type: 'single_choice',
     text: 'You are loading a roof rack. How should heavy items generally be positioned?',
     options: [
@@ -2189,7 +2320,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-loading-05',
-    topicId: 'vehicle-loading',
+    topicId: 'przewoz',
     type: 'single_choice',
     text: 'You are towing a trailer on a single carriageway road. How does the speed limit compare with driving the car alone?',
     options: [
@@ -2207,7 +2338,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-loading-06',
-    topicId: 'vehicle-loading',
+    topicId: 'przewoz',
     type: 'single_choice',
     text: 'You are carrying a full load of passengers and luggage. Why might you need to adjust your tyre pressures?',
     options: [
@@ -2225,7 +2356,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-loading-07',
-    topicId: 'vehicle-loading',
+    topicId: 'przewoz',
     type: 'single_choice',
     text: 'You have loose, heavy items in the boot of a hatchback with no parcel shelf. What is the main risk in a sudden stop?',
     options: [
@@ -2243,7 +2374,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-loading-08',
-    topicId: 'vehicle-loading',
+    topicId: 'przewoz',
     type: 'single_choice',
     text: 'Fitting a large roof box for a long journey is likely to have what effect on your car?',
     options: [
@@ -2261,7 +2392,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-loading-09',
-    topicId: 'vehicle-loading',
+    topicId: 'przewoz',
     type: 'single_choice',
     text: 'You have placed bags on the rear parcel shelf of your car. What should you check before setting off?',
     options: [
@@ -2279,7 +2410,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-vehicle-loading-10',
-    topicId: 'vehicle-loading',
+    topicId: 'przewoz',
     type: 'single_choice',
     text: 'While towing, the caravan begins to snake from side to side. What should you do?',
     options: [
@@ -2299,7 +2430,7 @@ const QUESTIONS: Question[] = [
   /* --- Road Conditions -------------------------------------------------- */
   {
     id: 'q-road-conditions-01',
-    topicId: 'road-conditions',
+    topicId: 'predkosc',
     type: 'single_choice',
     text: 'The steering suddenly feels very light on a cold day. What is this most likely to mean?',
     options: [
@@ -2317,7 +2448,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-conditions-02',
-    topicId: 'road-conditions',
+    topicId: 'predkosc',
     type: 'single_choice',
     text: 'You have to drive through a stretch of standing flood water. How should you do it?',
     options: [
@@ -2338,7 +2469,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-conditions-03',
-    topicId: 'road-conditions',
+    topicId: 'predkosc',
     type: 'single_choice',
     text: 'You are crossing an exposed bridge in a strong side wind. What should you be ready for?',
     options: [
@@ -2360,7 +2491,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-road-conditions-04',
-    topicId: 'road-conditions',
+    topicId: 'predkosc',
     type: 'single_choice',
     text: 'You are driving at night on an unlit road with an oncoming vehicle approaching. What should you do with your headlights?',
     options: [
@@ -2378,7 +2509,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-conditions-05',
-    topicId: 'road-conditions',
+    topicId: 'predkosc',
     type: 'single_choice',
     text: 'You are driving directly into low, bright sun and finding it hard to see. What should you do?',
     options: [
@@ -2396,7 +2527,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-conditions-06',
-    topicId: 'road-conditions',
+    topicId: 'predkosc',
     type: 'single_choice',
     text: 'You see a sign warning of loose chippings on a newly surfaced road. What should you do?',
     options: [
@@ -2414,7 +2545,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-conditions-07',
-    topicId: 'road-conditions',
+    topicId: 'predkosc',
     type: 'single_choice',
     text: 'It is autumn and the road is covered in fallen wet leaves. How should you treat this surface?',
     options: [
@@ -2432,7 +2563,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-conditions-08',
-    topicId: 'road-conditions',
+    topicId: 'predkosc',
     type: 'single_choice',
     text: 'You have just driven through a ford or deep puddle. What should you do afterwards?',
     options: [
@@ -2450,7 +2581,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-conditions-09',
-    topicId: 'road-conditions',
+    topicId: 'predkosc',
     type: 'single_choice',
     text: 'Heavy rain on the motorway is throwing up spray that reduces visibility for traffic around you. What should you do?',
     options: [
@@ -2468,7 +2599,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-road-conditions-10',
-    topicId: 'road-conditions',
+    topicId: 'predkosc',
     type: 'single_choice',
     text: 'You spot a deep pothole in your lane just before you reach it. What is the safest response?',
     options: [
@@ -2488,7 +2619,7 @@ const QUESTIONS: Question[] = [
   /* --- Signals and Controls --------------------------------------------- */
   {
     id: 'q-signals-and-controls-01',
-    topicId: 'signals-and-controls',
+    topicId: 'sygnalizacja',
     type: 'single_choice',
     text: 'When should you signal?',
     options: [
@@ -2509,7 +2640,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-signals-and-controls-02',
-    topicId: 'signals-and-controls',
+    topicId: 'sygnalizacja',
     type: 'single_choice',
     text: 'A driver coming the other way flashes their headlights at you. What does this mean according to the Highway Code?',
     options: [
@@ -2527,7 +2658,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-signals-and-controls-03',
-    topicId: 'signals-and-controls',
+    topicId: 'sygnalizacja',
     type: 'single_choice',
     text: 'You brake hard and feel the pedal pulsing under your foot as the anti-lock braking system works. What should you do?',
     options: [
@@ -2549,7 +2680,7 @@ const QUESTIONS: Question[] = [
 
   {
     id: 'q-signals-and-controls-04',
-    topicId: 'signals-and-controls',
+    topicId: 'sygnalizacja',
     type: 'single_choice',
     text: 'A traffic light shows steady amber. What must you do?',
     options: [
@@ -2567,7 +2698,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-signals-and-controls-05',
-    topicId: 'signals-and-controls',
+    topicId: 'sygnalizacja',
     type: 'single_choice',
     text: 'A police officer is directing traffic at a junction with hand signals, while the traffic lights are also operating. Which do you follow?',
     options: [
@@ -2585,7 +2716,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-signals-and-controls-06',
-    topicId: 'signals-and-controls',
+    topicId: 'sygnalizacja',
     type: 'single_choice',
     text: 'Your brake lights have stopped working and you need to slow down on a busy road before you can get them fixed. What backup signal can you give?',
     options: [
@@ -2603,7 +2734,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-signals-and-controls-07',
-    topicId: 'signals-and-controls',
+    topicId: 'sygnalizacja',
     type: 'single_choice',
     text: 'When is it acceptable to sound your horn while your vehicle is stationary in traffic?',
     options: [
@@ -2621,7 +2752,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-signals-and-controls-08',
-    topicId: 'signals-and-controls',
+    topicId: 'sygnalizacja',
     type: 'single_choice',
     text: 'A red warning light shaped like an oil can lights up on your dashboard while driving. What should you do?',
     options: [
@@ -2639,7 +2770,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-signals-and-controls-09',
-    topicId: 'signals-and-controls',
+    topicId: 'sygnalizacja',
     type: 'single_choice',
     text: 'At a temporary roadworks site, a worker is manually controlling traffic with a "stop/go" sign. If it conflicts with a temporary traffic light nearby, which should you obey?',
     options: [
@@ -2657,7 +2788,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-signals-and-controls-10',
-    topicId: 'signals-and-controls',
+    topicId: 'sygnalizacja',
     type: 'single_choice',
     text: 'After completing a turn, you notice your indicator has not self-cancelled and is still flashing. What should you do?',
     options: [
@@ -2677,7 +2808,7 @@ const QUESTIONS: Question[] = [
   /* --- Other Road Users -------------------------------------------------- */
   {
     id: 'q-other-road-users-01',
-    topicId: 'other-road-users',
+    topicId: 'wyprzedzanie',
     type: 'single_choice',
     text: 'A bus at a bus stop ahead of you signals to pull out into the traffic. What should you do?',
     options: [
@@ -2695,7 +2826,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-other-road-users-02',
-    topicId: 'other-road-users',
+    topicId: 'wyprzedzanie',
     type: 'single_choice',
     text: 'A long lorry ahead of you is signalling left but has moved out towards the centre of the road. Why?',
     options: [
@@ -2716,7 +2847,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-other-road-users-03',
-    topicId: 'other-road-users',
+    topicId: 'wyprzedzanie',
     type: 'single_choice',
     text: 'You are on a roundabout and a long vehicle in the left-hand lane is signalling to continue round to the right. What should you do?',
     options: [
@@ -2734,7 +2865,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-other-road-users-04',
-    topicId: 'other-road-users',
+    topicId: 'wyprzedzanie',
     type: 'single_choice',
     text: 'You are driving in a town with tram tracks running along the road. Why should you take extra care?',
     options: [
@@ -2752,7 +2883,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-other-road-users-05',
-    topicId: 'other-road-users',
+    topicId: 'wyprzedzanie',
     type: 'single_choice',
     text: 'You are behind a slow-moving tractor on a narrow country road with no safe place to overtake. What should you do?',
     options: [
@@ -2770,7 +2901,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-other-road-users-06',
-    topicId: 'other-road-users',
+    topicId: 'wyprzedzanie',
     type: 'single_choice',
     text: 'An articulated lorry ahead of you is turning left into a narrow side road and has swung out to the right first. What should you do?',
     options: [
@@ -2788,7 +2919,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-other-road-users-07',
-    topicId: 'other-road-users',
+    topicId: 'wyprzedzanie',
     type: 'single_choice',
     text: 'You are following a taxi that pulls up at the kerb ahead of you. What should you be ready for?',
     options: [
@@ -2806,7 +2937,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-other-road-users-08',
-    topicId: 'other-road-users',
+    topicId: 'wyprzedzanie',
     type: 'single_choice',
     text: 'You are behind a car clearly marked as a driving school vehicle with dual controls. It hesitates at a junction. What should you do?',
     options: [
@@ -2824,7 +2955,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-other-road-users-09',
-    topicId: 'other-road-users',
+    topicId: 'wyprzedzanie',
     type: 'single_choice',
     text: 'A cyclist ahead of you is approaching a roundabout and stays in the left-hand lane while signalling to go straight across, past the first exit. What should you do?',
     options: [
@@ -2842,7 +2973,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'q-other-road-users-10',
-    topicId: 'other-road-users',
+    topicId: 'wyprzedzanie',
     type: 'single_choice',
     text: 'You see a slow-moving vehicle ahead with an amber flashing beacon, indicating a wide or oversized load. What should you do?',
     options: [
@@ -2863,6 +2994,34 @@ const QUESTIONS: Question[] = [
 // See the comment on POLAND.questionCount above — this keeps the
 // country picker's "N questions available" honest without hand-maintaining
 // a second number that drifts every time the bank grows.
+/**
+ * Stamp class and weight onto the seed questions.
+ *
+ * Done in code rather than on 140 literals because this bank is demo content
+ * that the official catalogue will replace wholesale — the real one ships these
+ * fields per question. What matters here is only that every (class, weight)
+ * bucket the paper generator draws from is non-empty, so the mechanics can be
+ * exercised before the real bank exists.
+ *
+ * The pattern gives 5 x 3pt, 3 x 2pt and 2 x 1pt per ten questions, which is the
+ * ratio the exam uses for its basic half (10:6:4).
+ */
+const POINT_PATTERN = [3, 3, 3, 3, 3, 2, 2, 2, 1, 1];
+const seenPerTopic: Record<string, number> = {};
+for (const question of QUESTIONS) {
+  const topic = TOPICS.find((t) => t.id === question.topicId);
+  const index = (seenPerTopic[question.topicId] ?? 0);
+  seenPerTopic[question.topicId] = index + 1;
+  question.category = topic?.category ?? 'basic';
+  question.points = POINT_PATTERN[index % POINT_PATTERN.length];
+}
+
+// questionCount per topic, from the questions that actually reference it —
+// a hand-maintained number drifts the moment the bank grows.
+for (const topic of TOPICS) {
+  topic.questionCount = QUESTIONS.filter((q) => q.topicId === topic.id).length;
+}
+
 POLAND.questionCount = QUESTIONS.length;
 
 /* -------------------------------------------------------------------------- */

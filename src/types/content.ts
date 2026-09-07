@@ -51,6 +51,18 @@ export interface MockTestConfig {
    */
   composition?: Record<QuestionCategory, number>;
   /**
+   * How many questions of each weight go into each class of the paper, keyed by
+   * points as a string. Poland fixes both grids by regulation:
+   *
+   *   basic       10 x 3pt + 6 x 2pt + 4 x 1pt = 46
+   *   specialist   6 x 3pt + 4 x 2pt + 2 x 1pt = 28   -> 74 in total
+   *
+   * Without this a paper sampled at random would not add up to `maxPoints`, and
+   * a pass mark expressed in points would mean nothing. Absent = weights are not
+   * fixed, sample the class freely.
+   */
+  weights?: Record<QuestionCategory, Record<string, number>>;
+  /**
    * Whether answered questions can be revisited before submitting. Poland
    * forbids it, which removes the review screen and the Previous button —
    * not as a design preference but because the exam has no such step.
@@ -85,6 +97,19 @@ export interface Topic {
   icon: string;
   sortOrder: number;
   questionCount: number;
+  /**
+   * Which class of question this topic holds.
+   *
+   * Poland splits its bank into 16 basic sections and 6 specialist ones, and the
+   * two are not interchangeable: a basic topic is answered TAK/NIE and carries
+   * general road-safety knowledge, a specialist one has three lettered options
+   * and covers what is specific to the licence category. Listing all 22 as one
+   * flat menu hides the thing the candidate most needs to know — which half of
+   * the paper they are weak in.
+   *
+   * Optional so a single-class bank (the British one) stays valid.
+   */
+  category?: QuestionCategory;
 }
 
 export interface AnswerOption {

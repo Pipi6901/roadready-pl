@@ -18,6 +18,12 @@ export const EN = {
   'tabs.practice': 'Practice',
   'tabs.profile': 'Profile',
 
+  'learn.title': 'Topics',
+  'learn.basicSection': 'Basic questions',
+  'learn.basicHint': '20 of the 32 on the paper · answered TAK or NIE',
+  'learn.specialistSection': 'Specialist questions',
+  'learn.specialistHint': '12 of the 32 on the paper · three options A / B / C',
+
   'common.cancel': 'Cancel',
   'common.delete': 'Delete',
   'common.reset': 'Reset',
@@ -110,6 +116,12 @@ const PL: Catalogue = {
   'tabs.practice': 'Trening',
   'tabs.profile': 'Profil',
 
+  'learn.title': 'Działy',
+  'learn.basicSection': 'Pytania podstawowe',
+  'learn.basicHint': '20 z 32 na egzaminie · odpowiedź TAK albo NIE',
+  'learn.specialistSection': 'Pytania specjalistyczne',
+  'learn.specialistHint': '12 z 32 na egzaminie · trzy odpowiedzi A / B / C',
+
   'common.cancel': 'Anuluj',
   'common.delete': 'Usuń',
   'common.reset': 'Zresetuj',
@@ -198,6 +210,12 @@ const UK: Catalogue = {
   'tabs.learn': 'Навчання',
   'tabs.practice': 'Практика',
   'tabs.profile': 'Профіль',
+
+  'learn.title': 'Розділи',
+  'learn.basicSection': 'Основні питання',
+  'learn.basicHint': '20 із 32 на іспиті · відповідь TAK або NIE',
+  'learn.specialistSection': 'Спеціалізовані питання',
+  'learn.specialistHint': '12 із 32 на іспиті · три варіанти A / B / C',
 
   'common.cancel': 'Скасувати',
   'common.delete': 'Видалити',
@@ -288,6 +306,12 @@ const RU: Catalogue = {
   'tabs.practice': 'Практика',
   'tabs.profile': 'Профиль',
 
+  'learn.title': 'Разделы',
+  'learn.basicSection': 'Основные вопросы',
+  'learn.basicHint': '20 из 32 на экзамене · ответ TAK или NIE',
+  'learn.specialistSection': 'Специализированные вопросы',
+  'learn.specialistHint': '12 из 32 на экзамене · три варианта A / B / C',
+
   'common.cancel': 'Отмена',
   'common.delete': 'Удалить',
   'common.reset': 'Сбросить',
@@ -377,6 +401,12 @@ const ES: Catalogue = {
   'tabs.practice': 'Practicar',
   'tabs.profile': 'Perfil',
 
+  'learn.title': 'Temas',
+  'learn.basicSection': 'Preguntas básicas',
+  'learn.basicHint': '20 de las 32 del examen · se responde TAK o NIE',
+  'learn.specialistSection': 'Preguntas especializadas',
+  'learn.specialistHint': '12 de las 32 del examen · tres opciones A / B / C',
+
   'common.cancel': 'Cancelar',
   'common.delete': 'Eliminar',
   'common.reset': 'Restablecer',
@@ -465,6 +495,12 @@ const TR: Catalogue = {
   'tabs.learn': 'Öğren',
   'tabs.practice': 'Alıştırma',
   'tabs.profile': 'Profil',
+
+  'learn.title': 'Konular',
+  'learn.basicSection': 'Temel sorular',
+  'learn.basicHint': 'Sınavdaki 32 sorunun 20’si · TAK veya NIE',
+  'learn.specialistSection': 'Uzmanlık soruları',
+  'learn.specialistHint': 'Sınavdaki 32 sorunun 12’si · üç seçenek A / B / C',
 
   'common.cancel': 'İptal',
   'common.delete': 'Sil',

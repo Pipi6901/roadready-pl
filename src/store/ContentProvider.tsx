@@ -3,7 +3,14 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo } fro
 import { COUNTRIES, DEMO_BUNDLE } from '@/data/demo-bundle';
 import { initRemoteContent, remoteContentStore } from '@/data/remoteContent';
 import { LESSON_SIZE } from '@/constants/rules';
-import { questionCategory, type Country, type DisplayQuestion, type Question, type Topic } from '@/types/content';
+import {
+  questionCategory,
+  questionPoints,
+  type Country,
+  type DisplayQuestion,
+  type Question,
+  type Topic,
+} from '@/types/content';
 import { useProgress } from './ProgressProvider';
 import { useSettings } from './SettingsProvider';
 import { useSubscription } from './SubscriptionProvider';
@@ -111,21 +118,46 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         return shuffled(pool, count).map(decorate);
       },
       mockQuestions: () => {
-        const { questionCount: target, composition } = country.mockTest;
+        const { questionCount: target, composition, weights } = country.mockTest;
 
-        // Where the exam fixes the make-up of a paper — Poland's 20 basic and
-        // 12 specialist — the split comes first and topic spread second: a
-        // paper with the wrong number of specialist questions is the wrong
-        // exam, however well it covers the syllabus.
+        // Where the exam fixes the make-up of a paper, that comes first and
+        // topic spread second: a paper with the wrong number of specialist
+        // questions is the wrong exam, however well it covers the syllabus.
+        //
+        // Poland fixes it twice over — by class AND by weight — so the paper is
+        // built bucket by bucket: 10 basic worth 3 points, 6 worth 2, 4 worth 1,
+        // then the specialist grid. Sampling 32 questions at random would land
+        // on some other total than 74, and a pass mark of 68 points would then
+        // be a number with nothing behind it.
+        if (weights) {
+          const picked: Question[] = [];
+          for (const [category, grid] of Object.entries(weights)) {
+            for (const [points, wanted] of Object.entries(grid)) {
+              const pool = DEMO_BUNDLE.questions.filter(
+                (q) => questionCategory(q) === category && questionPoints(q) === Number(points),
+              );
+              // Shuffling the whole bucket is what spreads the paper across
+              // topics: every section of that class and weight is in the hat.
+              picked.push(...shuffled(pool, wanted));
+            }
+          }
+          // A bucket the bank cannot fill yet would otherwise serve a paper
+          // shorter than the exam, so the shortfall is topped up from what is
+          // left. It makes the total wrong, which is the right kind of wrong:
+          // visibly short rather than silently mis-weighted.
+          if (picked.length < target) {
+            const rest = DEMO_BUNDLE.questions.filter((q) => !picked.includes(q));
+            picked.push(...shuffled(rest, target - picked.length));
+          }
+          return shuffled(picked, Math.min(target, picked.length)).map(decorate);
+        }
+
         if (composition) {
           const picked: Question[] = [];
           for (const [category, wanted] of Object.entries(composition)) {
             const pool = DEMO_BUNDLE.questions.filter((q) => questionCategory(q) === category);
             picked.push(...shuffled(pool, wanted));
           }
-          // A bank short of one class (the seed bundle has no specialist
-          // questions at all) would otherwise serve a paper too short to be
-          // worth sitting, so the shortfall is topped up from whatever is left.
           if (picked.length < target) {
             const rest = DEMO_BUNDLE.questions.filter((q) => !picked.includes(q));
             picked.push(...shuffled(rest, target - picked.length));
