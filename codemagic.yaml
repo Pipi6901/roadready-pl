@@ -23,17 +23,23 @@ workflows:
       app_store_connect: RoadReadyPL
 
     environment:
-      # Deliberately NOT using the declarative `ios_signing:` block here.
-      # Codemagic resolves that during workflow initialisation, before any
-      # script runs, so when it cannot find a profile the build dies with
-      # "No matching profiles found" and no diagnostics at all — and, worse,
-      # it only ever LOOKS for profiles, it never creates one. Signing is done
-      # as an explicit step below with --create instead.
+      # Automatic signing. Codemagic issues the distribution certificate, its
+      # private key and the provisioning profile itself, using the App Store
+      # Connect key named in `integrations` above.
+      #
+      # This block failed once with "No matching profiles found" — not because
+      # it cannot create profiles, but because at that point no App Store
+      # Connect key had been added to Codemagic yet, so it could neither look
+      # nor create. Doing the same work by hand with fetch-signing-files then
+      # fails one step later, on "Cannot save Signing Certificates without
+      # certificate private key", because the private key is exactly the part
+      # this block handles for you.
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.astonio.roadreadypl
       node: 20.11.1
       xcode: latest
       cocoapods: default
-      vars:
-        BUNDLE_ID: "com.astonio.roadreadypl"
 
     triggering:
       events:
@@ -68,20 +74,10 @@ workflows:
           agvtool new-version -all $BUILD_NUMBER
 
       - name: Set up code signing
-        # fetch-signing-files with --create registers the bundle id and issues
-        # the distribution certificate and provisioning profile when they do
-        # not exist yet, which is the state a brand new app is in. The listing
-        # above it is there so that a failure says which of the three possible
-        # causes it is — identifier missing, key role too low, or wrong team —
-        # rather than all of them at once.
-        script: |
-          set -e
-          echo "--- bundle ids visible to this key ---"
-          app-store-connect list-bundle-ids --bundle-id-identifier "$BUNDLE_ID" || true
-          keychain initialize
-          app-store-connect fetch-signing-files "$BUNDLE_ID"             --type IOS_APP_STORE             --create
-          keychain add-certificates
-          xcode-project use-profiles
+        # The certificates and profile are already in the build keychain by
+        # now, put there by the ios_signing block. This only points the Xcode
+        # project at them.
+        script: xcode-project use-profiles
 
       - name: Build the ipa
         # The workspace name comes from the app name in app.json, so it is
