@@ -1,24 +1,35 @@
-# Codemagic build for TestFlight.
+# Codemagic build for TestFlight — manual code signing.
 #
-# Two things here are deliberate and easy to undo by accident.
+# WHY MANUAL, AND NOT THE USUAL API-KEY SETUP
 #
-# 1. There is only ONE workflow. A second, diagnostic one existed for a while
-#    and was simply never picked from the dropdown, so three builds in a row
-#    reported the same signing error with no diagnostics attached. The checks
-#    now run inside the build people actually start.
+# Codemagic's automatic signing needs an App Store Connect API key of the TEAM
+# kind. Only the Account Holder can mint one, and that was not available here.
+# An Individual key is not a substitute: Apple signs the two kinds of token
+# differently — a team token carries an Issuer ID, an individual one carries no
+# issuer at all and marks itself as a user token instead. Codemagic's tools
+# build the team form, so an individual key comes back from Apple as
+# "401 Authentication credentials are missing or invalid" no matter what role
+# the person holding it has. That 401 is what four builds in a row were dying
+# on, dressed up as "No matching profiles found".
 #
-# 2. There is no `environment.ios_signing:` block. Codemagic resolves that
-#    during workflow setup, before the first script — so when signing fails
-#    there the build dies with "No matching profiles found" and nothing else,
-#    and no amount of logging added to the scripts is ever reached. Signing is
-#    done explicitly below, after the checks have printed what Apple actually
-#    thinks of our credentials.
+# So nothing here talks to the Apple provisioning API. The certificate and the
+# profile are made once by hand and stored in Codemagic; the upload goes over
+# an app-specific password instead of a key.
 #
-# Prerequisites in Codemagic:
-#   Settings -> Integrations -> Developer Portal -> Manage keys: add an App
-#   Store Connect API key named exactly RoadReadyPL. It must be a TEAM key,
-#   not an Individual one — individual keys have no access to certificates and
-#   profiles at all, which produces exactly the failure above.
+# ---------------------------------------------------------------------------
+# SET UP ONCE, in Codemagic -> the app -> Environment variables, group
+# `ios_signing`, everything marked secure:
+#
+#   CM_CERTIFICATE          base64 of the distribution .p12
+#   CM_CERTIFICATE_PASSWORD the password that .p12 was exported with
+#   CM_PROVISIONING_PROFILE base64 of the App Store .mobileprovision
+#   APPLE_ID                the Apple account email
+#   APP_SPECIFIC_PASSWORD   from appleid.apple.com -> Sign-In and Security
+#
+# How to produce the first three is written up in the reply that shipped this
+# file; the short version is openssl for the key and CSR, the Apple developer
+# portal for the certificate and the profile.
+# ---------------------------------------------------------------------------
 
 workflows:
   ios-testflight:
@@ -26,10 +37,9 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 60
 
-    integrations:
-      app_store_connect: RoadReadyPL
-
     environment:
+      groups:
+        - ios_signing
       node: 20.11.1
       xcode: latest
       cocoapods: default
@@ -44,38 +54,21 @@ workflows:
           include: true
 
     scripts:
-      # -- Diagnosis first: it costs seconds, and it is the only thing that
-      #    separates the four causes the signing error lumps together.
-      - name: 1. Did the credentials reach the build
+      - name: Check the signing variables are set
+        # Cheap, and it turns a missing variable into a one-line message here
+        # instead of an opaque keychain error twenty minutes in.
         script: |
-          echo "ISSUER ID present  : ${APP_STORE_CONNECT_ISSUER_ID:+yes}"
-          echo "KEY ID present     : ${APP_STORE_CONNECT_KEY_IDENTIFIER:+yes}"
-          echo "PRIVATE KEY present: ${APP_STORE_CONNECT_PRIVATE_KEY:+yes}"
-          echo "KEY ID value       : ${APP_STORE_CONNECT_KEY_IDENTIFIER:-(empty)}"
-          echo
-          echo "All three must say yes. If they do not, the integration named"
-          echo "in this file does not match the key added in Codemagic."
-
-      - name: 2. Does Apple accept them
-        script: |
-          echo "--- bundle ids on this account ---"
-          app-store-connect bundle-ids list || true
-          echo
-          echo "401 here means the key data is wrong: Issuer ID and Key ID"
-          echo "swapped, the wrong .p8 uploaded, or an Individual key instead"
-          echo "of a Team key. An empty list with no error means the key works"
-          echo "but sees a different Apple team than the one holding the app."
-
-      - name: 3. Is there anything to sign with
-        script: |
-          echo "--- distribution certificates ---"
-          app-store-connect certificates list --type IOS_DISTRIBUTION || true
-          echo
-          echo "--- app store profiles ---"
-          app-store-connect profiles list --type IOS_APP_STORE || true
-          echo
-          echo "Both empty on a working key means the key cannot create them:"
-          echo "its role is below App Manager."
+          missing=""
+          for v in CM_CERTIFICATE CM_CERTIFICATE_PASSWORD CM_PROVISIONING_PROFILE APPLE_ID APP_SPECIFIC_PASSWORD; do
+            eval "value=\$$v"
+            if [ -z "$value" ]; then missing="$missing $v"; fi
+          done
+          if [ -n "$missing" ]; then
+            echo "Missing environment variables:$missing"
+            echo "Add them to the ios_signing group in Codemagic and rebuild."
+            exit 1
+          fi
+          echo "All five signing variables are present."
 
       - name: Install dependencies
         script: npm ci
@@ -102,36 +95,21 @@ workflows:
           cd ios
           agvtool new-version -all $BUILD_NUMBER
 
-      - name: Sign
-        # fetch-signing-files needs a private key to pair the certificate with.
-        # Without one it fails on "Cannot save Signing Certificates without
-        # certificate private key", which reads like a permissions problem and
-        # is not.
-        #
-        # Reusing one key matters: a fresh key means a fresh certificate every
-        # build, and Apple allows three distribution certificates in total. So
-        # once the first build has produced one, save it into Codemagic as the
-        # secure variable CERTIFICATE_PRIVATE_KEY and this stops minting more.
+      - name: Install the certificate and the profile
         script: |
           set -e
           keychain initialize
 
-          KEY_PATH=/tmp/ios_distribution_key.pem
-          if [ -n "$CERTIFICATE_PRIVATE_KEY" ]; then
-            echo "Using the certificate private key from the environment."
-            echo "$CERTIFICATE_PRIVATE_KEY" > "$KEY_PATH"
-          else
-            echo "No CERTIFICATE_PRIVATE_KEY set — generating one for this build."
-            ssh-keygen -t rsa -b 2048 -m PEM -f "$KEY_PATH" -q -N ""
-            rm -f "$KEY_PATH.pub"
-          fi
+          echo "$CM_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
+          keychain add-certificates \
+            --certificate /tmp/certificate.p12 \
+            --certificate-password "$CM_CERTIFICATE_PASSWORD"
 
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --certificate-key=@file:"$KEY_PATH" \
-            --create
+          PROFILES_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$PROFILES_DIR"
+          echo "$CM_PROVISIONING_PROFILE" | base64 --decode \
+            > "$PROFILES_DIR/roadready.mobileprovision"
 
-          keychain add-certificates
           xcode-project use-profiles
 
       - name: Build the ipa
@@ -145,15 +123,20 @@ workflows:
           echo "workspace: $WORKSPACE / scheme: $SCHEME"
           xcode-project build-ipa --workspace "$WORKSPACE" --scheme "$SCHEME"
 
+      - name: Upload to TestFlight
+        # Not `publishing.app_store_connect`, which only authenticates with an
+        # API key. altool takes an Apple ID and an app-specific password, which
+        # is the whole point of this file.
+        script: |
+          set -e
+          IPA=$(ls build/ios/ipa/*.ipa | head -1)
+          echo "uploading $IPA"
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$IPA" \
+            --username "$APPLE_ID" \
+            --password "$APP_SPECIFIC_PASSWORD"
+
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-
-    publishing:
-      app_store_connect:
-        auth: integration
-        # Internal testers only. Flip to an external group once the debug
-        # screen in the onboarding funnel is gone and the privacy policy is
-        # published — an external group goes through Beta App Review, and both
-        # of those are what it would fail on.
-        submit_to_testflight: true
