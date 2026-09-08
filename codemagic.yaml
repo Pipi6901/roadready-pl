@@ -1,35 +1,30 @@
-# Codemagic build for TestFlight — manual code signing.
+# Codemagic build for TestFlight.
 #
-# WHY MANUAL, AND NOT THE USUAL API-KEY SETUP
+# WHERE THE CREDENTIALS COME FROM
 #
-# Codemagic's automatic signing needs an App Store Connect API key of the TEAM
-# kind. Only the Account Holder can mint one, and that was not available here.
-# An Individual key is not a substitute: Apple signs the two kinds of token
-# differently — a team token carries an Issuer ID, an individual one carries no
-# issuer at all and marks itself as a user token instead. Codemagic's tools
-# build the team form, so an individual key comes back from Apple as
-# "401 Authentication credentials are missing or invalid" no matter what role
-# the person holding it has. That 401 is what four builds in a row were dying
-# on, dressed up as "No matching profiles found".
+# The App Store Connect key is supplied as plain environment variables in the
+# Codemagic variable group `app_store_vars`, not through the Developer Portal
+# integration. That distinction cost several builds: a workflow that names an
+# integration, or the wrong group, never gets APP_STORE_CONNECT_* into scope,
+# so the CLI sends an unsigned request and Apple answers
+# "401 Authentication credentials are missing or invalid" — which Codemagic
+# then reports at the top of the build as "No matching profiles found".
 #
-# So nothing here talks to the Apple provisioning API. The certificate and the
-# profile are made once by hand and stored in Codemagic; the upload goes over
-# an app-specific password instead of a key.
+# The group must provide:
+#   APP_STORE_CONNECT_ISSUER_ID       UUID, one per Apple team
+#   APP_STORE_CONNECT_KEY_IDENTIFIER  10 characters, one per key
+#   APP_STORE_CONNECT_PRIVATE_KEY     the .p8, an EC key
+#   CERTIFICATE_PRIVATE_KEY           an RSA key, paired with the signing
+#                                     certificate. Keeping one and reusing it
+#                                     is what stops every build minting a new
+#                                     distribution certificate — Apple allows
+#                                     three in total.
+#   APP_STORE_APP_ID                  numeric id of the app, used on publish
 #
-# ---------------------------------------------------------------------------
-# SET UP ONCE, in Codemagic -> the app -> Environment variables, group
-# `ios_signing`, everything marked secure:
-#
-#   CM_CERTIFICATE          base64 of the distribution .p12
-#   CM_CERTIFICATE_PASSWORD the password that .p12 was exported with
-#   CM_PROVISIONING_PROFILE base64 of the App Store .mobileprovision
-#   APPLE_ID                the Apple account email
-#   APP_SPECIFIC_PASSWORD   from appleid.apple.com -> Sign-In and Security
-#
-# How to produce the first three is written up in the reply that shipped this
-# file; the short version is openssl for the key and CSR, the Apple developer
-# portal for the certificate and the profile.
-# ---------------------------------------------------------------------------
+# There is deliberately no `environment.ios_signing:` block. Codemagic resolves
+# that during workflow setup, before the first script, so a failure there kills
+# the build with one line and no diagnostics — nothing added to the scripts is
+# ever reached. Signing happens explicitly below instead.
 
 workflows:
   ios-testflight:
@@ -39,7 +34,7 @@ workflows:
 
     environment:
       groups:
-        - ios_signing
+        - app_store_vars
       node: 20.11.1
       xcode: latest
       cocoapods: default
@@ -54,21 +49,29 @@ workflows:
           include: true
 
     scripts:
-      - name: Check the signing variables are set
-        # Cheap, and it turns a missing variable into a one-line message here
-        # instead of an opaque keychain error twenty minutes in.
+      - name: Check the credentials are in scope
+        # Seconds, and it turns "the variable group is not attached" into a
+        # first-step message instead of a 401 twenty minutes in.
         script: |
           missing=""
-          for v in CM_CERTIFICATE CM_CERTIFICATE_PASSWORD CM_PROVISIONING_PROFILE APPLE_ID APP_SPECIFIC_PASSWORD; do
+          for v in APP_STORE_CONNECT_ISSUER_ID APP_STORE_CONNECT_KEY_IDENTIFIER \
+                   APP_STORE_CONNECT_PRIVATE_KEY CERTIFICATE_PRIVATE_KEY; do
             eval "value=\$$v"
             if [ -z "$value" ]; then missing="$missing $v"; fi
           done
           if [ -n "$missing" ]; then
-            echo "Missing environment variables:$missing"
-            echo "Add them to the ios_signing group in Codemagic and rebuild."
+            echo "Missing:$missing"
+            echo "The app_store_vars group is not attached to this workflow."
             exit 1
           fi
-          echo "All five signing variables are present."
+          echo "Issuer ID : $APP_STORE_CONNECT_ISSUER_ID"
+          echo "Key ID    : $APP_STORE_CONNECT_KEY_IDENTIFIER"
+          echo "All four credentials are in scope."
+
+      - name: Does Apple accept them
+        # A 401 here is about the key itself, not about profiles, and saying so
+        # before the build starts saves half an hour of chasing the wrong thing.
+        script: app-store-connect bundle-ids list --bundle-id-identifier "$BUNDLE_ID"
 
       - name: Install dependencies
         script: npm ci
@@ -95,21 +98,20 @@ workflows:
           cd ios
           agvtool new-version -all $BUILD_NUMBER
 
-      - name: Install the certificate and the profile
+      - name: Sign
+        # --create registers the bundle id and issues the profile if they do
+        # not exist yet; --certificate-key supplies the RSA key the certificate
+        # is paired with. Without that key this fails on "Cannot save Signing
+        # Certificates without certificate private key", which reads like a
+        # permissions problem and is not.
         script: |
           set -e
           keychain initialize
-
-          echo "$CM_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
-          keychain add-certificates \
-            --certificate /tmp/certificate.p12 \
-            --certificate-password "$CM_CERTIFICATE_PASSWORD"
-
-          PROFILES_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
-          mkdir -p "$PROFILES_DIR"
-          echo "$CM_PROVISIONING_PROFILE" | base64 --decode \
-            > "$PROFILES_DIR/roadready.mobileprovision"
-
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --certificate-key=@env:CERTIFICATE_PRIVATE_KEY \
+            --create
+          keychain add-certificates
           xcode-project use-profiles
 
       - name: Build the ipa
@@ -123,20 +125,19 @@ workflows:
           echo "workspace: $WORKSPACE / scheme: $SCHEME"
           xcode-project build-ipa --workspace "$WORKSPACE" --scheme "$SCHEME"
 
-      - name: Upload to TestFlight
-        # Not `publishing.app_store_connect`, which only authenticates with an
-        # API key. altool takes an Apple ID and an app-specific password, which
-        # is the whole point of this file.
-        script: |
-          set -e
-          IPA=$(ls build/ios/ipa/*.ipa | head -1)
-          echo "uploading $IPA"
-          xcrun altool --upload-app \
-            --type ios \
-            --file "$IPA" \
-            --username "$APPLE_ID" \
-            --password "$APP_SPECIFIC_PASSWORD"
-
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      app_store_connect:
+        # Same key as above, passed explicitly because this workflow uses
+        # variables rather than a Developer Portal integration.
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        # Internal testers only. Flip to an external group once the debug
+        # screen in the onboarding funnel is gone and the privacy policy is
+        # published — an external group goes through Beta App Review, and both
+        # of those are what it would fail on.
+        submit_to_testflight: true
