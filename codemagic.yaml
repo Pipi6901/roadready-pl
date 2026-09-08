@@ -119,11 +119,26 @@ workflows:
         # derived rather than hardcoded — renaming the app would otherwise
         # break the build in a way that reads as a signing error.
         script: |
-          set -e
           WORKSPACE=$(ls -d ios/*.xcworkspace | head -1)
           SCHEME=$(basename "$WORKSPACE" .xcworkspace)
           echo "workspace: $WORKSPACE / scheme: $SCHEME"
-          xcode-project build-ipa --workspace "$WORKSPACE" --scheme "$SCHEME"
+
+          if xcode-project build-ipa --workspace "$WORKSPACE" --scheme "$SCHEME"; then
+            exit 0
+          fi
+
+          # xcodebuild reports "Failed to archive" and exit 65 for every kind of
+          # compile failure alike; the line that actually says what broke is in
+          # its own log file, which otherwise only reaches the artifacts zip.
+          echo "=================== what actually failed ==================="
+          for f in /tmp/xcodebuild_logs/*.log; do
+            [ -f "$f" ] || continue
+            echo "--- errors in $(basename "$f") ---"
+            grep -nE "error:|fatal error|The following build commands failed|Undefined symbol" "$f" | tail -40 || true
+            echo "--- last 80 lines of $(basename "$f") ---"
+            tail -80 "$f"
+          done
+          exit 1
 
     artifacts:
       - build/ios/ipa/*.ipa
