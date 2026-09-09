@@ -17,7 +17,26 @@ import type { ContentBundle, Country, Locale } from '@/types/content';
  * No Firebase SDK here on purpose (ADR-011) — this is a plain HTTPS GET.
  */
 
-const CONTENT_URL = 'https://roadready-80e53.web.app/content.json';
+/**
+ * Where published content comes from.
+ *
+ * This must point at the POLISH project's Hosting site. It was inherited from
+ * the British repository still pointing at `roadready-80e53`, which meant the
+ * Polish build fetched the British bundle and applied it whole — country,
+ * questions, topics and locales — turning itself into the UK app on its first
+ * online launch. The guard below is the belt to this braces.
+ */
+const CONTENT_URL = 'https://REPLACE_WITH_PL_FIREBASE_SITE.web.app/content.json';
+
+/**
+ * The country this build ships for. A payload for anyone else is refused.
+ *
+ * Cheap, and it turns the class of mistake above into a no-op instead of a
+ * silent swap: a wrong URL, a mis-deployed bundle, or a shared project all
+ * fail closed on the bundled seed rather than replacing the exam a candidate
+ * is preparing for.
+ */
+const EXPECTED_COUNTRY = 'PL';
 
 interface RemoteContentPayload extends ContentBundle {
   countries: Country[];
@@ -33,7 +52,8 @@ function isValidPayload(x: unknown): x is RemoteContentPayload {
     Array.isArray(p.countries) &&
     Array.isArray(p.locales) &&
     typeof p.versionHash === 'string' &&
-    !!p.country
+    !!p.country &&
+    (p.country as Country).code === EXPECTED_COUNTRY
   );
 }
 
