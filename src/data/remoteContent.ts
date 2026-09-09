@@ -26,7 +26,7 @@ import type { ContentBundle, Country, Locale } from '@/types/content';
  * questions, topics and locales — turning itself into the UK app on its first
  * online launch. The guard below is the belt to this braces.
  */
-const CONTENT_URL = 'https://REPLACE_WITH_PL_FIREBASE_SITE.web.app/content.json';
+const CONTENT_URL = 'https://roadready-pl.web.app/content.json';
 
 /**
  * The country this build ships for. A payload for anyone else is refused.
