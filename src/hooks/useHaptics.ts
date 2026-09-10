@@ -18,5 +18,9 @@ export function useHaptics() {
     incorrect: () => {
       if (hapticsEnabled) void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     },
+    /** A toggle flipped — bookmark on, bookmark off. Lighter than a verdict. */
+    tap: () => {
+      if (hapticsEnabled) void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    },
   };
 }

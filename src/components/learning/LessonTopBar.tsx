@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
+import { SaveButton } from '@/components/SaveButton';
 import { Icon } from '@/components/ui/Icon';
 import { Row } from '@/components/ui/primitives';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -12,12 +13,18 @@ interface LessonTopBarProps {
   /** Drives the thin progress line under the bar. */
   answered: number;
   onClose: () => void;
-  onFlag: () => void;
-  flagged: boolean;
+  /** The question on screen, for the bookmark in the right-hand slot. */
+  questionId: string;
 }
 
-/** Mockup "Top Bar" + "Progress Line" shared by the three question frames. */
-export function LessonTopBar({ total, index, answered, onClose, onFlag, flagged }: LessonTopBarProps) {
+/**
+ * Mockup "Top Bar" + "Progress Line" shared by the three question frames.
+ *
+ * The right-hand slot used to hold a flag that lived only for the lesson and
+ * led nowhere. It is the bookmark now: the same mark the quiz, weak spots and
+ * the mock test carry, and it lands the question on the Saved screen.
+ */
+export function LessonTopBar({ total, index, answered, onClose, questionId }: LessonTopBarProps) {
   const t = useTheme();
 
   return (
@@ -63,21 +70,7 @@ export function LessonTopBar({ total, index, answered, onClose, onFlag, flagged 
           })}
         </Row>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={flagged ? 'Remove flag from this question' : 'Flag this question'}
-          accessibilityState={{ selected: flagged }}
-          onPress={onFlag}
-          hitSlop={12}
-          style={{ width: 44, height: 44, alignItems: 'flex-end', justifyContent: 'center' }}
-        >
-          <Icon
-            name="flag"
-            size={20}
-            color={flagged ? t.colors.amber : t.colors.textSecondary}
-            fill={flagged ? t.colors.amber : 'none'}
-          />
-        </Pressable>
+        <SaveButton questionId={questionId} style={{ alignItems: 'flex-end' }} />
       </Row>
 
       <View style={{ height: 4, backgroundColor: t.colors.sage100 }}>

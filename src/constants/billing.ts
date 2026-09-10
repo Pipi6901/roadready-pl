@@ -18,6 +18,16 @@ export const REVENUECAT_API_KEY = Platform.select({
   default: '',
 })!;
 
+/**
+ * Whether a real key is in place. The placeholders above are deliberately not
+ * valid keys, and RevenueCat's web SDK throws on one at configure() time —
+ * which took the whole app down in the browser preview, before the first
+ * screen. Until the Polish RevenueCat app exists the SDK is left unconfigured
+ * and every learner is treated as free tier.
+ */
+export const BILLING_CONFIGURED =
+  REVENUECAT_API_KEY.length > 0 && !REVENUECAT_API_KEY.startsWith('REPLACE_WITH_');
+
 /** Must match the SKUs created in App Store Connect / Google Play Console exactly. */
 export const PRODUCT_IDS = {
   monthly: 'com.astonio.roadreadypl.pro.monthly',

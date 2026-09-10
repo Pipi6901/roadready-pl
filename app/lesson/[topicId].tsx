@@ -79,7 +79,6 @@ export default function LessonScreen() {
   // crossing 500 total XP on question 4 of 10) — merged with whatever
   // completeLesson finds at the end so nothing gets missed.
   const lessonAchievementsRef = React.useRef<string[]>([]);
-  const [flagged, setFlagged] = React.useState<Record<string, boolean>>({});
   const [sheetHeight, setSheetHeight] = React.useState(0);
   // Permanently-cleared count so far, for the progress dots.
   const masteredCount = questions.length - queue.length;
@@ -322,8 +321,7 @@ export default function LessonScreen() {
         index={masteredCount}
         answered={answered ? masteredCount + (isCorrect ? 1 : 0) : masteredCount}
         onClose={handleExit}
-        onFlag={() => setFlagged((f) => ({ ...f, [question.id]: !f[question.id] }))}
-        flagged={!!flagged[question.id]}
+        questionId={question.id}
       />
 
       <ScrollView

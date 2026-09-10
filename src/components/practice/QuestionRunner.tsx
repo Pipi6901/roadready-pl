@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { BilingualText } from '@/components/BilingualText';
 import { QuestionMedia } from '@/components/QuestionMedia';
+import { SaveButton } from '@/components/SaveButton';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { useHaptics } from '@/hooks/useHaptics';
@@ -170,9 +171,12 @@ export function QuestionRunner({
           ))}
         </Row>
 
-        <Txt size={13} weight="600" color={t.colors.textSecondary}>
-          {index + 1} / {questions.length}
-        </Txt>
+        <Row style={{ gap: 2 }}>
+          <Txt size={13} weight="600" color={t.colors.textSecondary}>
+            {index + 1} / {questions.length}
+          </Txt>
+          <SaveButton questionId={question.id} style={{ width: 36, alignItems: 'flex-end' }} />
+        </Row>
       </Row>
 
       <View style={{ height: 4, backgroundColor: t.colors.sage100 }}>

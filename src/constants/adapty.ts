@@ -18,6 +18,15 @@ export const ADAPTY_PUBLIC_KEY = Platform.select({
 })!;
 
 /**
+ * Whether the Adapty app for Poland exists yet. With the placeholders above
+ * activate() rejects, the funnel screen shows its debug error state, and the
+ * first thing a tester sees is a stack trace. Until the keys are real the
+ * funnel is skipped outright — see app/index.tsx.
+ */
+export const ONBOARDING_CONFIGURED =
+  ADAPTY_PUBLIC_KEY.length > 0 && !ADAPTY_PUBLIC_KEY.startsWith('REPLACE_WITH_');
+
+/**
  * The Placement ID configured in Adapty for the Polish onboarding
  * funnel. Dashboard → Placements → Onboardings → the placement serving the
  * `main` onboarding.

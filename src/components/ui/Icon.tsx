@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  AlarmClock, Bell, Bike, BookOpen, BookOpenCheck, CalendarClock, CalendarX, CarFront, Check,
+  AlarmClock, Bell, Bike, Bookmark, BookOpen, BookOpenCheck, CalendarClock, CalendarX, CarFront, Check,
   CheckCheck, ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleParking, CircleX,
   ClipboardCheck, CloudRain, Compass, Crown, Download, Earth, FileText, Flag, Flame, Gauge, Gem,
   GitFork, Globe, Hand, House, Info, Languages, ListChecks, Lock, Map, MapPin, MessageCircle, Milestone,
@@ -18,6 +18,7 @@ const ICONS = {
   'alarm-clock': AlarmClock,
   bell: Bell,
   bike: Bike,
+  bookmark: Bookmark,
   'book-open': BookOpen,
   'book-open-check': BookOpenCheck,
   'calendar-clock': CalendarClock,

@@ -6,6 +6,7 @@ import { AnswerOption } from '@/components/AnswerOption';
 import { SoftButton } from '@/components/practice/SoftButton';
 import { BilingualText } from '@/components/BilingualText';
 import { QuestionMedia } from '@/components/QuestionMedia';
+import { SaveButton } from '@/components/SaveButton';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import {
@@ -89,7 +90,7 @@ export default function MockRunScreen() {
 
   return (
     <Screen>
-      <Row style={{ justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10 }}>
+      <Row style={{ justifyContent: 'space-between', gap: 8, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10 }}>
         <View style={{ flex: 1 }}>
           <Txt size={14} weight="700">
             Question {index + 1} of {total}
@@ -133,6 +134,11 @@ export default function MockRunScreen() {
           </Txt>
         </Row>
 
+        {/* The bookmark is allowed here even though going back is not: it
+            changes nothing on the paper, it only marks the question for the
+            Saved screen once the paper is done. */}
+        <SaveButton questionId={question.id} style={{ width: 32 }} />
+
         {canGoBack ? (
           <Pressable
             accessibilityRole="button"
@@ -148,13 +154,7 @@ export default function MockRunScreen() {
               fill={flagged ? t.colors.amber : 'none'}
             />
           </Pressable>
-        ) : (
-          // Nothing to flag when nothing can be revisited; the paper clock
-          // takes the slot so the header does not go lopsided.
-          <Txt size={12} weight="600" color={t.colors.textSecondary}>
-            {formatClock(left)}
-          </Txt>
-        )}
+        ) : null}
       </Row>
 
       <View style={{ height: 4, backgroundColor: t.colors.sage100 }}>

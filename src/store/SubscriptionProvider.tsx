@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import Purchases, { type CustomerInfo, type CustomerInfoUpdateListener } from 'react-native-purchases';
 
-import { ENTITLEMENT_ID, PRODUCT_IDS, REVENUECAT_API_KEY } from '@/constants/billing';
+import { BILLING_CONFIGURED, ENTITLEMENT_ID, PRODUCT_IDS, REVENUECAT_API_KEY } from '@/constants/billing';
 import { HAZARD_ENABLED as HAZARD_FLAG, PAYWALL_ENABLED } from '@/constants/flags';
 import { FREE_QUESTIONS_PER_DAY } from '@/constants/rules';
 import { KEYS, load, save } from './storage';
@@ -47,7 +47,9 @@ const skuToPlan = (sku: string): Plan | null =>
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<SubscriptionState>(EMPTY);
-  const [ready, setReady] = useState(false);
+  // Ready from the start when there is no SDK to wait for — see the effect
+  // below.
+  const [ready, setReady] = useState(!BILLING_CONFIGURED);
 
   const persist = useCallback((next: SubscriptionState) => {
     void save(KEYS.subscription, next);
@@ -82,6 +84,15 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     load<SubscriptionState>(KEYS.subscription, EMPTY).then((s) => {
       if (!cancelled) setState({ ...EMPTY, ...s });
     });
+
+    // No key yet (see BILLING_CONFIGURED): nothing to talk to, so the cached
+    // state is all there is. Configuring with the placeholder is not a no-op —
+    // the web SDK throws, the native ones log errors on every call.
+    if (!BILLING_CONFIGURED) {
+      return () => {
+        cancelled = true;
+      };
+    }
 
     // Safe to call from every screen that mounts this provider — the SDK
     // no-ops on a repeat configure() with the same key.

@@ -45,6 +45,14 @@ export interface ProgressState {
   daily: Record<string, { lessons: number; xp: number }>;
   mockAttempts: MockAttempt[];
   achievements: string[];
+  /**
+   * Questions the learner bookmarked, in the order they were saved. A plain
+   * list rather than a flag on QuestionProgress because saving is not an
+   * answer: a question bookmarked mid-exam has no attempts yet, and a record
+   * with zero attempts would confuse every accuracy figure derived from
+   * `questions`.
+   */
+  savedQuestionIds: string[];
 }
 
 const EMPTY: ProgressState = {
@@ -56,6 +64,7 @@ const EMPTY: ProgressState = {
   daily: {},
   mockAttempts: [],
   achievements: [],
+  savedQuestionIds: [],
 };
 
 export interface TopicStats {
@@ -106,6 +115,12 @@ interface ProgressContextValue {
   recordAnswer: (questionId: string, correct: boolean) => { xp: number; newAchievements: string[] };
   completeLesson: (topicId: string, sessionXp: number) => { xp: number; newAchievements: string[] };
   recordMockAttempt: (attempt: MockAttempt) => { newAchievements: string[] };
+  /** Bookmarks. Saving is allowed anywhere a question is on screen, the mock
+   *  test included: it never reveals the answer or lets the paper be revisited,
+   *  it only marks the question for later. */
+  savedQuestionIds: string[];
+  isSaved: (questionId: string) => boolean;
+  toggleSaved: (questionId: string) => boolean;
   reset: () => void;
 }
 
@@ -281,13 +296,35 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     [persist],
   );
 
+  const toggleSaved = useCallback(
+    (questionId: string): boolean => {
+      const prev = stateRef.current;
+      const saved = prev.savedQuestionIds.includes(questionId);
+      const next: ProgressState = {
+        ...prev,
+        savedQuestionIds: saved
+          ? prev.savedQuestionIds.filter((id) => id !== questionId)
+          : [...prev.savedQuestionIds, questionId],
+      };
+      stateRef.current = next;
+      setState(persist(next));
+      return !saved;
+    },
+    [persist],
+  );
+
   const reset = useCallback(() => {
     // Must clear stateRef too — every mutator reads its `prev` from there,
     // not from `state`. Skipping this let an in-flight recordAnswer/
     // completeLesson (e.g. from a lesson screen that hadn't unmounted yet)
     // read the stale pre-reset ref and write the "reset" progress right back.
-    stateRef.current = EMPTY;
-    setState(persist(EMPTY));
+    //
+    // Bookmarks survive: the dialog promises to erase XP, streak, mastery and
+    // mock history — a learner's own reading list is none of those, and losing
+    // it would be the one part of a reset that cannot be re-earned.
+    const next: ProgressState = { ...EMPTY, savedQuestionIds: stateRef.current.savedQuestionIds };
+    stateRef.current = next;
+    setState(persist(next));
   }, [persist]);
 
   const value = useMemo<ProgressContextValue>(() => {
@@ -375,9 +412,12 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       recordAnswer,
       completeLesson,
       recordMockAttempt,
+      savedQuestionIds: state.savedQuestionIds,
+      isSaved: (questionId) => state.savedQuestionIds.includes(questionId),
+      toggleSaved,
       reset,
     };
-  }, [state, ready, recordAnswer, completeLesson, recordMockAttempt, reset]);
+  }, [state, ready, recordAnswer, completeLesson, recordMockAttempt, toggleSaved, reset]);
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
 }

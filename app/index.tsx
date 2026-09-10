@@ -13,6 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { DecoLayer, DotGrid, type DecoItem } from '@/components/onboarding/Decor';
+import { ONBOARDING_CONFIGURED } from '@/constants/adapty';
 import { ONBOARDING_ENABLED, ONBOARDING_SKIP_DEFAULTS } from '@/constants/flags';
 import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
@@ -97,8 +98,10 @@ export default function SplashScreen() {
     if (!ready) return;
 
     // ONBOARDING_ENABLED off skips straight to the tabs, seeding the defaults
-    // onboarding would otherwise have collected via the Adapty flow.
-    if (!ONBOARDING_ENABLED) {
+    // onboarding would otherwise have collected via the Adapty flow. So does
+    // a build without Adapty keys (ONBOARDING_CONFIGURED): the funnel cannot
+    // load, and the debug screen it falls back to is not a first impression.
+    if (!ONBOARDING_ENABLED || !ONBOARDING_CONFIGURED) {
       if (!onboarded) {
         update({
           onboarded: true,
