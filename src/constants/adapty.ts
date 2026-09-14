@@ -12,7 +12,7 @@ import { Platform } from 'react-native';
 
 /** From the Adapty dashboard → the Polish app (not the UK "RoadReady" one) → SDK keys → Public SDK key. */
 export const ADAPTY_PUBLIC_KEY = Platform.select({
-  ios: 'REPLACE_WITH_ADAPTY_PL_IOS_PUBLIC_KEY',
+  ios: 'public_live_TdjyNzCS.EfqolgrssZRXt86nJFG4',
   android: 'REPLACE_WITH_ADAPTY_PL_ANDROID_PUBLIC_KEY',
   default: '',
 })!;
@@ -42,4 +42,4 @@ export const ONBOARDING_CONFIGURED =
  * So: never paste this value from anywhere. Type it, and keep it byte-identical
  * to the dashboard's Placement ID field.
  */
-export const ONBOARDING_PLACEMENT_ID = 'REPLACE_WITH_ADAPTY_PL_PLACEMENT_ID';
+export const ONBOARDING_PLACEMENT_ID = 'roadready_pl_onboarding';
