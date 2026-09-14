@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Row, Txt } from '@/components/ui/primitives';
 import type { MockAttempt } from '@/store/ProgressProvider';
+import { useDateLocale } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 import { cardShadow } from './shadow';
 
@@ -20,10 +21,10 @@ const MAX_BARS = 6;
 const MIN_BAR_HEIGHT = 4;
 const MAX_BAR_HEIGHT = 100;
 
-function dayLabel(iso: string): string {
+function dayLabel(iso: string, locale: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  return d.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
 }
 
 interface Props {
@@ -35,6 +36,7 @@ interface Props {
 
 export function ScoreHistoryChart({ attempts, passMark, scoreMax }: Props) {
   const t = useTheme();
+  const dateLocale = useDateLocale();
 
   // mockAttempts is stored newest-first; a chart has to read left to right in
   // time, so the slice is reversed rather than the store.
@@ -75,7 +77,7 @@ export function ScoreHistoryChart({ attempts, passMark, scoreMax }: Props) {
           // Points, not answers: a.score and a.total both come out of
           // scoreMockSession already weighted.
           const pct = a.total > 0 ? Math.round((a.score / a.total) * 100) : 0;
-          const date = dayLabel(a.finishedAt);
+          const date = dayLabel(a.finishedAt, dateLocale);
           return (
             <View
               key={a.finishedAt}

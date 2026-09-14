@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 
 import { AnswerOption } from '@/components/AnswerOption';
 import { SoftButton } from '@/components/practice/SoftButton';
@@ -88,9 +88,39 @@ export default function MockRunScreen() {
   const locked = clock?.phase === 'reading';
   const specialist = questionCategory(question) === 'specialist';
 
+  // The one way out before the last question. Without it a candidate who
+  // started a paper by mistake had 25 minutes of countdown and no door; the
+  // attempt is simply dropped, never scored, so nothing lands in history.
+  const abandon = () => {
+    Alert.alert(
+      'Leave the exam?',
+      'This attempt will not be scored or saved.',
+      [
+        { text: 'Keep going', style: 'cancel' },
+        {
+          text: 'Leave',
+          style: 'destructive',
+          onPress: () => {
+            mockSession.reset();
+            router.replace('/practice');
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <Screen>
       <Row style={{ justifyContent: 'space-between', gap: 8, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10 }}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Leave the exam"
+          onPress={abandon}
+          hitSlop={12}
+          style={{ width: 32, height: 44, alignItems: 'flex-start', justifyContent: 'center' }}
+        >
+          <Icon name="x" size={22} color={t.colors.textSecondary} />
+        </Pressable>
         <View style={{ flex: 1 }}>
           <Txt size={14} weight="700">
             Question {index + 1} of {total}

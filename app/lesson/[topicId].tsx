@@ -12,6 +12,7 @@ import { LessonTopBar } from '@/components/learning/LessonTopBar';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, Txt } from '@/components/ui/primitives';
 import { PAYWALL_ENABLED } from '@/constants/flags';
+import { QUESTION_SPEECH_LANGUAGE } from '@/constants/rules';
 import { EVENTS, track } from '@/features/analytics/analytics';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useContent } from '@/store/ContentProvider';
@@ -114,7 +115,7 @@ export default function LessonScreen() {
   const speak = React.useCallback(
     (text: string) => {
       Speech.stop();
-      Speech.speak(text, { language: 'en-GB', rate: voiceSpeed });
+      Speech.speak(text, { language: QUESTION_SPEECH_LANGUAGE, rate: voiceSpeed });
     },
     [voiceSpeed],
   );

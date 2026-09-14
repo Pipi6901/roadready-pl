@@ -4,6 +4,7 @@ import { Alert, Linking, Platform, Pressable, StyleSheet, View } from 'react-nat
 
 import { NavBar } from '@/components/settings/NavBar';
 import { formatDate, PLAN_PERIOD, PLAN_PRICE, planLabel } from '@/components/settings/plan';
+import { useDateLocale } from '@/features/i18n/useT';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { SettingsSection, useCardShadow } from '@/components/settings/SettingsSection';
 import { Icon } from '@/components/ui/Icon';
@@ -31,6 +32,7 @@ const PLANS: Plan[] = ['monthly', 'yearly'];
  */
 export default function SubscriptionScreen() {
   const t = useTheme();
+  const dateLocale = useDateLocale();
   const router = useRouter();
   const shadow = useCardShadow();
   const subscription = useSubscription();
@@ -98,14 +100,14 @@ export default function SubscriptionScreen() {
             </Row>
             <Txt size={13} color={t.colors.textSecondary} lineHeight={19}>
               {isPro
-                ? `Renews on ${formatDate(state.renewsAt)}.`
+                ? `Renews on ${formatDate(state.renewsAt, dateLocale)}.`
                 : 'You are on the free plan — 10 questions a day, no translations and no mock tests.'}
             </Txt>
           </View>
 
           <SettingsSection title="Details" icon="gem" iconColor={t.colors.amberDark}>
             <SettingsRow label="Current plan" value={planLabel(state)} />
-            <SettingsRow label="Renewal date" value={formatDate(state.renewsAt)} last />
+            <SettingsRow label="Renewal date" value={formatDate(state.renewsAt, dateLocale)} last />
           </SettingsSection>
 
           {/* Change plan */}

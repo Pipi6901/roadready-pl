@@ -78,27 +78,20 @@ export default function PracticeScreen() {
           />
 
           {/*
-           * Hazard Perception is built but dark in the MVP (ADR-006): the clip
-           * pack is not licensed yet, and advertising a feature that cannot run
-           * is an App Review rejection waiting to happen.
+           * Hazard Perception is a British module (ADR-006): Poland has no
+           * separate hazard exam, so the card is not shown at all rather than
+           * as "coming soon" — nothing is coming.
            */}
-          <PracticeCard
-            icon="video"
-            iconBg={t.colors.terracotta}
-            iconEdge={t.colors.terracottaDark}
-            title="Hazard Perception"
-            subtitle="Practice spotting hazards in video clips"
-            badges={[
-              {
-                icon: 'calendar-clock',
-                label: 'Coming soon',
-                bg: t.colors.terracotta50,
-                fg: t.colors.terracottaDark,
-              },
-            ]}
-            disabled={!HAZARD_ENABLED}
-            onPress={() => router.push('/hazard/1')}
-          />
+          {HAZARD_ENABLED ? (
+            <PracticeCard
+              icon="video"
+              iconBg={t.colors.terracotta}
+              iconEdge={t.colors.terracottaDark}
+              title="Hazard Perception"
+              subtitle="Practice spotting hazards in video clips"
+              onPress={() => router.push('/hazard/1')}
+            />
+          ) : null}
 
           <PracticeCard
             icon="trending-down"

@@ -8,6 +8,7 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { ACHIEVEMENT_META } from '@/constants/rules';
+import { useDateLocale } from '@/features/i18n/useT';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -39,10 +40,10 @@ const BURST_DOTS = [
 ] as const;
 const BURST_BOX = 116;
 
-function monthYear(iso: string): string {
+function monthYear(iso: string, locale: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '—';
-  return d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+  return d.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
 }
 
 /**
@@ -56,6 +57,7 @@ export default function ProfileScreen() {
   const t = useTheme();
   const router = useRouter();
   const shadow = useCardShadow();
+  const dateLocale = useDateLocale();
   const { displayName, firstLaunchAt, daysUntilExam } = useSettings();
   const progress = useProgress();
 
@@ -65,7 +67,7 @@ export default function ProfileScreen() {
       // lesson — a star has no established tie to XP anywhere else in the
       // app, this does.
       icon: 'zap',
-      value: progress.state.totalXp.toLocaleString('en-GB'),
+      value: progress.state.totalXp.toLocaleString(dateLocale),
       label: 'Total XP',
       bg: t.colors.amber50,
       edge: t.colors.amber,
@@ -189,7 +191,7 @@ export default function ProfileScreen() {
                 {displayName}
               </Txt>
               <Txt size={12} color={t.colors.textSecondary}>
-                Learning since {monthYear(firstLaunchAt)}
+                Learning since {monthYear(firstLaunchAt, dateLocale)}
               </Txt>
             </View>
 

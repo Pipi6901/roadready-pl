@@ -3,6 +3,7 @@ import { Pressable, View } from 'react-native';
 
 import { Icon } from '@/components/ui/Icon';
 import { Row, Txt } from '@/components/ui/primitives';
+import { useDateLocale } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -26,6 +27,7 @@ interface ExamCalendarProps {
  */
 export function ExamCalendar({ selected, onSelect }: ExamCalendarProps) {
   const t = useTheme();
+  const dateLocale = useDateLocale();
   const today = React.useMemo(() => startOfDay(new Date()), []);
   const [view, setView] = React.useState(() => {
     const seed = selected ? new Date(selected) : today;
@@ -41,7 +43,7 @@ export function ExamCalendar({ selected, onSelect }: ExamCalendarProps) {
     });
   }, [view]);
 
-  const monthLabel = new Date(view.year, view.month, 1).toLocaleDateString('en-GB', {
+  const monthLabel = new Date(view.year, view.month, 1).toLocaleDateString(dateLocale, {
     month: 'long',
     year: 'numeric',
   });
@@ -177,6 +179,7 @@ interface DayCellProps {
 
 function DayCell({ day, weekend, year, month, today, selected, onPress }: DayCellProps) {
   const t = useTheme();
+  const dateLocale = useDateLocale();
 
   if (day === null) return <View style={{ flex: 1, height: 34 }} />;
 
@@ -199,7 +202,7 @@ function DayCell({ day, weekend, year, month, today, selected, onPress }: DayCel
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={cellDate.toLocaleDateString('en-GB', {
+      accessibilityLabel={cellDate.toLocaleDateString(dateLocale, {
         day: 'numeric',
         month: 'long',
         year: 'numeric',

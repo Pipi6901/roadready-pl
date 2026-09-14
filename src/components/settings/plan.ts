@@ -7,8 +7,12 @@ import type { Plan, SubscriptionState } from '@/store/SubscriptionProvider';
  * TODO: replace with the localised price once real product IDs exist.
  */
 export const PLAN_PRICE: Record<Plan, string> = {
-  monthly: '£4.99',
-  yearly: '£39.99',
+  // Placeholder złoty prices until the App Store Connect products exist —
+  // in the band the Polish competitors sit in (GO 29 zł/month, Jezak 29.99 zł
+  // one-off). The British figures that were here would have read as a
+  // foreign app the moment anyone opened Settings.
+  monthly: '24,99 zł',
+  yearly: '89,99 zł',
 };
 
 export const PLAN_PERIOD: Record<Plan, string> = {
@@ -32,9 +36,9 @@ export function planLabel(state: SubscriptionState): string {
   }
 }
 
-export function formatDate(iso: string | null): string {
+export function formatDate(iso: string | null, locale = 'en-GB'): string {
   if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('en-GB', {
+  return new Date(iso).toLocaleDateString(locale, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',

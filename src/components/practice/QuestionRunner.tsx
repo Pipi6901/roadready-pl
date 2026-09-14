@@ -8,6 +8,7 @@ import { QuestionMedia } from '@/components/QuestionMedia';
 import { SaveButton } from '@/components/SaveButton';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
+import { QUESTION_SPEECH_LANGUAGE } from '@/constants/rules';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
@@ -71,7 +72,7 @@ export function QuestionRunner({
   const speak = React.useCallback(
     (text: string) => {
       void Speech.stop();
-      Speech.speak(text, { rate: voiceSpeed });
+      Speech.speak(text, { language: QUESTION_SPEECH_LANGUAGE, rate: voiceSpeed });
     },
     [voiceSpeed],
   );

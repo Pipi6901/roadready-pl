@@ -7,7 +7,7 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { Card, Pill, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { DAILY_GOAL_LESSONS } from '@/constants/rules';
-import { useT } from '@/features/i18n/useT';
+import { useDateLocale, useT } from '@/features/i18n/useT';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
@@ -27,6 +27,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 export default function HomeScreen() {
   const t = useTheme();
   const tr = useT();
+  const dateLocale = useDateLocale();
   const router = useRouter();
   const { daysUntilExam } = useSettings();
   const { topics } = useContent();
@@ -63,7 +64,7 @@ export default function HomeScreen() {
 
         <Row style={{ gap: 12 }}>
           <Pill icon="flame" label={tr('home.streak', { days: progress.state.streakDays })} />
-          <Pill icon="star" label={`${progress.state.totalXp.toLocaleString('en-GB')} XP`} />
+          <Pill icon="star" label={`${progress.state.totalXp.toLocaleString(dateLocale)} XP`} />
         </Row>
 
         {/* NAUKA */}

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useSettings } from '@/store/SettingsProvider';
 import { CATALOGUES, EN, type StringKey } from './strings';
-import { FALLBACK_UI_LOCALE } from './locales';
+import { dateLocaleFor, FALLBACK_UI_LOCALE } from './locales';
 
 export type Translate = (key: StringKey, vars?: Record<string, string | number>) => string;
 
@@ -38,4 +38,10 @@ export function useT(): Translate {
     (key: StringKey, vars?: Record<string, string | number>) => translate(uiLocaleCode, key, vars),
     [uiLocaleCode],
   );
+}
+
+/** The BCP-47 tag matching the interface language, for date formatting. */
+export function useDateLocale(): string {
+  const { uiLocaleCode } = useSettings();
+  return dateLocaleFor(uiLocaleCode);
 }

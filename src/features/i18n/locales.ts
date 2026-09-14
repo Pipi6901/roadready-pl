@@ -58,3 +58,18 @@ export function deviceUiLocale(): string {
     return FALLBACK_UI_LOCALE;
   }
 }
+
+/**
+ * BCP-47 tag for `toLocaleDateString` and friends, from an interface language.
+ *
+ * Dates used to be formatted with a hardcoded British locale, so a Ukrainian
+ * interface still said "14 Sept 2026" between two lines of Ukrainian. The
+ * region halves are the conventional ones; only the language half changes what
+ * a date looks like.
+ */
+export function dateLocaleFor(uiLocaleCode: string): string {
+  const REGION: Record<string, string> = {
+    pl: 'pl-PL', uk: 'uk-UA', ru: 'ru-RU', en: 'en-GB', es: 'es-ES', tr: 'tr-TR',
+  };
+  return REGION[uiLocaleCode] ?? 'en-GB';
+}

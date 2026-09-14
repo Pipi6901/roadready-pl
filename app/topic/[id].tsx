@@ -36,7 +36,12 @@ export default function TopicDetailScreen() {
     );
   }
 
-  const lessons = Array.from({ length: stats.totalLessons }, (_, i): { index: number; state: LessonState } => ({
+  // A section the bank has no questions for yet. topicStats still reports one
+  // lesson for it (so the map has something to draw), but starting that lesson
+  // dead-ends on "No lessons left" — so here it is a notice, not a button.
+  const empty = stats.total === 0;
+
+  const lessons = Array.from({ length: empty ? 0 : stats.totalLessons }, (_, i): { index: number; state: LessonState } => ({
     index: i,
     state: i < stats.completedLessons ? 'completed' : i === stats.completedLessons ? 'current' : 'locked',
   }));
@@ -148,6 +153,20 @@ export default function TopicDetailScreen() {
             Lessons
           </Txt>
 
+          {empty ? (
+            <Card gap={6}>
+              <Row style={{ gap: 8 }}>
+                <Icon name="hourglass" size={16} color={t.colors.amberDark} />
+                <Txt size={14} weight="600">
+                  Questions for this section are on the way
+                </Txt>
+              </Row>
+              <Txt size={12} color={t.colors.textSecondary}>
+                They arrive with the next content update — no app update needed.
+              </Txt>
+            </Card>
+          ) : null}
+
           <View style={{ gap: 10 }}>
             {lessons.map(({ index, state }) => {
               const actionable = state === 'current';
@@ -229,6 +248,7 @@ export default function TopicDetailScreen() {
       >
         <Button
           label={stats.completed ? 'Practise again' : 'Start next lesson'}
+          disabled={empty}
           onPress={() =>
             router.push(
               stats.completed

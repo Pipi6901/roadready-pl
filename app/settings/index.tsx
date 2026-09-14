@@ -13,7 +13,7 @@ import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { Slider } from '@/components/ui/Slider';
 import { COUNTRY_SELECTOR_ENABLED } from '@/constants/flags';
 import { PRIVACY_POLICY_URL } from '@/constants/legal';
-import { useT } from '@/features/i18n/useT';
+import { useDateLocale, useT } from '@/features/i18n/useT';
 import { useMediaPack } from '@/features/media/useMediaPack';
 import { requestNotificationPermission } from '@/features/notifications/reminders';
 import { useContent } from '@/store/ContentProvider';
@@ -50,6 +50,7 @@ function formatSize(bytes: number): string {
 export default function SettingsScreen() {
   const t = useTheme();
   const tr = useT();
+  const dateLocale = useDateLocale();
   const router = useRouter();
   const shadow = useCardShadow();
   const settings = useSettings();
@@ -202,13 +203,11 @@ export default function SettingsScreen() {
               value={formatTime(settings.reminderTime)}
               onPress={() => router.push('/settings/reminder-time')}
               disabled={!settings.dailyReminder}
-            />
-            <SettingsRow
-              label={tr('settings.row.questionOfTheDay')}
-              switchValue={settings.questionOfTheDay}
-              onSwitchChange={(questionOfTheDay) => settings.update({ questionOfTheDay })}
               last
             />
+            {/* No "Question of the Day" row: the setting exists, nothing
+                reads it yet. A switch that toggles nothing is a broken
+                switch as far as anyone flipping it can tell. */}
           </SettingsSection>
 
           {/* Questions and explanations ship inside the binary and are refreshed
@@ -285,7 +284,7 @@ export default function SettingsScreen() {
             <SettingsRow label={tr('settings.row.currentPlan')} value={planLabel(subscription.state)} />
             <SettingsRow
               label={tr('settings.row.renewalDate')}
-              value={formatDate(subscription.state.renewsAt)}
+              value={formatDate(subscription.state.renewsAt, dateLocale)}
             />
             <SettingsRow
               label={tr('settings.row.manageSubscription')}

@@ -1,21 +1,30 @@
 import React from 'react';
 import {
-  AlarmClock, Bell, Bike, Bookmark, BookOpen, BookOpenCheck, CalendarClock, CalendarX, CarFront, Check,
-  CheckCheck, ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleParking, CircleX,
-  ClipboardCheck, CloudRain, Compass, Crown, Download, Earth, FileText, Flag, Flame, Gauge, Gem,
-  GitFork, Globe, Hand, House, Info, Languages, ListChecks, Lock, Map, MapPin, MessageCircle, Milestone,
-  Navigation, OctagonAlert, Package, PartyPopper, Play, Pointer, RotateCcw, RotateCw, Route,
-  Search, Settings, ShieldCheck, Signpost, Siren, Sparkles, Sprout, Star, Target, Timer,
-  TrafficCone, TreePine, TrendingDown, TriangleAlert, Trophy, User, Users, Vibrate, Video, Volume2, X, Zap,
+  AlarmClock, ArrowLeftRight, Bell, Bike, Bookmark, BookOpen, BookOpenCheck, CalendarClock, CalendarX,
+  Car, CarFront, Check, CheckCheck, ChevronDown, ChevronLeft, ChevronRight, CircleArrowRight,
+  CircleCheck, CircleDot, CircleParking, CircleSlash, CircleX, ClipboardCheck, CloudRain, Compass,
+  CornerUpRight, Crown, Download, Earth, FileText, Flag, Flame, Gauge, Gem, GitFork, Globe, Hand,
+  HeartPulse, Hourglass, House, Info, Languages, Leaf, ListChecks, Lock, Map, MapPin, MessageCircle,
+  Milestone, Navigation, OctagonAlert, Package, PartyPopper, Play, Pointer, RotateCcw, RotateCw,
+  Route, Search, Settings, ShieldCheck, Signpost, Siren, Smartphone, Sparkles, Sprout, Star, Target,
+  Timer, TrafficCone, TreePine, TrendingDown, TriangleAlert, Trophy, Truck, User, Users, Vibrate,
+  Video, Volume2, Wrench, X, Zap,
 } from 'lucide-react-native';
 
 /**
  * Icons are referenced by their kebab-case lucide name, exactly as they appear
  * in the Pencil mockup. Explicit imports keep tree-shaking working — importing
  * the whole package would pull in 1749 icons.
+ *
+ * A name missing from this map falls back to a signpost — silently. That is
+ * how ten of the Polish section icons (car, truck, wrench, heart-pulse…) all
+ * rendered as the same signpost for a while: the bundle named them, nothing
+ * here knew them. Every icon name used by content or a screen has to be
+ * imported and listed below.
  */
 const ICONS = {
   'alarm-clock': AlarmClock,
+  'arrow-left-right': ArrowLeftRight,
   bell: Bell,
   bike: Bike,
   bookmark: Bookmark,
@@ -23,18 +32,23 @@ const ICONS = {
   'book-open-check': BookOpenCheck,
   'calendar-clock': CalendarClock,
   'calendar-x': CalendarX,
+  car: Car,
   'car-front': CarFront,
   check: Check,
   'check-check': CheckCheck,
   'chevron-down': ChevronDown,
   'chevron-left': ChevronLeft,
   'chevron-right': ChevronRight,
+  'circle-arrow-right': CircleArrowRight,
   'circle-check': CircleCheck,
+  'circle-dot': CircleDot,
   'circle-parking': CircleParking,
+  'circle-slash': CircleSlash,
   'circle-x': CircleX,
   'clipboard-check': ClipboardCheck,
   'cloud-rain': CloudRain,
   compass: Compass,
+  'corner-up-right': CornerUpRight,
   crown: Crown,
   download: Download,
   earth: Earth,
@@ -46,9 +60,12 @@ const ICONS = {
   'git-fork': GitFork,
   globe: Globe,
   hand: Hand,
+  'heart-pulse': HeartPulse,
+  hourglass: Hourglass,
   house: House,
   info: Info,
   languages: Languages,
+  leaf: Leaf,
   'list-checks': ListChecks,
   lock: Lock,
   map: Map,
@@ -69,6 +86,7 @@ const ICONS = {
   'shield-check': ShieldCheck,
   signpost: Signpost,
   siren: Siren,
+  smartphone: Smartphone,
   sparkles: Sparkles,
   sprout: Sprout,
   star: Star,
@@ -79,11 +97,13 @@ const ICONS = {
   'trending-down': TrendingDown,
   'triangle-alert': TriangleAlert,
   trophy: Trophy,
+  truck: Truck,
   user: User,
   users: Users,
   vibrate: Vibrate,
   video: Video,
   'volume-2': Volume2,
+  wrench: Wrench,
   x: X,
   zap: Zap,
 } as const;
