@@ -141,10 +141,13 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     const dayKey = new Date().toISOString().slice(0, 10);
     const usedToday = state.dailyQuestionCount[dayKey] ?? 0;
 
-    // With the paywall switched off there is no way to buy anything, so gating
-    // features would just break the app. Everything is unlocked until the
-    // RevenueCat project and store products exist — see src/constants/flags.ts.
-    const unlocked = !PAYWALL_ENABLED || isPro;
+    // With the paywall switched off — or no RevenueCat key to buy through —
+    // there is no way to become Pro, so gating features would only break the
+    // app: translations never showing, the mock test wearing a Pro badge
+    // nobody can remove, a daily limit that ends in a paywall that cannot
+    // load. Everything is unlocked until the store products exist — see
+    // src/constants/flags.ts and BILLING_CONFIGURED.
+    const unlocked = !PAYWALL_ENABLED || !BILLING_CONFIGURED || isPro;
 
     return {
       ready,

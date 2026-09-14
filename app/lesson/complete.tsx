@@ -42,6 +42,14 @@ export default function LessonCompleteScreen() {
   const perfect = total > 0 && correct === total;
   const hasReview = progress.reviewQueue.length > 0;
 
+  // Where "next" leads. The topic just played may have lessons left; if it
+  // does not, the next unfinished topic on the map does — and when nothing is
+  // left anywhere, the button has no destination and is not shown. Sending
+  // the learner back into the finished topic used to land on the lesson
+  // screen's "No lessons left" dead end, which is not what "next" means.
+  const stats = params.topicId ? progress.topicStats(params.topicId) : null;
+  const nextTopicId = stats && !stats.completed ? params.topicId : progress.nextTopicId;
+
   // Surface the celebration once this screen itself has landed, rather than
   // racing it during the replace() that brought the learner here.
   React.useEffect(() => {
@@ -279,10 +287,12 @@ export default function LessonCompleteScreen() {
 
       {/* Actions */}
       <View style={{ gap: 10, paddingTop: 14, paddingHorizontal: 24, paddingBottom: 24 }}>
-        <Button
-          label="Continue to next lesson"
-          onPress={() => params.topicId && router.replace(`/lesson/${params.topicId}`)}
-        />
+        {nextTopicId ? (
+          <Button
+            label={nextTopicId === params.topicId ? 'Continue to next lesson' : 'Next section'}
+            onPress={() => router.replace(`/lesson/${nextTopicId}`)}
+          />
+        ) : null}
         {hasReview ? (
           <SecondaryAction label="Review mistakes" onPress={() => router.replace('/weak-spots')} />
         ) : null}

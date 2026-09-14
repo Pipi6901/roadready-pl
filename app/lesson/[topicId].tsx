@@ -20,6 +20,7 @@ import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useSubscription } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { questionCategory } from '@/types/content';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 /** Off-screen resting position of the feedback sheet. */
@@ -96,7 +97,13 @@ export default function LessonScreen() {
     return () => sheetY.removeListener(id);
   }, [sheetY]);
 
-  const question = queue[0];
+  // Decorated afresh on every render rather than taken from the queue as
+  // stored: the queue is frozen at mount (see above), and a cold start straight
+  // into a lesson — a deep link, an app restore — mounts before the settings
+  // have loaded, so it froze `translation: null` and the second line never
+  // appeared. Re-decorating changes translation and media only; the question
+  // itself, its order and the retry logic stay exactly as queued.
+  const question = queue[0] ? content.decorate(queue[0]) : undefined;
   const isCorrect = !!question && selectedId === question.correctOptionId;
   // Gate only between cards: answering the last free question must still show
   // its feedback rather than swapping the screen out mid-sentence.
@@ -167,6 +174,7 @@ export default function LessonScreen() {
   };
 
   const handleContinue = () => {
+    if (!question) return;
     const wasCorrect = isCorrect;
     const finishedQuestion = question;
 
@@ -379,7 +387,9 @@ export default function LessonScreen() {
           {question.options.map((option, i) => (
             <AnswerOption
               key={option.id}
-              letter={LETTERS[i] ?? option.id}
+              // Letters only where the paper has them: a specialist question
+              // is answered A/B/C, a basic one TAK/NIE with nothing in front.
+              letter={questionCategory(question) === 'specialist' ? (LETTERS[i] ?? option.id) : undefined}
               text={option.text}
               translation={question.translation?.options[option.id]}
               state={optionState(option.id)}

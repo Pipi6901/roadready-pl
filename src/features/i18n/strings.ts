@@ -102,7 +102,7 @@ export const EN = {
   'transLang.heading': 'Choose your translation language',
   'transLang.subtitle': 'Questions will show in Polish + your chosen language.',
   'transLang.note':
-    'The exam itself is sat in Polish, English, German or Polish sign language. A translation here is a study aid, not something you can use on the day.',
+    'The exam itself is sat in Polish, English, German or Ukrainian. A translation into any other language is a study aid, not something you can use on the day.',
   'transLang.polishOnly': 'Polish only (no translation)',
   'transLang.polishOnlyA11y': 'Polish only, no translation',
   'home.title': 'Driving licence',
@@ -238,7 +238,7 @@ const PL: Catalogue = {
   'transLang.heading': 'Wybierz język tłumaczenia',
   'transLang.subtitle': 'Pytania będą pokazywane po polsku i w wybranym języku.',
   'transLang.note':
-    'Egzamin zdaje się po polsku, angielsku, niemiecku lub w polskim języku migowym. Tłumaczenie tutaj pomaga w nauce, ale nie będzie dostępne na egzaminie.',
+    'Egzamin zdaje się po polsku, angielsku, niemiecku lub ukraińsku. Tłumaczenie na inny język pomaga w nauce, ale nie będzie dostępne na egzaminie.',
   'transLang.polishOnly': 'Tylko polski (bez tłumaczenia)',
   'transLang.polishOnlyA11y': 'Tylko polski, bez tłumaczenia',
   'home.title': 'Prawo jazdy',
@@ -371,7 +371,7 @@ const UK: Catalogue = {
   'transLang.heading': 'Оберіть мову перекладу',
   'transLang.subtitle': 'Питання показуватимуться польською та обраною мовою.',
   'transLang.note':
-    'Іспит складають польською, англійською, німецькою або польською жестовою мовою. Переклад тут — допомога в підготовці, на іспиті його не буде.',
+    'Сам іспит складають польською, англійською, німецькою або українською. Переклад іншою мовою — це допомога в підготовці, на іспиті його не буде.',
   'transLang.polishOnly': 'Тільки польська (без перекладу)',
   'transLang.polishOnlyA11y': 'Тільки польська, без перекладу',
   'home.title': 'Водійські права',
@@ -504,7 +504,7 @@ const RU: Catalogue = {
   'transLang.heading': 'Выберите язык перевода',
   'transLang.subtitle': 'Вопросы будут показываться на польском и на выбранном языке.',
   'transLang.note':
-    'Экзамен сдают на польском, английском, немецком или польском жестовом языке. Перевод здесь — помощь в подготовке, на экзамене его не будет.',
+    'Сам экзамен сдают на польском, английском, немецком или украинском. Перевод на другой язык — помощь в подготовке, на экзамене его не будет.',
   'transLang.polishOnly': 'Только польский (без перевода)',
   'transLang.polishOnlyA11y': 'Только польский, без перевода',
   'home.title': 'Водительские права',
@@ -637,7 +637,7 @@ const ES: Catalogue = {
   'transLang.heading': 'Elige tu idioma de traducción',
   'transLang.subtitle': 'Las preguntas se mostrarán en polaco y en el idioma que elijas.',
   'transLang.note':
-    'El examen se hace en polaco, inglés, alemán o lengua de signos polaca. La traducción aquí es una ayuda para estudiar, no algo que puedas usar el día del examen.',
+    'El examen se hace en polaco, inglés, alemán o ucraniano. Una traducción a otro idioma es una ayuda para estudiar, no algo que puedas usar ese día.',
   'transLang.polishOnly': 'Solo polaco (sin traducción)',
   'transLang.polishOnlyA11y': 'Solo polaco, sin traducción',
   'home.title': 'Permiso de conducir',
@@ -769,7 +769,7 @@ const TR: Catalogue = {
   'transLang.heading': 'Çeviri dilinizi seçin',
   'transLang.subtitle': 'Sorular Lehçe ve seçtiğiniz dilde gösterilir.',
   'transLang.note':
-    'Sınav Lehçe, İngilizce, Almanca veya Polonya işaret diliyle yapılır. Buradaki çeviri çalışmaya yardımcı olur, sınav günü kullanılamaz.',
+    'Sınavın kendisi Lehçe, İngilizce, Almanca ya da Ukraynaca yapılır. Başka bir dile çeviri çalışma yardımıdır; sınav günü kullanılamaz.',
   'transLang.polishOnly': 'Yalnızca Lehçe (çevirisiz)',
   'transLang.polishOnlyA11y': 'Yalnızca Lehçe, çevirisiz',
   'home.title': 'Sürücü belgesi',

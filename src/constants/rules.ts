@@ -7,7 +7,7 @@
  */
 
 /** Questions per lesson. */
-export const LESSON_SIZE = 10;
+export const LESSON_SIZE = 5;
 
 /** XP for a correct first attempt. */
 export const XP_PER_CORRECT = 10;

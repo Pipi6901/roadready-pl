@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LOCALES } from '@/data/demo-bundle';
 import { deviceUiLocale, findUiLocale } from '@/features/i18n/locales';
@@ -76,10 +76,21 @@ const SettingsContext = createContext<SettingsContextValue | null>(null);
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
   const [ready, setReady] = useState(false);
+  // Patches made before storage has been read. Persisting one of those
+  // straight away would write DEFAULTS-plus-patch over whatever is stored:
+  // a cold start that lands on the paywall and calls update({ onboarded })
+  // used to erase the chosen translation language that way. They are held
+  // here and folded into the loaded settings instead.
+  const readyRef = useRef(false);
+  const pendingRef = useRef<Partial<Settings>>({});
 
   useEffect(() => {
     load<Settings>(KEYS.settings, DEFAULTS).then((s) => {
-      setSettings({ ...DEFAULTS, ...s });
+      const next = { ...DEFAULTS, ...s, ...pendingRef.current };
+      if (Object.keys(pendingRef.current).length) void save(KEYS.settings, next);
+      pendingRef.current = {};
+      readyRef.current = true;
+      setSettings(next);
       setReady(true);
     });
   }, []);
@@ -103,6 +114,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, [ready, settings.dailyReminder, settings.reminderTime]);
 
   const update = useCallback((patch: Partial<Settings>) => {
+    if (!readyRef.current) {
+      pendingRef.current = { ...pendingRef.current, ...patch };
+      setSettings((prev) => ({ ...prev, ...patch }));
+      return;
+    }
     setSettings((prev) => {
       const next = { ...prev, ...patch };
       void save(KEYS.settings, next);

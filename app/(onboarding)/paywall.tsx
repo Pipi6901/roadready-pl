@@ -3,7 +3,7 @@ import React from 'react';
 import { Alert } from 'react-native';
 import RevenueCatUI from 'react-native-purchases-ui';
 
-import { ENTITLEMENT_ID } from '@/constants/billing';
+import { BILLING_CONFIGURED, ENTITLEMENT_ID } from '@/constants/billing';
 import { EVENTS, track } from '@/features/analytics/analytics';
 import { useSettings } from '@/store/SettingsProvider';
 
@@ -35,6 +35,21 @@ export default function PaywallScreen() {
   React.useEffect(() => {
     track(EVENTS.paywallShown, { source });
   }, [source]);
+
+  // No RevenueCat key yet: the SDK was never configured (see
+  // SubscriptionProvider), and asking RevenueCatUI to draw a paywall on top
+  // of that throws before it draws anything. Every route into this screen
+  // used to dead-end here for a tester — the onboarding one worst of all,
+  // because `onboarded` is only ever set on this screen. Pass straight
+  // through instead: the funnel ends, the app opens.
+  React.useEffect(() => {
+    if (BILLING_CONFIGURED) return;
+    track(EVENTS.paywallDismissed, { source, reason: 'billing_not_configured' });
+    if (source === 'onboarding') finishOnboarding();
+    else router.back();
+  }, [source, finishOnboarding, router]);
+
+  if (!BILLING_CONFIGURED) return null;
 
   return (
     <RevenueCatUI.Paywall

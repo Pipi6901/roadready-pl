@@ -170,7 +170,7 @@ export default function MockSetupScreen() {
           <Icon name="languages" size={14} color={t.colors.textMuted} />
           <Txt size={12} color={t.colors.textMuted} style={{ flex: 1 }}>
             {translationEnabled
-              ? `Questions shown in English + ${localeName}`
+              ? `Questions shown in Polish + ${localeName}`
               : 'Questions shown in Polish only'}
           </Txt>
         </Row>

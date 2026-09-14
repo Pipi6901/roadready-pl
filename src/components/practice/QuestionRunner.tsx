@@ -13,7 +13,7 @@ import { useHaptics } from '@/hooks/useHaptics';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
-import type { DisplayQuestion } from '@/types/content';
+import { questionCategory, type DisplayQuestion } from '@/types/content';
 import { AnswerOption, type AnswerOptionState } from '@/components/AnswerOption';
 import { cardShadow } from './shadow';
 
@@ -232,6 +232,7 @@ export function QuestionRunner({
           {question.options.map((option) => (
             <AnswerOption
               key={option.id}
+              letter={questionCategory(question) === 'specialist' ? option.id : undefined}
               text={option.text}
               translation={question.translation?.options?.[option.id]}
               state={optionState(option.id)}
