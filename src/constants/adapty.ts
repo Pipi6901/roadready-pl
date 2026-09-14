@@ -10,9 +10,19 @@ import { Platform } from 'react-native';
  * meant to ship inside the client, same as the RevenueCat key.
  */
 
-/** From the Adapty dashboard → the Polish app (not the UK "RoadReady" one) → SDK keys → Public SDK key. */
+/**
+ * From the Adapty dashboard → the Polish app (not the UK "RoadReady" one) →
+ * App settings → General → API keys → Public SDK key.
+ *
+ * Copy it with the dashboard's copy button, never retype it from a screenshot:
+ * the first build shipped with a lowercase L where the key has a capital I —
+ * identical in the dashboard's font — and Adapty answered 401 to the very
+ * first request. The SDK then marks its whole backend as unauthorized and
+ * refuses to even send the CDN fallback request, so what the app reported was
+ * "#2009 encodingFailed … fallback.json … unauthorized", nothing about a key.
+ */
 export const ADAPTY_PUBLIC_KEY = Platform.select({
-  ios: 'public_live_TdjyNzCS.EfqolgrssZRXt86nJFG4',
+  ios: 'public_live_TdjyNzCS.EfqoIgrssZRXt86nJFG4',
   android: 'REPLACE_WITH_ADAPTY_PL_ANDROID_PUBLIC_KEY',
   default: '',
 })!;
