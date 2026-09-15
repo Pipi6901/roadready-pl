@@ -1,0 +1,42 @@
+{
+  "code": "PL",
+  "name": "Polska",
+  "flagEmoji": "🇵🇱",
+  "authority": "WORD",
+  "legalNotice": "Pytania pochodzą z oficjalnej bazy pytań egzaminacyjnych opublikowanej przez Ministerstwo Infrastruktury (gov.pl/web/infrastruktura/prawo-jazdy). Podział na działy tematyczne jest opracowaniem własnym RoadReady. Aplikacja nie jest powiązana z Ministerstwem Infrastruktury ani z WORD.",
+  "status": "active",
+  "mockTest": {
+    "questionCount": 32,
+    "timeLimitMinutes": 25,
+    "passMark": 68,
+    "maxPoints": 74,
+    "timing": {
+      "basic": {
+        "readSeconds": 20,
+        "answerSeconds": 15
+      },
+      "specialist": {
+        "readSeconds": 0,
+        "answerSeconds": 50
+      }
+    },
+    "composition": {
+      "basic": 20,
+      "specialist": 12
+    },
+    "weights": {
+      "basic": {
+        "1": 4,
+        "2": 6,
+        "3": 10
+      },
+      "specialist": {
+        "1": 2,
+        "2": 4,
+        "3": 6
+      }
+    },
+    "allowReview": false
+  },
+  "currency": "PLN"
+}

@@ -123,6 +123,16 @@ export const LOCALES: Locale[] = [
     direction: 'ltr',
     flagEmoji: '🇪🇸',
   },
+  // German is an exam language, and the ministry's catalogue ships an official
+  // German translation of every question — the one language that costs nothing
+  // to offer. Fifth, not first: the German-reading audience in Poland is small.
+  {
+    code: 'de',
+    nameNative: 'Deutsch',
+    nameEnglish: 'German',
+    direction: 'ltr',
+    flagEmoji: '🇩🇪',
+  },
   {
     code: 'tr',
     nameNative: 'Türkçe',
@@ -293,12 +303,22 @@ const TOPICS: Topic[] = [
     questionCount: 0,
   },
   {
+    id: 'sytuacje-drogowe',
+    name: 'Sytuacje drogowe — filmy i zdjęcia',
+    slug: 'sytuacje-drogowe',
+    icon: 'video',
+    category: 'basic',
+    sortOrder: 15,
+    // Patched below from the questions that actually reference it.
+    questionCount: 0,
+  },
+  {
     id: 'pierwsza-pomoc',
     name: 'Pierwsza pomoc',
     slug: 'pierwsza-pomoc',
     icon: 'heart-pulse',
     category: 'basic',
-    sortOrder: 15,
+    sortOrder: 16,
     // Patched below from the questions that actually reference it.
     questionCount: 0,
   },
@@ -308,7 +328,7 @@ const TOPICS: Topic[] = [
     slug: 'ekologia',
     icon: 'leaf',
     category: 'basic',
-    sortOrder: 16,
+    sortOrder: 17,
     // Patched below from the questions that actually reference it.
     questionCount: 0,
   },
@@ -318,7 +338,7 @@ const TOPICS: Topic[] = [
     slug: 'technika-manewry',
     icon: 'car',
     category: 'specialist',
-    sortOrder: 17,
+    sortOrder: 18,
     // Patched below from the questions that actually reference it.
     questionCount: 0,
   },
@@ -328,7 +348,7 @@ const TOPICS: Topic[] = [
     slug: 'warunki-techniczne',
     icon: 'wrench',
     category: 'specialist',
-    sortOrder: 18,
+    sortOrder: 19,
     // Patched below from the questions that actually reference it.
     questionCount: 0,
   },
@@ -338,7 +358,7 @@ const TOPICS: Topic[] = [
     slug: 'wyposazenie',
     icon: 'package',
     category: 'specialist',
-    sortOrder: 19,
+    sortOrder: 20,
     // Patched below from the questions that actually reference it.
     questionCount: 0,
   },
@@ -348,7 +368,7 @@ const TOPICS: Topic[] = [
     slug: 'dokumenty',
     icon: 'file-text',
     category: 'specialist',
-    sortOrder: 20,
+    sortOrder: 21,
     // Patched below from the questions that actually reference it.
     questionCount: 0,
   },
@@ -358,7 +378,7 @@ const TOPICS: Topic[] = [
     slug: 'przewoz',
     icon: 'truck',
     category: 'specialist',
-    sortOrder: 21,
+    sortOrder: 22,
     // Patched below from the questions that actually reference it.
     questionCount: 0,
   },
@@ -368,7 +388,7 @@ const TOPICS: Topic[] = [
     slug: 'autostrady',
     icon: 'milestone',
     category: 'specialist',
-    sortOrder: 22,
+    sortOrder: 23,
     // Patched below from the questions that actually reference it.
     questionCount: 0,
   },

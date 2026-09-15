@@ -1,7 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { DEMO_BUNDLE } from '@/data/demo-bundle';
+import { remoteContentStore } from '@/data/remoteContent';
 import { LESSON_SIZE, XP_PER_CORRECT, DAILY_GOAL_LESSONS } from '@/constants/rules';
+import { questionAppliesTo } from '@/types/content';
+import { useSettings } from './SettingsProvider';
 import { KEYS, load, save } from './storage';
 
 export interface QuestionProgress {
@@ -168,6 +171,17 @@ function checkAchievements(next: ProgressState): { state: ProgressState; newAchi
 }
 
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
+  // Every figure below — mastered, readiness, lessons per topic — is counted
+  // over the bank for the learner's licence, the same list ContentProvider
+  // serves questions from. Counting the whole catalogue would show a car
+  // candidate "0 of 900" in a section where only 300 questions are theirs.
+  const { licenceCategory } = useSettings();
+  // Same trick as ContentProvider: the bundle is mutated in place when
+  // published content lands, and this is what makes the memo below notice.
+  const contentVersion = React.useSyncExternalStore(
+    remoteContentStore.subscribe,
+    remoteContentStore.getVersion,
+  );
   const [state, setState] = useState<ProgressState>(EMPTY);
   const [ready, setReady] = useState(false);
   // The single source of truth every mutator (recordAnswer, completeLesson,
@@ -328,6 +342,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   }, [persist]);
 
   const value = useMemo<ProgressContextValue>(() => {
+    const bank = DEMO_BUNDLE.questions.filter((q) => questionAppliesTo(q, licenceCategory));
     const today = dayKey();
     const todayEntry = state.daily[today] ?? { lessons: 0, xp: 0 };
     const questionEntries = Object.values(state.questions);
@@ -336,8 +351,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     const masteredCount = questionEntries.filter((q) => q.mastered).length;
 
     const topicStats = (topicId: string): TopicStats => {
-      const topic = DEMO_BUNDLE.topics.find((t) => t.id === topicId);
-      const questions = DEMO_BUNDLE.questions.filter((q) => q.topicId === topicId);
+      const questions = bank.filter((q) => q.topicId === topicId);
       const total = questions.length;
       const mastered = questions.filter((q) => state.questions[q.id]?.mastered).length;
       const answered = questions.filter((q) => state.questions[q.id]);
@@ -380,7 +394,8 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       };
     };
 
-    const allStats = () => DEMO_BUNDLE.topics.map((t) => topicStats(t.id));
+    const allStats = () =>
+      DEMO_BUNDLE.topics.filter((t) => bank.some((q) => q.topicId === t.id)).map((t) => topicStats(t.id));
     const stats = allStats();
     // Deliberately no fallback to "any unlocked topic" here: topic 0 is
     // always unlocked, so that fallback silently returned it once every
@@ -399,8 +414,8 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       goalMet: todayEntry.lessons >= DAILY_GOAL_LESSONS,
       masteredCount,
       accuracy: attempts ? Math.round((corrects / attempts) * 100) : 0,
-      readiness: DEMO_BUNDLE.questions.length
-        ? Math.round((masteredCount / DEMO_BUNDLE.questions.length) * 100)
+      readiness: bank.length
+        ? Math.round((bank.filter((q) => state.questions[q.id]?.mastered).length / bank.length) * 100)
         : 0,
       reviewQueue: Object.entries(state.questions)
         .filter(([, p]) => p.inReview)
@@ -417,7 +432,8 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       toggleSaved,
       reset,
     };
-  }, [state, ready, recordAnswer, completeLesson, recordMockAttempt, toggleSaved, reset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- contentVersion is the bundle's change signal
+  }, [state, ready, licenceCategory, contentVersion, recordAnswer, completeLesson, recordMockAttempt, toggleSaved, reset]);
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
 }

@@ -1,0 +1,211 @@
+# -*- coding: utf-8 -*-
+"""Turns the ministry's question catalogue into the app's content bundle.
+
+Input:  KATALOG_dla_kandydatów_na_kierowców_MMYYYY.xlsx from
+        https://www.gov.pl/web/infrastruktura/prawo-jazdy
+Output: content/katalog/content.json — the exact payload shape the mobile app
+        fetches (src/data/remoteContent.ts) and the admin seeds from
+        (roadready-admin-pl/scripts/seed.js), plus a review CSV.
+
+What the catalogue gives us and what it does not:
+- 3.5k questions with the exam class (basic/specialist), the point weight, the
+  licence categories each question applies to, and the media file the
+  question refers to. Official translations into English, German and
+  Ukrainian ride along in the same row.
+- No thematic sections (assigned here, see katalog_topics.py), no
+  explanations (left empty — the exam has none, the app treats an empty
+  explanation as "show only the correct answer"), and no media files: those
+  are a separate 9.5 GB archive on the same page, handled by a later step. The
+  original file name is kept in `sourceMedia` so that step can match them.
+
+Usage: python scripts/import_katalog.py <catalogue.xlsx>
+"""
+import csv
+import io
+import json
+import os
+import re
+import sys
+from collections import Counter, defaultdict
+
+from openpyxl import load_workbook
+
+sys.path.insert(0, os.path.dirname(__file__))
+from katalog_topics import classify  # noqa: E402
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUT_DIR = os.path.join(ROOT, 'content', 'katalog')
+
+# Column indexes in the catalogue sheet (0-based).
+COL = dict(lp=0, number=1, text=2, a=3, b=4, c=5, correct=6, media=7, structure=8, points=9, categories=10,
+           en_text=15, en_a=16, en_b=17, en_c=18, de_text=19, de_a=20, de_b=21, de_c=22, ua_text=23, ua_a=24, ua_b=25, ua_c=26)
+
+LICENCE_ORDER = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'C1', 'C', 'D1', 'D', 'T', 'PT']
+
+YES_NO = {'en': ('Yes', 'No'), 'de': ('Ja', 'Nein'), 'uk': ('Так', 'Ні')}
+
+
+def clean(value):
+    if value is None:
+        return ''
+    s = str(value).replace(' ', ' ').strip()
+    return re.sub(r'\s+', ' ', s)
+
+
+def load_rows(path):
+    wb = load_workbook(path, read_only=True, data_only=True)
+    ws = wb['katalog']
+    rows = []
+    for r in ws.iter_rows(min_row=2, values_only=True):
+        if clean(r[COL['number']]) == '':
+            continue
+        rows.append(r)
+    return rows
+
+
+def structure_of(raw):
+    s = clean(raw).upper()
+    if s.startswith('PODST'):
+        return 'basic'
+    # "SPECJALISTYCZNY", "Specjalistyczny", and one "Specajlistyczny" in the July 2026 file.
+    return 'specialist'
+
+
+def build(rows, topics_meta):
+    questions, translations = [], {'en': {}, 'de': {}, 'uk': {}}
+    problems = []
+    for r in rows:
+        number = clean(r[COL['number']])
+        qid = f'q-{number}'
+        text = clean(r[COL['text']])
+        structure = structure_of(r[COL['structure']])
+        correct = clean(r[COL['correct']]).upper()
+        # Ten rows in the July 2026 file carry the wrong class label: a
+        # TAK/NIE answer under SPECJALISTYCZNY or three lettered options under
+        # PODSTAWOWY. The answer format is what the exam actually shows the
+        # candidate, so it wins over the label.
+        if correct in ('T', 'N'):
+            structure = 'basic'
+        elif correct in ('A', 'B', 'C'):
+            structure = 'specialist'
+        points = int(float(clean(r[COL['points']]) or 1))
+        licences = [c.strip().upper() for c in clean(r[COL['categories']]).split(',') if c.strip()]
+        licences = [c for c in LICENCE_ORDER if c in licences]
+        media = clean(r[COL['media']]) or None
+
+        if structure == 'basic':
+            if correct not in ('T', 'N'):
+                problems.append((qid, f'basic answer {correct!r}'))
+                continue
+            options = [{'id': 'T', 'text': 'TAK'}, {'id': 'N', 'text': 'NIE'}]
+        else:
+            a, b, c = clean(r[COL['a']]), clean(r[COL['b']]), clean(r[COL['c']])
+            if correct not in ('A', 'B', 'C') or not (a and b and c):
+                problems.append((qid, f'specialist answer {correct!r} options {bool(a)}/{bool(b)}/{bool(c)}'))
+                continue
+            options = [{'id': 'A', 'text': a}, {'id': 'B', 'text': b}, {'id': 'C', 'text': c}]
+
+        answers_blob = ' '.join(o['text'] for o in options) if structure == 'specialist' else ''
+        topic = classify(structure, text, answers_blob, media is not None)
+
+        questions.append({
+            'id': qid,
+            'topicId': topic,
+            'type': 'single_choice',
+            'text': text,
+            'options': options,
+            'correctOptionId': correct,
+            'explanation': '',
+            'mediaId': None,
+            'sourceMedia': media,
+            'subtopic': None,
+            'sourceRef': f'Katalog MI 07/2026, pytanie nr {number}',
+            'category': structure,
+            'points': points,
+            'licences': licences,
+        })
+
+        for loc, (tk, ak, bk, ck) in {'en': ('en_text', 'en_a', 'en_b', 'en_c'), 'de': ('de_text', 'de_a', 'de_b', 'de_c'), 'uk': ('ua_text', 'ua_a', 'ua_b', 'ua_c')}.items():
+            t = clean(r[COL[tk]])
+            if not t:
+                continue
+            if structure == 'basic':
+                yes, no = YES_NO[loc]
+                opts = {'T': yes, 'N': no}
+            else:
+                oa, ob, oc = clean(r[COL[ak]]), clean(r[COL[bk]]), clean(r[COL[ck]])
+                if not (oa and ob and oc):
+                    continue
+                opts = {'A': oa, 'B': ob, 'C': oc}
+            translations[loc][qid] = {'text': t, 'options': opts, 'explanation': ''}
+
+    return questions, translations, problems
+
+
+def main():
+    if len(sys.argv) < 2:
+        print(__doc__)
+        sys.exit(1)
+    src = sys.argv[1]
+    rows = load_rows(src)
+
+    # Topic metadata comes from the app's own list so ids and names cannot drift.
+    with open(os.path.join(ROOT, 'content', 'katalog', 'topics.json'), encoding='utf-8') as f:
+        topics_meta = json.load(f)
+    with open(os.path.join(ROOT, 'content', 'katalog', 'country.json'), encoding='utf-8') as f:
+        country = json.load(f)
+    with open(os.path.join(ROOT, 'content', 'katalog', 'locales.json'), encoding='utf-8') as f:
+        locales = json.load(f)
+
+    questions, translations, problems = build(rows, topics_meta)
+
+    counts = Counter(q['topicId'] for q in questions)
+    topics = []
+    for t in topics_meta:
+        topics.append({**t, 'questionCount': counts.get(t['id'], 0)})
+
+    country = {**country, 'questionCount': len(questions)}
+    payload = {
+        'country': country,
+        'topics': topics,
+        'questions': questions,
+        'translations': translations,
+        'media': {},
+        'versionHash': f'katalog-{os.path.basename(src).rsplit("_", 1)[-1].split(".")[0]}-{len(questions)}',
+        'countries': [country],
+        'locales': locales,
+    }
+    os.makedirs(OUT_DIR, exist_ok=True)
+    out = os.path.join(OUT_DIR, 'content.json')
+    with open(out, 'w', encoding='utf-8') as f:
+        json.dump(payload, f, ensure_ascii=False, separators=(',', ':'))
+
+    # Review sheet: one row per question with the assigned topic, for eyeballing.
+    with open(os.path.join(OUT_DIR, 'review.csv'), 'w', encoding='utf-8-sig', newline='') as f:
+        w = csv.writer(f, delimiter=';')
+        w.writerow(['id', 'class', 'points', 'topic', 'licences', 'media', 'text'])
+        for q in questions:
+            w.writerow([q['id'], q['category'], q['points'], q['topicId'], ','.join(q['licences']), q['sourceMedia'] or '', q['text']])
+
+    print(f'questions: {len(questions)}  skipped: {len(problems)}  size: {os.path.getsize(out) / 1e6:.1f} MB')
+    for qid, why in problems[:10]:
+        print('  skipped', qid, why)
+    print('translations:', {k: len(v) for k, v in translations.items()})
+    print('by topic:')
+    for t in topics:
+        print(f"  {t['id']:<22} {t['category']:<10} {t['questionCount']:>5}")
+    per_lic = Counter()
+    for q in questions:
+        for l in q['licences']:
+            per_lic[l] += 1
+    print('per licence:', dict(sorted(per_lic.items(), key=lambda x: LICENCE_ORDER.index(x[0]))))
+    # Paper buckets for B — the mock generator needs every (class, points) bucket non-empty.
+    b = [q for q in questions if 'B' in q['licences']]
+    buckets = Counter((q['category'], q['points']) for q in b)
+    print('B buckets:', dict(sorted(buckets.items())))
+
+
+if __name__ == '__main__':
+    main()

@@ -1,13 +1,13 @@
 import React from 'react';
 import {
-  AlarmClock, ArrowLeftRight, Bell, Bike, Bookmark, BookOpen, BookOpenCheck, CalendarClock, CalendarX,
+  AlarmClock, ArrowLeftRight, Bell, Bike, Bookmark, BookOpen, BookOpenCheck, Bus, CalendarClock, CalendarX,
   Car, CarFront, Check, CheckCheck, ChevronDown, ChevronLeft, ChevronRight, CircleArrowRight,
   CircleCheck, CircleDot, CircleParking, CircleSlash, CircleX, ClipboardCheck, CloudRain, Compass,
   CornerUpRight, Crown, Download, Earth, FileText, Flag, Flame, Gauge, Gem, GitFork, Globe, Hand,
-  HeartPulse, Hourglass, House, Info, Languages, Leaf, ListChecks, Lock, Map, MapPin, MessageCircle,
+  HeartPulse, Hourglass, House, Image, Info, Languages, Leaf, ListChecks, Lock, Map, MapPin, MessageCircle,
   Milestone, Navigation, OctagonAlert, Package, PartyPopper, Play, Pointer, RotateCcw, RotateCw,
   Route, Search, Settings, ShieldCheck, Signpost, Siren, Smartphone, Sparkles, Sprout, Star, Target,
-  Timer, TrafficCone, TreePine, TrendingDown, TriangleAlert, Trophy, Truck, User, Users, Vibrate,
+  Timer, Tractor, TrafficCone, TramFront, TreePine, TrendingDown, TriangleAlert, Trophy, Truck, User, Users, Vibrate,
   Video, Volume2, Wrench, X, Zap,
 } from 'lucide-react-native';
 
@@ -30,6 +30,7 @@ const ICONS = {
   bookmark: Bookmark,
   'book-open': BookOpen,
   'book-open-check': BookOpenCheck,
+  bus: Bus,
   'calendar-clock': CalendarClock,
   'calendar-x': CalendarX,
   car: Car,
@@ -92,7 +93,9 @@ const ICONS = {
   star: Star,
   target: Target,
   timer: Timer,
+  tractor: Tractor,
   'traffic-cone': TrafficCone,
+  'tram-front': TramFront,
   'tree-pine': TreePine,
   'trending-down': TrendingDown,
   'triangle-alert': TriangleAlert,
@@ -101,6 +104,7 @@ const ICONS = {
   user: User,
   users: Users,
   vibrate: Vibrate,
+  image: Image,
   video: Video,
   'volume-2': Volume2,
   wrench: Wrench,

@@ -191,7 +191,7 @@ export function QuestionRunner({
       </View>
 
       <ScreenScroll style={{ flex: 1 }} contentContainerStyle={{ padding: 20, gap: 16 }}>
-        <QuestionMedia media={question.media} />
+        <QuestionMedia media={question.media} sourceMedia={question.sourceMedia} />
 
         <Row style={{ gap: 10, alignItems: 'flex-start' }}>
           <View style={{ flex: 1 }}>
@@ -328,14 +328,18 @@ function FeedbackSheet({ correct, xp, explanation, explanationTranslation, onCon
         ) : null}
       </Row>
 
-      <BilingualText
-        original={explanation}
-        translation={explanationTranslation}
-        size={14}
-        weight="400"
-        translationSize={12}
-        gap={4}
-      />
+      {/* The official catalogue ships no explanations, so this is often
+          empty: the highlighted option above is then the whole feedback. */}
+      {explanation.trim() ? (
+        <BilingualText
+          original={explanation}
+          translation={explanationTranslation}
+          size={14}
+          weight="400"
+          translationSize={12}
+          gap={4}
+        />
+      ) : null}
 
       {correct ? null : (
         <Row style={{ gap: 6, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 12, backgroundColor: t.colors.sage100 }}>

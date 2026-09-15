@@ -192,7 +192,7 @@ export default function MockRunScreen() {
       </View>
 
       <ScreenScroll style={{ flex: 1 }} contentContainerStyle={{ padding: 20, gap: 16 }}>
-        <QuestionMedia media={question.media} />
+        <QuestionMedia media={question.media} sourceMedia={question.sourceMedia} />
 
         <BilingualText
           original={question.text}

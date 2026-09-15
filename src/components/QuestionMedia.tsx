@@ -1,7 +1,10 @@
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { Image, View } from 'react-native';
 
+import { Icon } from '@/components/ui/Icon';
+import { Txt } from '@/components/ui/primitives';
 import { useMediaUri } from '@/features/media/useMediaPack';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { MediaAsset } from '@/types/content';
 
@@ -71,8 +74,44 @@ function QuestionVideo({ media }: { media: MediaAsset }) {
   );
 }
 
-export function QuestionMedia({ media }: { media: MediaAsset | null }) {
-  if (!media) return null;
+/**
+ * Stand-in for a picture or clip the catalogue attaches to the question but
+ * the app does not have yet. 85% of the official questions come with one
+ * ("Czy w tej sytuacji…"), and until the ministry's archive is imported the
+ * question makes no sense without saying so — a blank would look like a
+ * question with no picture, which reads as a bug rather than as pending.
+ */
+function PendingMedia({ video }: { video: boolean }) {
+  const t = useTheme();
+  const tr = useT();
+  return (
+    <View
+      accessible
+      accessibilityLabel={tr('media.pending')}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        padding: 14,
+        borderRadius: t.radius.md,
+        borderWidth: 1,
+        borderStyle: 'dashed',
+        borderColor: t.colors.border,
+        backgroundColor: t.colors.sage50,
+      }}
+    >
+      <Icon name={video ? 'video' : 'image'} size={20} color={t.colors.textMuted} />
+      <Txt size={12} color={t.colors.textSecondary} style={{ flex: 1 }} lineHeight={17}>
+        {tr('media.pending')}
+      </Txt>
+    </View>
+  );
+}
+
+export function QuestionMedia({ media, sourceMedia }: { media: MediaAsset | null; sourceMedia?: string | null }) {
+  if (!media) {
+    return sourceMedia ? <PendingMedia video={/\.(wmv|mp4|mov|avi)$/i.test(sourceMedia)} /> : null;
+  }
   // Not gated on HAZARD_ENABLED: that flag keeps hazard *questions*
   // unreachable, and a video attached to an ordinary question should still
   // play rather than silently disappear.

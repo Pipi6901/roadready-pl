@@ -41,7 +41,13 @@ export default function TopicDetailScreen() {
   // dead-ends on "No lessons left" — so here it is a notice, not a button.
   const empty = stats.total === 0;
 
-  const lessons = Array.from({ length: empty ? 0 : stats.totalLessons }, (_, i): { index: number; state: LessonState } => ({
+  // With the full catalogue a section can run to forty-odd lessons, and a
+  // wall of identical locked rows says nothing. Everything done, the current
+  // one, a handful ahead — and one line for the rest.
+  const LOCKED_PREVIEW = 4;
+  const shown = empty ? 0 : Math.min(stats.totalLessons, stats.completedLessons + 1 + LOCKED_PREVIEW);
+  const hidden = empty ? 0 : stats.totalLessons - shown;
+  const lessons = Array.from({ length: shown }, (_, i): { index: number; state: LessonState } => ({
     index: i,
     state: i < stats.completedLessons ? 'completed' : i === stats.completedLessons ? 'current' : 'locked',
   }));
@@ -230,6 +236,11 @@ export default function TopicDetailScreen() {
                 </Pressable>
               );
             })}
+            {hidden > 0 ? (
+              <Txt size={12} color={t.colors.textMuted} align="center" style={{ paddingVertical: 6 }}>
+                … and {hidden} more {hidden === 1 ? 'lesson' : 'lessons'}
+              </Txt>
+            ) : null}
           </View>
         </View>
       </ScreenScroll>

@@ -117,14 +117,18 @@ export function FeedbackSheet({
         </View>
       ) : null}
 
-      <BilingualText
-        original={explanation}
-        translation={explanationTranslation}
-        size={14}
-        weight="400"
-        translationSize={12}
-        gap={4}
-      />
+      {/* The official catalogue ships no explanations, so this is often
+          empty: the highlighted option above is then the whole feedback. */}
+      {explanation.trim() ? (
+        <BilingualText
+          original={explanation}
+          translation={explanationTranslation}
+          size={14}
+          weight="400"
+          translationSize={12}
+          gap={4}
+        />
+      ) : null}
 
       {!correct ? (
         <Row

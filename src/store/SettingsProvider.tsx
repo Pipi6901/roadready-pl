@@ -11,6 +11,13 @@ export interface Settings {
   /** null = "Polish only (no translation)" */
   localeCode: string | null;
   /**
+   * The licence the learner is going for — 'B' for a car, 'A' for a
+   * motorcycle, 'C' for a lorry… The exam paper has the same shape for every
+   * category; what changes is which questions are in the hat, and this is
+   * what picks them (see ContentProvider). Same codes as the catalogue.
+   */
+  licenceCategory: string;
+  /**
    * Language of the app's own interface, which is a separate choice from the
    * translation shown under a question: someone sitting the exam in Polish may
    * still want the app in Ukrainian.
@@ -39,6 +46,7 @@ const DEFAULTS: Settings = {
   onboarded: false,
   countryCode: 'PL',
   localeCode: null,
+  licenceCategory: 'B',
   uiLocale: null,
   examDate: null,
   displayName: 'Learner',

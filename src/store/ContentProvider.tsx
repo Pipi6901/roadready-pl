@@ -4,6 +4,7 @@ import { COUNTRIES, DEMO_BUNDLE } from '@/data/demo-bundle';
 import { initRemoteContent, remoteContentStore } from '@/data/remoteContent';
 import { LESSON_SIZE } from '@/constants/rules';
 import {
+  questionAppliesTo,
   questionCategory,
   questionPoints,
   type Country,
@@ -44,7 +45,7 @@ interface ContentContextValue {
 const ContentContext = createContext<ContentContextValue | null>(null);
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
-  const { localeCode, countryCode } = useSettings();
+  const { localeCode, countryCode, licenceCategory } = useSettings();
   const { can } = useSubscription();
   const progress = useProgress();
 
@@ -79,8 +80,16 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<ContentContextValue>(() => {
     const country = COUNTRIES.find((c) => c.code === countryCode) ?? DEMO_BUNDLE.country;
 
-    const questionsForTopic = (topicId: string) =>
-      DEMO_BUNDLE.questions.filter((q) => q.topicId === topicId);
+    // The bank for the licence the learner is going for. The exam paper is
+    // the same shape for every category — 20 basic, 12 specialist, 74 points —
+    // but a lorry candidate is asked about tachographs and a motorcyclist
+    // about counter-steering, so every draw below comes from this list, not
+    // from the whole catalogue. Sections with nothing in them for this
+    // licence disappear from the map rather than sitting there empty.
+    const bank = DEMO_BUNDLE.questions.filter((q) => questionAppliesTo(q, licenceCategory));
+    const topics = DEMO_BUNDLE.topics.filter((t) => bank.some((q) => q.topicId === t.id));
+
+    const questionsForTopic = (topicId: string) => bank.filter((q) => q.topicId === topicId);
 
     const shuffled = (source: Question[], count: number) => {
       const copy = [...source];
@@ -94,8 +103,10 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     return {
       country,
       countries: COUNTRIES,
-      topics: DEMO_BUNDLE.topics,
+      topics,
       getTopic: (topicId) => DEMO_BUNDLE.topics.find((t) => t.id === topicId),
+      // By id, from the whole catalogue: a saved or wrong question stays
+      // reachable after a change of licence category.
       getQuestion: (id) => {
         const q = DEMO_BUNDLE.questions.find((x) => x.id === id);
         return q ? decorate(q) : undefined;
@@ -110,7 +121,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       // map, back when the map gated them sequentially; with that gate gone
       // there is nothing left to respect, and holding questions back would only
       // make the quiz an easier exam than the real one.
-      randomQuestions: (count) => shuffled(DEMO_BUNDLE.questions, count).map(decorate),
+      randomQuestions: (count) => shuffled(bank, count).map(decorate),
       mockQuestions: () => {
         const { questionCount: target, composition, weights } = country.mockTest;
 
@@ -127,7 +138,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
           const picked: Question[] = [];
           for (const [category, grid] of Object.entries(weights)) {
             for (const [points, wanted] of Object.entries(grid)) {
-              const pool = DEMO_BUNDLE.questions.filter(
+              const pool = bank.filter(
                 (q) => questionCategory(q) === category && questionPoints(q) === Number(points),
               );
               // Shuffling the whole bucket is what spreads the paper across
@@ -140,7 +151,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
           // left. It makes the total wrong, which is the right kind of wrong:
           // visibly short rather than silently mis-weighted.
           if (picked.length < target) {
-            const rest = DEMO_BUNDLE.questions.filter((q) => !picked.includes(q));
+            const rest = bank.filter((q) => !picked.includes(q));
             picked.push(...shuffled(rest, target - picked.length));
           }
           return shuffled(picked, Math.min(target, picked.length)).map(decorate);
@@ -149,23 +160,23 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         if (composition) {
           const picked: Question[] = [];
           for (const [category, wanted] of Object.entries(composition)) {
-            const pool = DEMO_BUNDLE.questions.filter((q) => questionCategory(q) === category);
+            const pool = bank.filter((q) => questionCategory(q) === category);
             picked.push(...shuffled(pool, wanted));
           }
           if (picked.length < target) {
-            const rest = DEMO_BUNDLE.questions.filter((q) => !picked.includes(q));
+            const rest = bank.filter((q) => !picked.includes(q));
             picked.push(...shuffled(rest, target - picked.length));
           }
           return shuffled(picked, Math.min(target, picked.length)).map(decorate);
         }
 
         // Proportional sampling across topics, as the real exam does.
-        const perTopic = Math.max(1, Math.floor(target / DEMO_BUNDLE.topics.length));
+        const perTopic = Math.max(1, Math.floor(target / Math.max(1, topics.length)));
         const picked: Question[] = [];
-        for (const topic of DEMO_BUNDLE.topics) {
+        for (const topic of topics) {
           picked.push(...shuffled(questionsForTopic(topic.id), perTopic));
         }
-        const remaining = DEMO_BUNDLE.questions.filter((q) => !picked.includes(q));
+        const remaining = bank.filter((q) => !picked.includes(q));
         picked.push(...shuffled(remaining, Math.max(0, target - picked.length)));
         return shuffled(picked, Math.min(target, picked.length)).map(decorate);
       },
@@ -178,7 +189,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     // unlock state only ever changes via completeLesson touching
     // `state.lessons`, so that's the one thing worth reacting to here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countryCode, decorate, progress.state.lessons, contentVersion]);
+  }, [countryCode, licenceCategory, decorate, progress.state.lessons, contentVersion]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }

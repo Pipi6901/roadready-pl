@@ -13,6 +13,7 @@ import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { Slider } from '@/components/ui/Slider';
 import { COUNTRY_SELECTOR_ENABLED } from '@/constants/flags';
 import { PRIVACY_POLICY_URL } from '@/constants/legal';
+import type { StringKey } from '@/features/i18n/strings';
 import { useDateLocale, useT } from '@/features/i18n/useT';
 import { useMediaPack } from '@/features/media/useMediaPack';
 import { requestNotificationPermission } from '@/features/notifications/reminders';
@@ -158,6 +159,11 @@ export default function SettingsScreen() {
           ) : null}
 
           <SettingsSection title={tr('settings.section.language')} icon="languages">
+            <SettingsRow
+              label={tr('settings.row.licence')}
+              value={`${settings.licenceCategory} · ${tr(`licence.${settings.licenceCategory}` as StringKey)}`}
+              onPress={() => router.push('/(modals)/change-licence')}
+            />
             <SettingsRow
               label={tr('settings.row.interfaceLanguage')}
               value={settings.uiLocaleName}

@@ -1,0 +1,186 @@
+[
+  {
+    "id": "zasady-ogolne",
+    "name": "Zasady ogólne i pojęcia",
+    "slug": "zasady-ogolne",
+    "icon": "book-open",
+    "category": "basic",
+    "sortOrder": 1
+  },
+  {
+    "id": "znaki-ostrzegawcze",
+    "name": "Znaki ostrzegawcze",
+    "slug": "znaki-ostrzegawcze",
+    "icon": "triangle-alert",
+    "category": "basic",
+    "sortOrder": 2
+  },
+  {
+    "id": "znaki-zakazu",
+    "name": "Znaki zakazu",
+    "slug": "znaki-zakazu",
+    "icon": "circle-slash",
+    "category": "basic",
+    "sortOrder": 3
+  },
+  {
+    "id": "znaki-nakazu",
+    "name": "Znaki nakazu",
+    "slug": "znaki-nakazu",
+    "icon": "circle-arrow-right",
+    "category": "basic",
+    "sortOrder": 4
+  },
+  {
+    "id": "znaki-informacyjne",
+    "name": "Znaki informacyjne i kierunku",
+    "slug": "znaki-informacyjne",
+    "icon": "info",
+    "category": "basic",
+    "sortOrder": 5
+  },
+  {
+    "id": "znaki-poziome",
+    "name": "Znaki poziome i tabliczki",
+    "slug": "znaki-poziome",
+    "icon": "route",
+    "category": "basic",
+    "sortOrder": 6
+  },
+  {
+    "id": "sygnalizacja",
+    "name": "Sygnalizacja i sygnały kierującego",
+    "slug": "sygnalizacja",
+    "icon": "circle-dot",
+    "category": "basic",
+    "sortOrder": 7
+  },
+  {
+    "id": "pierwszenstwo",
+    "name": "Pierwszeństwo i skrzyżowania",
+    "slug": "pierwszenstwo",
+    "icon": "git-fork",
+    "category": "basic",
+    "sortOrder": 8
+  },
+  {
+    "id": "wlaczanie-zmiana",
+    "name": "Włączanie się do ruchu i zmiana kierunku",
+    "slug": "wlaczanie-zmiana",
+    "icon": "corner-up-right",
+    "category": "basic",
+    "sortOrder": 9
+  },
+  {
+    "id": "wyprzedzanie",
+    "name": "Wyprzedzanie, omijanie, wymijanie",
+    "slug": "wyprzedzanie",
+    "icon": "arrow-left-right",
+    "category": "basic",
+    "sortOrder": 10
+  },
+  {
+    "id": "predkosc",
+    "name": "Prędkość i odstępy",
+    "slug": "predkosc",
+    "icon": "gauge",
+    "category": "basic",
+    "sortOrder": 11
+  },
+  {
+    "id": "zatrzymanie-postoj",
+    "name": "Zatrzymanie i postój",
+    "slug": "zatrzymanie-postoj",
+    "icon": "circle-parking",
+    "category": "basic",
+    "sortOrder": 12
+  },
+  {
+    "id": "piesi-rowerzysci",
+    "name": "Piesi, rowerzyści, przejazdy kolejowe",
+    "slug": "piesi-rowerzysci",
+    "icon": "bike",
+    "category": "basic",
+    "sortOrder": 13
+  },
+  {
+    "id": "sytuacje-szczegolne",
+    "name": "Sytuacje szczególne i trudne warunki",
+    "slug": "sytuacje-szczegolne",
+    "icon": "cloud-rain",
+    "category": "basic",
+    "sortOrder": 14
+  },
+  {
+    "id": "sytuacje-drogowe",
+    "name": "Sytuacje drogowe — filmy i zdjęcia",
+    "slug": "sytuacje-drogowe",
+    "icon": "video",
+    "category": "basic",
+    "sortOrder": 15
+  },
+  {
+    "id": "pierwsza-pomoc",
+    "name": "Pierwsza pomoc",
+    "slug": "pierwsza-pomoc",
+    "icon": "heart-pulse",
+    "category": "basic",
+    "sortOrder": 16
+  },
+  {
+    "id": "ekologia",
+    "name": "Ekologia i kultura jazdy",
+    "slug": "ekologia",
+    "icon": "leaf",
+    "category": "basic",
+    "sortOrder": 17
+  },
+  {
+    "id": "technika-manewry",
+    "name": "Technika kierowania i manewry",
+    "slug": "technika-manewry",
+    "icon": "car",
+    "category": "specialist",
+    "sortOrder": 18
+  },
+  {
+    "id": "warunki-techniczne",
+    "name": "Warunki techniczne pojazdu",
+    "slug": "warunki-techniczne",
+    "icon": "wrench",
+    "category": "specialist",
+    "sortOrder": 19
+  },
+  {
+    "id": "wyposazenie",
+    "name": "Wyposażenie i obciążenie pojazdu",
+    "slug": "wyposazenie",
+    "icon": "package",
+    "category": "specialist",
+    "sortOrder": 20
+  },
+  {
+    "id": "dokumenty",
+    "name": "Dokumenty i obowiązki kierującego",
+    "slug": "dokumenty",
+    "icon": "file-text",
+    "category": "specialist",
+    "sortOrder": 21
+  },
+  {
+    "id": "przewoz",
+    "name": "Przewóz osób, ładunku i holowanie",
+    "slug": "przewoz",
+    "icon": "truck",
+    "category": "specialist",
+    "sortOrder": 22
+  },
+  {
+    "id": "autostrady",
+    "name": "Autostrady i drogi ekspresowe",
+    "slug": "autostrady",
+    "icon": "milestone",
+    "category": "specialist",
+    "sortOrder": 23
+  }
+]

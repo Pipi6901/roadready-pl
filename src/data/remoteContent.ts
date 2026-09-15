@@ -1,5 +1,8 @@
+import { File, Paths } from 'expo-file-system';
+import { Platform } from 'react-native';
+
 import { COUNTRIES, DEMO_BUNDLE, LOCALES } from './demo-bundle';
-import { KEYS, load, save } from '@/store/storage';
+import { KEYS, load, remove, save } from '@/store/storage';
 import type { ContentBundle, Country, Locale } from '@/types/content';
 
 /**
@@ -103,7 +106,7 @@ export const remoteContentStore = {
  * network is unreachable or the fetch fails for any reason.
  */
 export async function initRemoteContent(): Promise<void> {
-  const cached = await load<RemoteContentPayload | null>(KEYS.remoteContent, null);
+  const cached = await readCache();
   if (cached && isValidPayload(cached)) applyPayload(cached);
 
   try {
@@ -117,9 +120,62 @@ export async function initRemoteContent(): Promise<void> {
     if (!isValidPayload(json)) return;
     if (json.versionHash === DEMO_BUNDLE.versionHash) return;
     applyPayload(json);
-    void save(KEYS.remoteContent, json);
+    void writeCache(json);
   } catch {
     // Offline, DNS failure, malformed JSON — keep whatever we already have
     // (cache applied above, or the bundled seed untouched).
+  }
+}
+
+/* ------------------------------------------------------------------ cache --- */
+
+/**
+ * The last good payload, kept on disk.
+ *
+ * The full catalogue is 3.5k questions with three translations — about 4 MB
+ * of JSON. That used to sit in AsyncStorage, whose Android database is capped
+ * at 6 MB in total, so one content update plus the learner's progress would
+ * have started failing silently. A plain file under the document directory
+ * has no such limit and is backed up with the rest (see storage.ts). The web
+ * build has no file system and keeps the old AsyncStorage path; its payload
+ * is the same size, but browsers give localStorage/IndexedDB far more room.
+ */
+const CACHE_FILE = 'remote-content.json';
+
+function cacheFile(): File {
+  return new File(Paths.document, CACHE_FILE);
+}
+
+async function readCache(): Promise<unknown> {
+  if (Platform.OS === 'web') return load<RemoteContentPayload | null>(KEYS.remoteContent, null);
+  try {
+    const file = cacheFile();
+    if (!file.exists) {
+      // First launch after the move from AsyncStorage: pick up what the
+      // previous version cached, so the learner does not drop back to the
+      // seed while the fresh fetch is in flight.
+      return load<RemoteContentPayload | null>(KEYS.remoteContent, null);
+    }
+    return JSON.parse(await file.text()) as unknown;
+  } catch {
+    return null;
+  }
+}
+
+async function writeCache(payload: RemoteContentPayload): Promise<void> {
+  const text = JSON.stringify(payload);
+  if (Platform.OS === 'web') {
+    await save(KEYS.remoteContent, payload);
+    return;
+  }
+  try {
+    const file = cacheFile();
+    if (!file.exists) file.create();
+    file.write(text);
+    // The old AsyncStorage copy is dead weight now — and the thing most likely
+    // to push that database over its cap.
+    void remove(KEYS.remoteContent);
+  } catch {
+    // A failed cache write costs one extra fetch next launch, nothing more.
   }
 }

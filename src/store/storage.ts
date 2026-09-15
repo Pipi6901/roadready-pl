@@ -32,6 +32,14 @@ export async function save<T>(key: string, value: T): Promise<void> {
   }
 }
 
+export async function remove(key: string): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(PREFIX + key);
+  } catch {
+    // Same reasoning as save().
+  }
+}
+
 export async function wipe(): Promise<void> {
   const keys = await AsyncStorage.getAllKeys();
   await AsyncStorage.multiRemove(keys.filter((k) => k.startsWith(PREFIX)));

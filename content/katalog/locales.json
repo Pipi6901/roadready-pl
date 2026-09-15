@@ -1,0 +1,44 @@
+[
+  {
+    "code": "uk",
+    "nameNative": "Українська",
+    "nameEnglish": "Ukrainian",
+    "direction": "ltr",
+    "flagEmoji": "🇺🇦"
+  },
+  {
+    "code": "ru",
+    "nameNative": "Русский",
+    "nameEnglish": "Russian",
+    "direction": "ltr",
+    "flagEmoji": "🇷🇺"
+  },
+  {
+    "code": "en",
+    "nameNative": "English",
+    "nameEnglish": "English",
+    "direction": "ltr",
+    "flagEmoji": "🇬🇧"
+  },
+  {
+    "code": "es",
+    "nameNative": "Español",
+    "nameEnglish": "Spanish",
+    "direction": "ltr",
+    "flagEmoji": "🇪🇸"
+  },
+  {
+    "code": "de",
+    "nameNative": "Deutsch",
+    "nameEnglish": "German",
+    "direction": "ltr",
+    "flagEmoji": "🇩🇪"
+  },
+  {
+    "code": "tr",
+    "nameNative": "Türkçe",
+    "nameEnglish": "Turkish",
+    "direction": "ltr",
+    "flagEmoji": "🇹🇷"
+  }
+]

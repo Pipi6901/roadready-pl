@@ -29,7 +29,7 @@ export default function HomeScreen() {
   const tr = useT();
   const dateLocale = useDateLocale();
   const router = useRouter();
-  const { daysUntilExam } = useSettings();
+  const { daysUntilExam, licenceCategory } = useSettings();
   const { topics } = useContent();
   const progress = useProgress();
 
@@ -47,9 +47,19 @@ export default function HomeScreen() {
             <Txt size={26} weight="800">
               {tr('home.title')}
             </Txt>
-            <Txt size={14} color={t.colors.textSecondary}>
-              {tr('home.category')}
-            </Txt>
+            {/* The licence the whole app is filtered by — tap to change it. */}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={tr('licence.navTitle')}
+              onPress={() => router.push('/(modals)/change-licence')}
+              hitSlop={8}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start' }}
+            >
+              <Txt size={14} color={t.colors.textSecondary}>
+                {tr('home.category', { code: licenceCategory })}
+              </Txt>
+              <Icon name="chevron-down" size={14} color={t.colors.textSecondary} />
+            </Pressable>
           </View>
           <Pressable
             accessibilityRole="button"

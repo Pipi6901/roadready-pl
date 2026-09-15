@@ -341,7 +341,7 @@ export default function LessonScreen() {
           paddingBottom: (answered ? sheetHeight : 0) + 32,
         }}
       >
-        <QuestionMedia media={question.media} />
+        <QuestionMedia media={question.media} sourceMedia={question.sourceMedia} />
 
         {/* Question + speech */}
         <Row style={{ gap: 10, alignItems: 'flex-start' }}>

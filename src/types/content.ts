@@ -140,6 +140,24 @@ export interface Question {
    * `questionPoints`.
    */
   points?: number;
+  /**
+   * Licence categories this question is asked for — 'B', 'A', 'C', 'T'…
+   * as the ministry's catalogue lists them. A question that names none is
+   * asked for every category, which is what the bundled demo bank does.
+   * Read it through `questionAppliesTo`.
+   */
+  licences?: string[];
+  /**
+   * File name of the picture or clip in the ministry's media archive, kept
+   * so the media step can match uploads to questions. Not a URL and not
+   * something the app renders: that is `mediaId`.
+   */
+  sourceMedia?: string | null;
+}
+
+/** Whether a question is part of the bank for a licence category. */
+export function questionAppliesTo(question: Pick<Question, 'licences'>, licence: string): boolean {
+  return !question.licences || question.licences.length === 0 || question.licences.includes(licence);
 }
 
 /** Fallbacks for bundles from countries that do not classify or weight questions. */
