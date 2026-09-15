@@ -18,6 +18,7 @@ export const EN = {
   'tabs.practice': 'Practice',
   'tabs.profile': 'Profile',
 
+  'learn.continueTopic': 'Continue topic',
   'learn.title': 'Topics',
   'learn.basicSection': 'Basic questions',
   'learn.basicHint': '20 of the 32 on the paper · answered TAK or NIE',
@@ -178,6 +179,7 @@ const PL: Catalogue = {
   'tabs.practice': 'Trening',
   'tabs.profile': 'Profil',
 
+  'learn.continueTopic': 'Kontynuuj dział',
   'learn.title': 'Działy',
   'learn.basicSection': 'Pytania podstawowe',
   'learn.basicHint': '20 z 32 na egzaminie · odpowiedź TAK albo NIE',
@@ -335,6 +337,7 @@ const UK: Catalogue = {
   'tabs.practice': 'Практика',
   'tabs.profile': 'Профіль',
 
+  'learn.continueTopic': 'Продовжити розділ',
   'learn.title': 'Розділи',
   'learn.basicSection': 'Основні питання',
   'learn.basicHint': '20 із 32 на іспиті · відповідь TAK або NIE',
@@ -492,6 +495,7 @@ const RU: Catalogue = {
   'tabs.practice': 'Практика',
   'tabs.profile': 'Профиль',
 
+  'learn.continueTopic': 'Продолжить раздел',
   'learn.title': 'Разделы',
   'learn.basicSection': 'Основные вопросы',
   'learn.basicHint': '20 из 32 на экзамене · ответ TAK или NIE',
@@ -649,6 +653,7 @@ const ES: Catalogue = {
   'tabs.practice': 'Practicar',
   'tabs.profile': 'Perfil',
 
+  'learn.continueTopic': 'Continuar tema',
   'learn.title': 'Temas',
   'learn.basicSection': 'Preguntas básicas',
   'learn.basicHint': '20 de las 32 del examen · se responde TAK o NIE',
@@ -806,6 +811,7 @@ const TR: Catalogue = {
   'tabs.practice': 'Alıştırma',
   'tabs.profile': 'Profil',
 
+  'learn.continueTopic': 'Konuya devam et',
   'learn.title': 'Konular',
   'learn.basicSection': 'Temel sorular',
   'learn.basicHint': 'Sınavdaki 32 sorunun 20’si · TAK veya NIE',

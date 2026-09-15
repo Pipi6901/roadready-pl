@@ -3,7 +3,7 @@ import React from 'react';
 import { Pressable, type ScrollView, useWindowDimensions, View } from 'react-native';
 
 import {
-  NODE_SIZE, TopicNode, type TopicNodeState,
+  NODE_SIZE, NODE_SIZE_CURRENT, TopicNode, type TopicNodeState,
 } from '@/components/learning/TopicNode';
 import { TopicRoute, type RoutePoint } from '@/components/learning/TopicRoute';
 import { useT } from '@/features/i18n/useT';
@@ -125,8 +125,12 @@ export default function LearnScreen() {
     // across tab switches, so without this a returning learner would land
     // wherever they last scrolled instead of back at their current topic.
     if (!isFocused || mapOffsetY === null || !current) return;
+    // Align the node's top edge, not its centre, with the clearance line:
+    // centring put the upper half of the node (and it is the big one) under
+    // the card, so the first topic sat flush against it with no gap.
+    const nodeTop = current.y - NODE_SIZE_CURRENT / 2 - 4;
     scrollRef.current?.scrollTo({
-      y: Math.max(0, mapOffsetY + current.y - CARD_CLEARANCE),
+      y: Math.max(0, mapOffsetY + nodeTop - CARD_CLEARANCE),
       animated: true,
     });
   }, [isFocused, mapOffsetY, current]);
@@ -244,7 +248,7 @@ export default function LearnScreen() {
         {current ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`Continue topic ${current.topic.name}, ${current.stat.mastered} of ${current.stat.total} questions mastered`}
+            accessibilityLabel={`${tr('learn.continueTopic')} ${current.topic.name}, ${current.stat.mastered} / ${current.stat.total}`}
             onPress={() => router.push(`/topic/${current.topic.id}`)}
             style={[
               {
@@ -269,7 +273,7 @@ export default function LearnScreen() {
           >
             <View style={{ gap: 2, flex: 1 }}>
               <Txt size={11} weight="600" color={t.colors.accentDark} style={{ letterSpacing: 0.5 }}>
-                CONTINUE TOPIC
+                {tr('learn.continueTopic').toUpperCase()}
               </Txt>
               <Txt size={19} weight="700">
                 {current.topic.name}

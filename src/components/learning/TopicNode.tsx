@@ -3,6 +3,7 @@ import { Pressable, View } from 'react-native';
 
 import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 export type TopicNodeState = 'completed' | 'current' | 'started' | 'available';
@@ -31,6 +32,7 @@ const STATE_TEXT: Record<TopicNodeState, string> = {
 
 export function TopicNode({ state, icon, name, mastered, total, onPress }: TopicNodeProps) {
   const t = useTheme();
+  const tr = useT();
 
   const size = state === 'current' ? NODE_SIZE_CURRENT : NODE_SIZE;
 
@@ -105,7 +107,7 @@ export function TopicNode({ state, icon, name, mastered, total, onPress }: Topic
       <View style={{ width: NODE_LABEL_WIDTH, marginTop: 6, gap: 1 }}>
         {state === 'current' ? (
           <Txt size={10} weight="600" align="center" color={t.colors.accentDark} style={{ letterSpacing: 0.5 }}>
-            CONTINUE TOPIC
+            {tr('learn.continueTopic').toUpperCase()}
           </Txt>
         ) : null}
         <Txt
