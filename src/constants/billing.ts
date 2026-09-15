@@ -12,7 +12,7 @@ import { Platform } from 'react-native';
 
 /** From the RevenueCat dashboard → Project settings → API keys → Public app-specific key. */
 export const REVENUECAT_API_KEY = Platform.select({
-  ios: 'REPLACE_WITH_REVENUECAT_PL_IOS_PUBLIC_KEY',
+  ios: 'appl_dUgmXDfASHxRkzJRnCmqpVUsoDi',
   // Android app not configured in RevenueCat yet — fill in once it exists.
   android: 'REPLACE_WITH_REVENUECAT_PL_ANDROID_PUBLIC_KEY',
   default: '',
