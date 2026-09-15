@@ -36,7 +36,7 @@ export const PRODUCT_IDS = {
 
 /**
  * The entitlement identifier configured in the RevenueCat dashboard for "Pro"
- * access. Not a slug — the onboarding wizard used the display name typed in
- * at project setup verbatim as the identifier.
+ * access. The Polish project uses a plain slug; the British one has
+ * "RoadReady Pro" with a space, so the two must never be copied across.
  */
-export const ENTITLEMENT_ID = 'RoadReady Pro';
+export const ENTITLEMENT_ID = 'roadready_pl_pro';
