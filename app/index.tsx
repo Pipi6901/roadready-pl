@@ -17,6 +17,7 @@ import { ONBOARDING_CONFIGURED } from '@/constants/adapty';
 import { ONBOARDING_ENABLED, ONBOARDING_SKIP_DEFAULTS } from '@/constants/flags';
 import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
+import { afterOnboarding } from '@/features/onboarding/afterOnboarding';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -86,7 +87,7 @@ export default function SplashScreen() {
   const t = useTheme();
   const router = useRouter();
   const { width, height } = useWindowDimensions();
-  const { ready, onboarded, hasSeenSplash, update } = useSettings();
+  const { ready, onboarded, licenceChosen, hasSeenSplash, update } = useSettings();
   const [exiting, setExiting] = React.useState(false);
 
   const ringScale = useSharedValue(1);
@@ -109,19 +110,19 @@ export default function SplashScreen() {
           localeCode: ONBOARDING_SKIP_DEFAULTS.localeCode,
         });
       }
-      router.replace('/(tabs)');
+      router.replace(afterOnboarding(licenceChosen));
       return;
     }
 
     if (onboarded) {
-      router.replace('/(tabs)');
+      router.replace(afterOnboarding(licenceChosen));
       return;
     }
     // Cast: expo-router's generated route types only include
     // /adapty-onboarding after the dev server has run once against this new
     // file (app/(onboarding)/adapty-onboarding.tsx) — harmless until then.
     router.replace('/adapty-onboarding' as Href);
-  }, [ready, onboarded, update, router]);
+  }, [ready, onboarded, licenceChosen, update, router]);
 
   // Returning learners skip straight past the tap-to-continue gate — it
   // only needs to be seen once, on the very first cold start ever.

@@ -17,6 +17,8 @@ export interface Settings {
    * what picks them (see ContentProvider). Same codes as the catalogue.
    */
   licenceCategory: string;
+  /** The first-launch category step has been answered (or Settings used). */
+  licenceChosen: boolean;
   /**
    * Language of the app's own interface, which is a separate choice from the
    * translation shown under a question: someone sitting the exam in Polish may
@@ -47,6 +49,7 @@ const DEFAULTS: Settings = {
   countryCode: 'PL',
   localeCode: null,
   licenceCategory: 'B',
+  licenceChosen: false,
   uiLocale: null,
   examDate: null,
   displayName: 'Learner',

@@ -7,6 +7,7 @@ import { Txt } from '@/components/ui/primitives';
 import { EVENTS, track } from '@/features/analytics/analytics';
 import { loadOnboarding, OnboardingLoadError } from '@/features/onboarding/loadOnboarding';
 import { useSettings } from '@/store/SettingsProvider';
+import { afterOnboarding } from '@/features/onboarding/afterOnboarding';
 import { useTheme } from '@/theme/ThemeProvider';
 
 /**
@@ -22,7 +23,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 export default function AdaptyOnboardingScreen() {
   const t = useTheme();
   const router = useRouter();
-  const { update } = useSettings();
+  const { licenceChosen, update } = useSettings();
   const [onboarding, setOnboarding] = React.useState<AdaptyOnboarding | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -66,8 +67,8 @@ export default function AdaptyOnboardingScreen() {
   const skipToApp = React.useCallback(() => {
     track(EVENTS.onboardingCompleted, { reason: 'skipped_offline' });
     update({ onboarded: true });
-    router.replace('/(tabs)');
-  }, [update, router]);
+    router.replace(afterOnboarding(licenceChosen));
+  }, [update, router, licenceChosen]);
 
   if (error) {
     // TEMP DEBUG (docs/08-risks-open-questions.md): a release build gives no

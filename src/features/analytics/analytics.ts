@@ -195,6 +195,7 @@ export const EVENTS = {
   appOpened: 'app_opened',
   onboardingStarted: 'onboarding_started',
   onboardingCompleted: 'onboarding_completed',
+  licenceChosen: 'licence_chosen',
   paywallShown: 'paywall_shown',
   paywallDismissed: 'paywall_dismissed',
   purchaseCompleted: 'purchase_completed',

@@ -6,6 +6,7 @@ import RevenueCatUI from 'react-native-purchases-ui';
 import { BILLING_CONFIGURED, ENTITLEMENT_ID } from '@/constants/billing';
 import { EVENTS, track } from '@/features/analytics/analytics';
 import { useSettings } from '@/store/SettingsProvider';
+import { afterOnboarding } from '@/features/onboarding/afterOnboarding';
 
 /**
  * Paywall — mockup frame "Paywall". Last step of onboarding.
@@ -18,7 +19,7 @@ import { useSettings } from '@/store/SettingsProvider';
  */
 export default function PaywallScreen() {
   const router = useRouter();
-  const { update } = useSettings();
+  const { licenceChosen, update } = useSettings();
   // Четыре точки входа на пейвол: онбординг, упёрся в дневной лимит, конец
   // триала, настройки. Без разделения их конверсии усредняются в одно число,
   // по которому нельзя понять ничего.
@@ -26,8 +27,8 @@ export default function PaywallScreen() {
 
   const finishOnboarding = React.useCallback(() => {
     update({ onboarded: true });
-    router.replace('/(tabs)');
-  }, [update, router]);
+    router.replace(afterOnboarding(licenceChosen));
+  }, [update, router, licenceChosen]);
 
   // `source` distinguishes the onboarding paywall from the one reached later
   // from a hit daily limit — without it the conversion rates of two very
