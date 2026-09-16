@@ -58,6 +58,8 @@ export const EN = {
     'Everything is on this device — illustrated questions work with no connection.',
   'settings.offline.downloadHint':
     'Downloads every question illustration and video clip to this device',
+  'settings.offline.estimate': 'Category {code}: {count} files, about {size}. Wi-Fi recommended.',
+  'settings.offline.estimateNoSize': 'Category {code}: {count} files. Wi-Fi recommended.',
   'settings.offline.delete': 'Delete downloaded media',
   'settings.section.purchases': 'Purchases',
   'settings.row.currentPlan': 'Current plan',
@@ -219,6 +221,8 @@ const PL: Catalogue = {
     'Wszystko jest na tym urządzeniu — pytania ze zdjęciami działają bez internetu.',
   'settings.offline.downloadHint':
     'Pobiera na to urządzenie wszystkie ilustracje i filmy do pytań',
+  'settings.offline.estimate': 'Kategoria {code}: {count} plików, około {size}. Najlepiej przez Wi-Fi.',
+  'settings.offline.estimateNoSize': 'Kategoria {code}: {count} plików. Najlepiej przez Wi-Fi.',
   'settings.offline.delete': 'Usuń pobrane pliki',
   'settings.section.purchases': 'Zakupy',
   'settings.row.currentPlan': 'Obecny plan',
@@ -377,6 +381,8 @@ const UK: Catalogue = {
     'Усе вже на пристрої — питання із зображеннями працюють без інтернету.',
   'settings.offline.downloadHint':
     'Завантажує на пристрій усі ілюстрації та відео до питань',
+  'settings.offline.estimate': 'Категорія {code}: {count} файлів, приблизно {size}. Краще через Wi-Fi.',
+  'settings.offline.estimateNoSize': 'Категорія {code}: {count} файлів. Краще через Wi-Fi.',
   'settings.offline.delete': 'Видалити завантажені файли',
   'settings.section.purchases': 'Покупки',
   'settings.row.currentPlan': 'Поточний план',
@@ -535,6 +541,8 @@ const RU: Catalogue = {
     'Всё уже на устройстве — вопросы с изображениями работают без интернета.',
   'settings.offline.downloadHint':
     'Скачивает на устройство все иллюстрации и видео к вопросам',
+  'settings.offline.estimate': 'Категория {code}: {count} файлов, около {size}. Лучше по Wi-Fi.',
+  'settings.offline.estimateNoSize': 'Категория {code}: {count} файлов. Лучше по Wi-Fi.',
   'settings.offline.delete': 'Удалить скачанные файлы',
   'settings.section.purchases': 'Покупки',
   'settings.row.currentPlan': 'Текущий план',
@@ -693,6 +701,8 @@ const ES: Catalogue = {
     'Todo está en este dispositivo: las preguntas con imágenes funcionan sin conexión.',
   'settings.offline.downloadHint':
     'Descarga en este dispositivo todas las ilustraciones y vídeos de las preguntas',
+  'settings.offline.estimate': 'Categoría {code}: {count} archivos, unos {size}. Mejor con Wi-Fi.',
+  'settings.offline.estimateNoSize': 'Categoría {code}: {count} archivos. Mejor con Wi-Fi.',
   'settings.offline.delete': 'Eliminar archivos descargados',
   'settings.section.purchases': 'Compras',
   'settings.row.currentPlan': 'Plan actual',
@@ -851,6 +861,8 @@ const TR: Catalogue = {
     'Her şey bu cihazda — görselli sorular internet olmadan da çalışır.',
   'settings.offline.downloadHint':
     'Sorulara ait tüm görselleri ve videoları bu cihaza indirir',
+  'settings.offline.estimate': '{code} sınıfı: {count} dosya, yaklaşık {size}. Wi-Fi önerilir.',
+  'settings.offline.estimateNoSize': '{code} sınıfı: {count} dosya. Wi-Fi önerilir.',
   'settings.offline.delete': 'İndirilen dosyaları sil',
   'settings.section.purchases': 'Satın alımlar',
   'settings.row.currentPlan': 'Mevcut plan',

@@ -2,7 +2,7 @@ import { Directory, File, Paths } from 'expo-file-system';
 
 import { DEMO_BUNDLE } from '@/data/demo-bundle';
 import { EVENTS, track } from '@/features/analytics/analytics';
-import type { MediaAsset } from '@/types/content';
+import { questionAppliesTo, type MediaAsset } from '@/types/content';
 
 /**
  * The offline media pack — the images and hazard clips questions reference by
@@ -75,16 +75,33 @@ export function cachedUri(asset: MediaAsset): string | null {
   }
 }
 
-/** Assets referenced by the currently published content. */
-export function packAssets(): MediaAsset[] {
-  return Object.values(DEMO_BUNDLE.media);
+/**
+ * Assets the offline pack holds: what the questions for one licence category
+ * refer to, not the whole library. The ministry's archive is 1,500 pictures
+ * and 1,100 clips — about two gigabytes — and a car candidate has no use for
+ * the tram and lorry clips in it, so the pack follows the picker.
+ */
+export function packAssets(licence: string): MediaAsset[] {
+  const seen = new Set<string>();
+  const assets: MediaAsset[] = [];
+  for (const q of DEMO_BUNDLE.questions) {
+    if (!q.mediaId || seen.has(q.mediaId) || !questionAppliesTo(q, licence)) continue;
+    const asset = DEMO_BUNDLE.media[q.mediaId];
+    if (!asset) continue;
+    seen.add(q.mediaId);
+    assets.push(asset);
+  }
+  return assets;
 }
 
 export interface MediaPackStatus {
-  /** Assets the current content references. 0 = nothing to download. */
+  /** Assets the current content references for the chosen licence. 0 = nothing to download. */
   total: number;
   cached: number;
+  /** On disk now. */
   bytes: number;
+  /** Whole pack, from the sizes the publisher recorded; 0 when unknown. */
+  totalBytes: number;
   downloading: boolean;
   /** 0..1 across the whole run; null when nothing is running. */
   progress: number | null;
@@ -96,6 +113,7 @@ let snapshot: MediaPackStatus = {
   total: 0,
   cached: 0,
   bytes: 0,
+  totalBytes: 0,
   downloading: false,
   progress: null,
   failed: 0,
@@ -126,13 +144,20 @@ export const mediaPackStore = {
   },
 };
 
+// The licence the pack was last measured for; downloads and deletes recount
+// with the same one so the figures on screen stay about a single pack.
+let currentLicence = 'B';
+
 /** Recounts what's on disk. Cheap enough to call after every state change. */
-export function refreshMediaStatus(): void {
-  const assets = packAssets();
+export function refreshMediaStatus(licence: string = currentLicence): void {
+  currentLicence = licence;
+  const assets = packAssets(licence);
   let cached = 0;
   let bytes = 0;
+  let totalBytes = 0;
 
   for (const asset of assets) {
+    totalBytes += asset.bytes ?? 0;
     try {
       const file = localFile(asset);
       if (file.exists) {
@@ -144,7 +169,7 @@ export function refreshMediaStatus(): void {
     }
   }
 
-  emit({ total: assets.length, cached, bytes });
+  emit({ total: assets.length, cached, bytes, totalBytes });
 }
 
 let running: AbortController | null = null;
@@ -154,12 +179,13 @@ let running: AbortController | null = null;
  * asset must not abandon the rest of the pack, so failures are counted and
  * reported through the store instead of thrown.
  */
-export async function downloadMediaPack(): Promise<void> {
+export async function downloadMediaPack(licence: string = currentLicence): Promise<void> {
   if (running) return;
+  currentLicence = licence;
 
-  const missing = packAssets().filter((a) => !cachedUri(a));
+  const missing = packAssets(licence).filter((a) => !cachedUri(a));
   if (missing.length === 0) {
-    refreshMediaStatus();
+    refreshMediaStatus(licence);
     return;
   }
 

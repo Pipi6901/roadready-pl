@@ -177,6 +177,8 @@ export interface MediaAsset {
   width: number | null;
   height: number | null;
   durationMs: number | null;
+  /** Size on the server, when the publisher knew it — for the offline pack's estimate. */
+  bytes?: number | null;
 }
 
 export interface QuestionTranslation {

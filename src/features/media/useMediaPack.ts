@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { remoteContentStore } from '@/data/remoteContent';
+import { useSettings } from '@/store/SettingsProvider';
 import type { MediaAsset } from '@/types/content';
 import {
   cachedUri,
@@ -22,6 +23,7 @@ export interface MediaPack {
 
 export function useMediaPack(): MediaPack {
   const status = React.useSyncExternalStore(mediaPackStore.subscribe, mediaPackStore.getSnapshot);
+  const { licenceCategory } = useSettings();
 
   // New content changes which assets the pack is supposed to hold, so the
   // counts have to be recomputed when content lands — not only on mount, or
@@ -32,16 +34,16 @@ export function useMediaPack(): MediaPack {
   );
 
   React.useEffect(() => {
-    refreshMediaStatus();
-  }, [contentVersion]);
+    refreshMediaStatus(licenceCategory);
+  }, [contentVersion, licenceCategory]);
 
   return React.useMemo(
     () => ({
       status,
-      download: () => void downloadMediaPack(),
+      download: () => void downloadMediaPack(licenceCategory),
       remove: deleteMediaPack,
     }),
-    [status],
+    [status, licenceCategory],
   );
 }
 

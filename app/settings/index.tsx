@@ -35,7 +35,8 @@ const VOICE_SPEED_MINOR_TICKS = [0.625, 0.875, 1.125, 1.375, 1.625, 1.875];
 /** Sizes are only ever shown to help judge a download, so one decimal is plenty. */
 function formatSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  if (bytes < 1024 * 1024 * 1024) return `${Math.round(bytes / (1024 * 1024))} MB`;
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
 }
 
 /**
@@ -260,7 +261,16 @@ export default function SettingsScreen() {
                       ? tr('settings.offline.failed', { count: media.status.failed })
                       : media.status.cached === media.status.total
                         ? tr('settings.offline.allCached')
-                        : undefined
+                        : media.status.totalBytes > 0
+                          ? tr('settings.offline.estimate', {
+                              code: settings.licenceCategory,
+                              count: media.status.total - media.status.cached,
+                              size: formatSize(media.status.totalBytes - media.status.bytes),
+                            })
+                          : tr('settings.offline.estimateNoSize', {
+                              code: settings.licenceCategory,
+                              count: media.status.total - media.status.cached,
+                            })
                   }
                   accent
                   chevron={false}
