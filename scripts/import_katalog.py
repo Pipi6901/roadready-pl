@@ -148,29 +148,56 @@ def build(rows, topics_meta):
     return questions, translations, problems
 
 
+def generated_files(gen_dir):
+    """(locale, path) for translations/{lang}.json and translations/{lang}/*.json chunks."""
+    out = []
+    for name in sorted(os.listdir(gen_dir)):
+        full = os.path.join(gen_dir, name)
+        if name.endswith('.json'):
+            out.append((name[:-5], full))
+        elif os.path.isdir(full):
+            for chunk in sorted(os.listdir(full)):
+                if chunk.endswith('.json'):
+                    out.append((name, os.path.join(full, chunk)))
+    return out
+
+
+def normalise_entry(q, tr):
+    """Accepts the verbose {text, options} form and the compact one used by
+    hand-written chunks: a bare string for a yes/no question, or
+    [text, A, B, C] for one with options."""
+    if isinstance(tr, str):
+        return {'text': tr, 'options': {}}
+    if isinstance(tr, list):
+        opts = {o['id']: v for o, v in zip(q['options'], tr[1:])}
+        return {'text': tr[0], 'options': opts}
+    return {'text': tr.get('text', ''), 'options': tr.get('options', {})}
+
+
 def merge_generated(questions, translations):
-    """Fills the gaps in `translations` from translations/{lang}.json files."""
+    """Fills the gaps in `translations` from the generated files — an official
+    translation always wins; the first generated file to cover an id wins next."""
     gen_dir = os.path.join(OUT_DIR, 'translations')
     if not os.path.isdir(gen_dir):
         return {}
     ids = {q['id']: q for q in questions}
     added = Counter()
-    for name in sorted(os.listdir(gen_dir)):
-        if not name.endswith('.json'):
-            continue
-        loc = name[:-5]
-        with open(os.path.join(gen_dir, name), encoding='utf-8') as f:
+    for loc, path in generated_files(gen_dir):
+        with open(path, encoding='utf-8') as f:
             gen = json.load(f)
         target = translations.setdefault(loc, {})
-        for qid, tr in gen.items():
+        for qid, raw in gen.items():
             q = ids.get(qid)
-            if q is None or qid in target or not tr.get('text'):
+            if q is None or qid in target:
+                continue
+            tr = normalise_entry(q, raw)
+            if not tr['text']:
                 continue
             if q['category'] == 'basic':
                 yes, no = YES_NO.get(loc, ('', ''))
                 opts = {'T': yes, 'N': no} if yes else {}
             else:
-                opts = {o['id']: tr.get('options', {}).get(o['id'], '') for o in q['options']}
+                opts = {o['id']: tr['options'].get(o['id'], '') for o in q['options']}
                 if not all(opts.values()):
                     continue
             target[qid] = {'text': tr['text'], 'options': opts, 'explanation': ''}
