@@ -1,5 +1,5 @@
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { Image, View } from 'react-native';
+import { ActivityIndicator, Image, View } from 'react-native';
 
 import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
@@ -30,10 +30,30 @@ function useFrameStyle() {
   } as const;
 }
 
+/**
+ * The frame at its final size while the file downloads, so the question text
+ * below does not jump down when the picture arrives. A spinner rather than a
+ * blank: on mobile data a clip takes a second or two, and a blank frame for
+ * that long reads as broken.
+ */
+function LoadingFrame({ media }: { media: MediaAsset }) {
+  const t = useTheme();
+  const frame = useFrameStyle();
+  return (
+    <View
+      accessible
+      accessibilityLabel="Loading"
+      style={[frame, { width: '100%', aspectRatio: aspectOf(media), alignItems: 'center', justifyContent: 'center' }]}
+    >
+      <ActivityIndicator color={t.colors.accent} />
+    </View>
+  );
+}
+
 function QuestionImage({ media }: { media: MediaAsset }) {
   const frame = useFrameStyle();
   const uri = useMediaUri(media);
-  if (!uri) return null;
+  if (!uri) return <LoadingFrame media={media} />;
 
   return (
     <View style={frame}>
@@ -54,11 +74,13 @@ function QuestionVideo({ media }: { media: MediaAsset }) {
   const uri = useMediaUri(media);
   // Hazard clips are watched once and scored on when the learner taps, so
   // looping would make the exercise meaningless.
+  // useVideoPlayer recreates the player when its source changes, so a null
+  // source while the clip downloads and the local file afterwards is fine.
   const player = useVideoPlayer(uri, (p) => {
     p.loop = false;
   });
 
-  if (!uri) return null;
+  if (!uri) return <LoadingFrame media={media} />;
 
   return (
     <View style={frame}>

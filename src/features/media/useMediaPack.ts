@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 
 import { remoteContentStore } from '@/data/remoteContent';
 import { useSettings } from '@/store/SettingsProvider';
@@ -48,20 +49,38 @@ export function useMediaPack(): MediaPack {
 }
 
 /**
- * The URI to render an asset from: the local copy when it exists, the remote
- * URL otherwise — plus a background fetch so the next viewing is local.
+ * The URI to render an asset from.
  *
- * Resolved once per asset on purpose. Swapping the URI the moment a background
- * download finished would remount the <Image>/<VideoView> and flash the
- * illustration away mid-question, which is worse than one more streamed view.
+ * Local copy when there is one; otherwise null while the file downloads, then
+ * the local copy — or the remote URL if the download failed, so a bad
+ * connection degrades to streaming rather than to a blank. Download-then-show
+ * transfers each file once; streaming it while also caching it (the previous
+ * behaviour) moved every byte twice over the same mobile link.
+ *
+ * The URI is settled once per asset: null → final. It never flips from a
+ * remote URL to a local one mid-question, which would remount the
+ * <Image>/<VideoView> and flash the illustration away.
  */
 export function useMediaUri(asset: MediaAsset | null): string | null {
-  const resolved = React.useMemo(() => (asset ? (cachedUri(asset) ?? asset.url) : null), [asset]);
+  const [downloaded, setDownloaded] = React.useState<Record<string, string>>({});
+  // Sync existence check — a native call, but cheap, and it is what lets a
+  // cached picture appear on the very first frame with no loading state.
+  const local = asset && Platform.OS !== 'web' ? cachedUri(asset) : null;
 
   React.useEffect(() => {
-    if (!asset || cachedUri(asset)) return;
-    void ensureAsset(asset);
+    if (!asset || Platform.OS === 'web' || cachedUri(asset)) return;
+    let cancelled = false;
+    void ensureAsset(asset).then((uri) => {
+      if (cancelled) return;
+      setDownloaded((prev) => (prev[asset.id] ? prev : { ...prev, [asset.id]: uri ?? asset.url }));
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [asset]);
 
-  return resolved;
+  if (!asset) return null;
+  // The web build has no file system: stream, as before.
+  if (Platform.OS === 'web') return asset.url;
+  return local ?? downloaded[asset.id] ?? null;
 }

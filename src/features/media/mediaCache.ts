@@ -245,29 +245,64 @@ export function deleteMediaPack(): void {
   refreshMediaStatus();
 }
 
-const inFlight = new Set<string>();
+const inFlight = new Map<string, Promise<string | null>>();
 
 /**
- * Caches a single asset in the background, so a learner who simply practises
- * ends up with the questions they've seen available offline without ever
- * opening Settings. Returns null when it couldn't be fetched — callers keep
- * streaming from the network in that case.
+ * Downloads a single asset to the pack directory, once, and resolves to its
+ * local URI — or null when it could not be fetched, in which case callers
+ * stream from the network instead.
+ *
+ * Every viewing goes through here first (see useMediaUri), so a question's
+ * picture is transferred exactly once and is then on disk for good: a learner
+ * who simply practises ends up with everything they have seen available
+ * offline without opening Settings. It used to be the other way round — the
+ * screen streamed the URL while this downloaded the same file alongside —
+ * which on mobile data meant every clip came down twice, at half speed each.
+ *
+ * Concurrent callers (a prefetch and the screen that reached the question)
+ * share one download rather than starting a second.
  */
-export async function ensureAsset(asset: MediaAsset): Promise<string | null> {
+export function ensureAsset(asset: MediaAsset): Promise<string | null> {
   const existing = cachedUri(asset);
-  if (existing) return existing;
-  // Three questions in a row can reference the same illustration; without this
-  // guard each mount starts its own download of the same file.
-  if (inFlight.has(asset.id)) return null;
+  if (existing) return Promise.resolve(existing);
+  const running = inFlight.get(asset.id);
+  if (running) return running;
 
-  inFlight.add(asset.id);
-  try {
-    const file = await File.downloadFileAsync(asset.url, localFile(asset), { idempotent: true });
-    refreshMediaStatus();
-    return file.uri;
-  } catch {
-    return null;
-  } finally {
-    inFlight.delete(asset.id);
+  const download = (async () => {
+    try {
+      const file = await File.downloadFileAsync(asset.url, localFile(asset), { idempotent: true });
+      refreshMediaStatus();
+      return file.uri;
+    } catch {
+      return null;
+    } finally {
+      inFlight.delete(asset.id);
+    }
+  })();
+  inFlight.set(asset.id, download);
+  return download;
+}
+
+/**
+ * Warms the cache for the questions about to be shown — a lesson's ten, an
+ * exam's thirty-two — a couple at a time, in the order they will appear, so
+ * that by the time the learner taps through to the next one its picture or
+ * clip is already local. Never rejects; a failed file just streams later.
+ */
+export function prefetchQuestionMedia(questions: { mediaId: string | null }[], concurrency = 2): void {
+  const seen = new Set<string>();
+  const assets: MediaAsset[] = [];
+  for (const q of questions) {
+    if (!q.mediaId || seen.has(q.mediaId)) continue;
+    seen.add(q.mediaId);
+    const asset = DEMO_BUNDLE.media[q.mediaId];
+    if (asset && !cachedUri(asset)) assets.push(asset);
   }
+  if (assets.length === 0) return;
+
+  let next = 0;
+  const worker = async () => {
+    while (next < assets.length) await ensureAsset(assets[next++]);
+  };
+  for (let i = 0; i < Math.min(concurrency, assets.length); i += 1) void worker();
 }

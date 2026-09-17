@@ -15,6 +15,7 @@ import {
   questionClock,
   remainingMs,
 } from '@/features/practice/mockSession';
+import { prefetchQuestionMedia } from '@/features/media/mediaCache';
 import { useSubmitMock } from '@/features/practice/useSubmitMock';
 import { useTheme } from '@/theme/ThemeProvider';
 import { questionCategory } from '@/types/content';
@@ -28,6 +29,12 @@ export default function MockRunScreen() {
 
   const session = React.useSyncExternalStore(mockSession.subscribe, mockSession.getState);
   const total = session.questions.length;
+
+  // The exam gives 20 seconds of reading time on the first question — enough
+  // to have the next clips on disk before they are reached.
+  React.useEffect(() => {
+    prefetchQuestionMedia(session.questions);
+  }, [session.questions]);
   const index = session.index;
 
   // Review hands back a question index; a one-way exam never does.

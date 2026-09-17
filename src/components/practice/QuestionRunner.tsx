@@ -9,6 +9,7 @@ import { SaveButton } from '@/components/SaveButton';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { QUESTION_SPEECH_LANGUAGE } from '@/constants/rules';
+import { prefetchQuestionMedia } from '@/features/media/mediaCache';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
@@ -66,6 +67,10 @@ export function QuestionRunner({
   const achievementsRef = React.useRef<string[]>([]);
 
   const question = questions[index];
+
+  React.useEffect(() => {
+    prefetchQuestionMedia(questions);
+  }, [questions]);
   const revealed = selectedId !== null;
   const answeredCorrectly = revealed && selectedId === question?.correctOptionId;
 

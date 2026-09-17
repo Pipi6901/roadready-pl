@@ -14,6 +14,7 @@ import { Button, Row, Screen, Txt } from '@/components/ui/primitives';
 import { PAYWALL_ENABLED } from '@/constants/flags';
 import { QUESTION_SPEECH_LANGUAGE } from '@/constants/rules';
 import { EVENTS, track } from '@/features/analytics/analytics';
+import { prefetchQuestionMedia } from '@/features/media/mediaCache';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
@@ -65,6 +66,12 @@ export default function LessonScreen() {
   // cycle forever and the lesson could never end. It still lands in weak
   // spots (via recordAnswer's `inReview` flag below) for later practice.
   const [queue, setQueue] = React.useState(questions);
+
+  // Warm the cache for the whole lesson up front: the first picture is what
+  // the learner waits for, every later one should already be on disk.
+  React.useEffect(() => {
+    prefetchQuestionMedia(queue);
+  }, [queue]);
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [answered, setAnswered] = React.useState(false);
   // Only the first attempt at each question counts toward the lesson's score
