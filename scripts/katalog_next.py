@@ -12,7 +12,7 @@ With --expl: questions with no explanation in <lang> (`pl` = the question's
 own explanation, any other language = the explanation of its translation
 entry). Output: id, class, correct answer (T/N or A/B/C), Polish text, options,
 then the text/options already translated into <lang> so the writer sees the
-wording the learner sees.
+wording the learner sees, and finally the Polish explanation to translate.
 
 Order: questions asked for the given licence first (default B — the common
 case), then everything else, each in section order. Counts what is done so
@@ -72,4 +72,5 @@ for q in todo[offset:offset + count]:
         if tr:
             cells.append(tr['text'])
             cells += [tr['options'].get(o['id'], '') for o in q['options']]
+        cells.append(q['explanation'])
     print('\t'.join(cells))
