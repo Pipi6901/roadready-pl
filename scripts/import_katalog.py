@@ -64,15 +64,40 @@ def clean(value):
     return re.sub(r'\s+', ' ', s)
 
 
+# Optional columns, located by header: the ES/TR translations and the
+# per-language explanations added to the July 2026 file by our translator
+# (KATALOG_…_ES_TR_wyjasnienia.xlsx). Absent in the ministry's own file.
+EXTRA_HEADERS = {
+    'es_text': 'Pytanie [ES]', 'es_a': 'Odpowiedź A [ES]', 'es_b': 'Odpowiedź B [ES]', 'es_c': 'Odpowiedź C [ES]',
+    'tr_text': 'Pytanie [TR]', 'tr_a': 'Odpowiedź A [TR]', 'tr_b': 'Odpowiedź B [TR]', 'tr_c': 'Odpowiedź C [TR]',
+    'expl_pl': 'Wyjaśnienie [PL]', 'expl_en': 'Wyjaśnienie [EN]', 'expl_de': 'Wyjaśnienie [D]',
+    'expl_uk': 'Wyjaśnienie [UA]', 'expl_ru': 'Wyjaśnienie [RU]', 'expl_es': 'Wyjaśnienie [ES]', 'expl_tr': 'Wyjaśnienie [TR]',
+}
+XLSX_LOCALES = {'en': ('en_text', 'en_a', 'en_b', 'en_c'), 'de': ('de_text', 'de_a', 'de_b', 'de_c'),
+                'uk': ('ua_text', 'ua_a', 'ua_b', 'ua_c'), 'es': ('es_text', 'es_a', 'es_b', 'es_c'),
+                'tr': ('tr_text', 'tr_a', 'tr_b', 'tr_c')}
+
+
 def load_rows(path):
     wb = load_workbook(path, read_only=True, data_only=True)
     ws = wb['katalog']
     rows = []
-    for r in ws.iter_rows(min_row=2, values_only=True):
+    for i, r in enumerate(ws.iter_rows(values_only=True)):
+        if i == 0:
+            header = {clean(c): j for j, c in enumerate(r) if c is not None}
+            for key, title in EXTRA_HEADERS.items():
+                if title in header:
+                    COL[key] = header[title]
+            continue
         if clean(r[COL['number']]) == '':
             continue
         rows.append(r)
     return rows
+
+
+def cell(r, key):
+    j = COL.get(key)
+    return clean(r[j]) if j is not None and j < len(r) else ''
 
 
 def structure_of(raw):
@@ -84,7 +109,8 @@ def structure_of(raw):
 
 
 def build(rows, topics_meta):
-    questions, translations = [], {'en': {}, 'de': {}, 'uk': {}}
+    questions, translations = [], {loc: {} for loc, cols in XLSX_LOCALES.items() if cols[0] in COL}
+    explanations = {loc: {} for loc in ('pl', 'en', 'de', 'uk', 'ru', 'es', 'tr') if f'expl_{loc}' in COL}
     problems = []
     for r in rows:
         number = clean(r[COL['number']])
@@ -127,7 +153,7 @@ def build(rows, topics_meta):
             'text': text,
             'options': options,
             'correctOptionId': correct,
-            'explanation': '',
+            'explanation': cell(r, 'expl_pl'),
             'mediaId': None,
             'sourceMedia': media,
             'subtopic': None,
@@ -137,21 +163,27 @@ def build(rows, topics_meta):
             'licences': licences,
         })
 
-        for loc, (tk, ak, bk, ck) in {'en': ('en_text', 'en_a', 'en_b', 'en_c'), 'de': ('de_text', 'de_a', 'de_b', 'de_c'), 'uk': ('ua_text', 'ua_a', 'ua_b', 'ua_c')}.items():
-            t = clean(r[COL[tk]])
+        for loc in explanations:
+            if loc != 'pl' and cell(r, f'expl_{loc}'):
+                explanations[loc][qid] = cell(r, f'expl_{loc}')
+
+        for loc, (tk, ak, bk, ck) in XLSX_LOCALES.items():
+            if loc not in translations:
+                continue
+            t = cell(r, tk)
             if not t:
                 continue
             if structure == 'basic':
                 yes, no = YES_NO[loc]
                 opts = {'T': yes, 'N': no}
             else:
-                oa, ob, oc = clean(r[COL[ak]]), clean(r[COL[bk]]), clean(r[COL[ck]])
+                oa, ob, oc = cell(r, ak), cell(r, bk), cell(r, ck)
                 if not (oa and ob and oc):
                     continue
                 opts = {'A': oa, 'B': ob, 'C': oc}
             translations[loc][qid] = {'text': t, 'options': opts, 'explanation': ''}
 
-    return questions, translations, problems
+    return questions, translations, explanations, problems
 
 
 def generated_files(gen_dir):
@@ -211,18 +243,21 @@ def merge_generated(questions, translations):
     return dict(added)
 
 
-def merge_explanations(questions, translations):
-    """Fills `explanation` from content/katalog/explanations/{lang}[.json|/*.json].
-    Returns {lang: count}; ids that are unknown or (for a translation) have no
-    translation entry yet are reported and skipped."""
+def merge_explanations(questions, translations, from_xlsx=None):
+    """Fills `explanation` — first from the catalogue's own explanation columns
+    (`from_xlsx`, {lang: {id: text}}, the translator's file), then from
+    content/katalog/explanations/{lang}[.json|/*.json] for whatever is still
+    empty. Returns {lang: count}; ids that are unknown or (for a translation)
+    have no translation entry yet are reported and skipped."""
+    sources = [(loc, gen) for loc, gen in (from_xlsx or {}).items()]
     exp_dir = os.path.join(OUT_DIR, 'explanations')
-    if not os.path.isdir(exp_dir):
-        return {}
+    if os.path.isdir(exp_dir):
+        for loc, path in generated_files(exp_dir):
+            with open(path, encoding='utf-8') as f:
+                sources.append((loc, json.load(f)))
     ids = {q['id']: q for q in questions}
     added, skipped = Counter(), Counter()
-    for loc, path in generated_files(exp_dir):
-        with open(path, encoding='utf-8') as f:
-            gen = json.load(f)
+    for loc, gen in sources:
         for qid, text in gen.items():
             text = (text or '').strip()
             q = ids.get(qid)
@@ -261,9 +296,9 @@ def main():
     with open(os.path.join(ROOT, 'content', 'katalog', 'locales.json'), encoding='utf-8') as f:
         locales = json.load(f)
 
-    questions, translations, problems = build(rows, topics_meta)
+    questions, translations, xlsx_expl, problems = build(rows, topics_meta)
     generated = merge_generated(questions, translations)
-    explained = merge_explanations(questions, translations)
+    explained = merge_explanations(questions, translations, xlsx_expl)
 
     counts = Counter(q['topicId'] for q in questions)
     topics = []

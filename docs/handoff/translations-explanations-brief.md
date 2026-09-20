@@ -17,7 +17,7 @@
 | 2 | GitHub `Pipi6901/roadready-pl-admin` (админка + Cloud Functions, ветка `main`) | то же | `seed.js`, `publish.js`, `translate-questions.js` |
 | 3 | Firebase-проект `roadready-pl` | Firebase Console → Project settings → Users and permissions → добавить Google-аккаунт исполнителя с ролью **Editor** (или Owner, если нужен деплой функций) | Firestore, Hosting, просмотр логов |
 | 4 | Ключ сервисного аккаунта `firebase-adminsdk-fbsvc@roadready-pl.iam.gserviceaccount.com` | Firebase Console → Project settings → Service accounts → **Generate new private key** → отдать JSON защищённым каналом. Исполнитель сохраняет его как `roadready-admin-pl/serviceAccountKey.json` (файл в `.gitignore`). **После окончания работ ключ удалить** (Google Cloud Console → IAM → Service accounts → Keys). Текущий ключ на машине владельца лучше тоже перевыпустить — он ранее попадал в переписку. | `seed.js`, `publish.js`, `verify-media.js` |
-| 5 | Каталог вопросов `KATALOG_dla_kandydatow_na_kierowcow_072026.xlsx` | у владельца: `D:\стажа\media\source\`. Официальный источник: https://www.gov.pl/web/infrastruktura/prawo-jazdy («Baza pytań egzaminacyjnych»). В git его нет. | `import_katalog.py` собирает из него `content.json` |
+| 5 | Каталог вопросов `KATALOG_dla_kandydatow_na_kierowcow_072026_ES_TR_wyjasnienia.xlsx` | у владельца: `D:\стажа\media\source\`. Официальный источник: https://www.gov.pl/web/infrastruktura/prawo-jazdy («Baza pytań egzaminacyjnych»). В git его нет. | `import_katalog.py` собирает из него `content.json` |
 | 6 | (опционально) Anthropic API key | https://console.anthropic.com → API keys | автоматизированный перевод/генерация объяснений через `translate-questions.js`; без ключа всё делается вручную чанками, как делались RU/UK |
 | 7 | Медиа-архивы **не нужны** | — | медиа уже загружены в Storage и привязаны к вопросам |
 
@@ -66,7 +66,7 @@ npm install
 # положить serviceAccountKey.json в корень
 ```
 
-Каталог `KATALOG_dla_kandydatow_na_kierowcow_072026.xlsx` (выдан отдельно) положи в любое место и передавай его путь в `import_katalog.py`. Все Python-скрипты запускай как `python -X utf8 …` (Windows: иначе ломается вывод кириллицы/польских букв).
+Каталог `KATALOG_dla_kandydatow_na_kierowcow_072026_ES_TR_wyjasnienia.xlsx` (выдан отдельно) положи в любое место и передавай его путь в `import_katalog.py`. Все Python-скрипты запускай как `python -X utf8 …` (Windows: иначе ломается вывод кириллицы/польских букв).
 
 ### Как устроены данные
 
@@ -110,7 +110,7 @@ python -X utf8 scripts/katalog_next.py pl 150 --expl
 python -X utf8 scripts/katalog_next.py es 150 --expl
 
 # пересобрать content.json (мерж переводов и объяснений; печатает счётчики по языкам)
-python -X utf8 scripts/import_katalog.py "<путь>/KATALOG_dla_kandydatow_na_kierowcow_072026.xlsx"
+python -X utf8 scripts/import_katalog.py "<путь>/KATALOG_dla_kandydatow_na_kierowcow_072026_ES_TR_wyjasnienia.xlsx"
 ```
 
 Валидация чанка перед коммитом (обязательна — один битый JSON ломает импорт):
