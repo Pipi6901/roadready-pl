@@ -122,8 +122,13 @@ export function QuestionRunner({
   // Surfaced once the session lands on its summary, the same "arrive, then
   // celebrate" pattern lesson/complete.tsx and mock/results.tsx use.
   React.useEffect(() => {
-    if (done && achievementsRef.current.length) {
-      router.push({ pathname: '/achievement', params: { ids: achievementsRef.current.join(',') } });
+    if (!done) return;
+    // A finished round is a day of practice for the streak, the same as a
+    // completed lesson — it can unlock streak-5 / streak-14 on its own.
+    const { newAchievements } = progress.recordPracticeSession();
+    const ids = [...achievementsRef.current, ...newAchievements];
+    if (ids.length) {
+      router.push({ pathname: '/achievement', params: { ids: ids.join(',') } });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [done]);

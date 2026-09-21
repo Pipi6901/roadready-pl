@@ -210,7 +210,7 @@ export default function LessonCompleteScreen() {
 
           <Row
             accessible
-            accessibilityLabel={`${progress.state.streakDays} day streak`}
+            accessibilityLabel={`${progress.streak} day streak`}
             style={{
               gap: 6,
               paddingVertical: 8,
@@ -221,7 +221,7 @@ export default function LessonCompleteScreen() {
           >
             <Icon name="flame" size={15} color={t.colors.amberDark} />
             <Txt size={13} weight="700" color={t.colors.amberDark}>
-              {progress.state.streakDays} day streak
+              {progress.streak} day streak
             </Txt>
           </Row>
         </Row>

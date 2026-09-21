@@ -42,6 +42,12 @@ interface SubscriptionContextValue {
 
 const SubscriptionContext = createContext<SubscriptionContextValue | null>(null);
 
+/** Local calendar date — the UTC one shifted the daily reset to 01:00/02:00 Polish time. */
+const localDayKey = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
 const skuToPlan = (sku: string): Plan | null =>
   sku === PRODUCT_IDS.monthly ? 'monthly' : sku === PRODUCT_IDS.yearly ? 'yearly' : null;
 
@@ -127,7 +133,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   }, [applyCustomerInfo]);
 
   const countQuestion = useCallback(() => {
-    const dayKey = new Date().toISOString().slice(0, 10);
+    const dayKey = localDayKey();
     setState((prev) =>
       persist({
         ...prev,
@@ -138,7 +144,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   const value = useMemo<SubscriptionContextValue>(() => {
     const isPro = state.status === 'trial' || state.status === 'active';
-    const dayKey = new Date().toISOString().slice(0, 10);
+    const dayKey = localDayKey();
     const usedToday = state.dailyQuestionCount[dayKey] ?? 0;
 
     // With the paywall switched off — or no RevenueCat key to buy through —

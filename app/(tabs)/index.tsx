@@ -73,7 +73,7 @@ export default function HomeScreen() {
         </Row>
 
         <Row style={{ gap: 12 }}>
-          <Pill icon="flame" label={tr('home.streak', { days: progress.state.streakDays })} />
+          <Pill icon="flame" label={tr('home.streak', { days: progress.streak })} />
           <Pill icon="star" label={`${progress.state.totalXp.toLocaleString(dateLocale)} XP`} />
         </Row>
 

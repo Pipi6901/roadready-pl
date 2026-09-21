@@ -103,6 +103,13 @@ interface ProgressContextValue {
   lessonsToday: number;
   xpToday: number;
   goalMet: boolean;
+  /**
+   * The streak as it stands *now*: `state.streakDays` is only rewritten on
+   * activity, so after a missed day it would still show last week's number
+   * until the next session silently reset it to 1. Zero here means the chain
+   * is already broken.
+   */
+  streak: number;
   masteredCount: number;
   accuracy: number;
   readiness: number;
@@ -118,6 +125,8 @@ interface ProgressContextValue {
   recordAnswer: (questionId: string, correct: boolean) => { xp: number; newAchievements: string[] };
   completeLesson: (topicId: string, sessionXp: number) => { xp: number; newAchievements: string[] };
   recordMockAttempt: (attempt: MockAttempt) => { newAchievements: string[] };
+  /** A finished Quick Quiz or Weak Spots round — counts for the streak, nothing else. */
+  recordPracticeSession: () => { newAchievements: string[] };
   /** Bookmarks. Saving is allowed anywhere a question is on screen, the mock
    *  test included: it never reveals the answer or lets the paper be revisited,
    *  it only marks the question for later. */
@@ -129,7 +138,43 @@ interface ProgressContextValue {
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
 
-const dayKey = (d: Date = new Date()) => d.toISOString().slice(0, 10);
+/**
+ * Local calendar date as YYYY-MM-DD.
+ *
+ * This used to be `toISOString().slice(0, 10)`, which is the UTC date: in
+ * Poland the day then rolled over at 01:00 or 02:00 local time, so a lesson
+ * finished at half past midnight was booked to "yesterday", the goal ring
+ * reset two hours late, and a streak kept alive after midnight looked broken.
+ */
+const dayKey = (d: Date = new Date()) => {
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${day}`;
+};
+
+/** setDate rather than "now minus 24h": the latter is off by an hour across a DST switch. */
+const yesterdayKey = () => {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return dayKey(d);
+};
+
+/**
+ * Streak bookkeeping for "the learner did something today".
+ *
+ * A day counts as soon as one session is completed — a lesson, a quick quiz,
+ * a weak-spots round or a mock test. The streak used to advance only once
+ * the daily goal (three lessons) was met, which is a rule nobody could see:
+ * a learner doing one lesson every evening for a week sat on "0 day streak"
+ * and concluded the counter was broken. The goal ring is still the goal; the
+ * streak is just "did you show up".
+ */
+function withActivityToday(prev: ProgressState): Pick<ProgressState, 'streakDays' | 'streakLastDate'> {
+  const today = dayKey();
+  if (prev.streakLastDate === today) return { streakDays: prev.streakDays, streakLastDate: today };
+  const continues = prev.streakLastDate === yesterdayKey();
+  return { streakDays: continues ? prev.streakDays + 1 : 1, streakLastDate: today };
+}
 
 /** Whether every lesson in a topic has been completed, per topicStats' own math. */
 function isTopicComplete(s: ProgressState, topicId: string): boolean {
@@ -267,23 +312,12 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       const xp = sessionXp;
       const prev = stateRef.current;
       const today = dayKey();
-      const yesterday = dayKey(new Date(Date.now() - 86_400_000));
       const todayEntry = prev.daily[today] ?? { lessons: 0, xp: 0 };
-
-      // Streak advances the first time the daily goal is met.
       const lessonsToday = todayEntry.lessons + 1;
-      let streakDays = prev.streakDays;
-      let streakLastDate = prev.streakLastDate;
-      if (lessonsToday >= DAILY_GOAL_LESSONS && streakLastDate !== today) {
-        streakDays = streakLastDate === yesterday ? streakDays + 1 : 1;
-        streakLastDate = today;
-      }
 
       const next: ProgressState = {
         ...prev,
-        totalXp: prev.totalXp,
-        streakDays,
-        streakLastDate,
+        ...withActivityToday(prev),
         lessons: { ...prev.lessons, [topicId]: (prev.lessons[topicId] ?? 0) + 1 },
         daily: { ...prev.daily, [today]: { lessons: lessonsToday, xp: todayEntry.xp + xp } },
       };
@@ -300,7 +334,11 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const recordMockAttempt = useCallback(
     (attempt: MockAttempt) => {
       const prev = stateRef.current;
-      const next = { ...prev, mockAttempts: [attempt, ...prev.mockAttempts].slice(0, 20) };
+      const next: ProgressState = {
+        ...prev,
+        ...withActivityToday(prev),
+        mockAttempts: [attempt, ...prev.mockAttempts].slice(0, 20),
+      };
       const { state: withAchievements, newAchievements } = checkAchievements(next);
       stateRef.current = withAchievements;
       setState(persist(withAchievements));
@@ -309,6 +347,20 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     },
     [persist],
   );
+
+  const recordPracticeSession = useCallback(() => {
+    const prev = stateRef.current;
+    const next: ProgressState = { ...prev, ...withActivityToday(prev) };
+    // Same day twice: nothing moved, so skip the write (and the re-render).
+    if (next.streakDays === prev.streakDays && next.streakLastDate === prev.streakLastDate) {
+      return { newAchievements: [] };
+    }
+    // streak-5 / streak-14 can unlock here.
+    const { state: withAchievements, newAchievements } = checkAchievements(next);
+    stateRef.current = withAchievements;
+    setState(persist(withAchievements));
+    return { newAchievements };
+  }, [persist]);
 
   const toggleSaved = useCallback(
     (questionId: string): boolean => {
@@ -412,6 +464,8 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       lessonsToday: todayEntry.lessons,
       xpToday: todayEntry.xp,
       goalMet: todayEntry.lessons >= DAILY_GOAL_LESSONS,
+      streak:
+        state.streakLastDate === today || state.streakLastDate === yesterdayKey() ? state.streakDays : 0,
       masteredCount,
       accuracy: attempts ? Math.round((corrects / attempts) * 100) : 0,
       readiness: bank.length
@@ -427,13 +481,14 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       recordAnswer,
       completeLesson,
       recordMockAttempt,
+      recordPracticeSession,
       savedQuestionIds: state.savedQuestionIds,
       isSaved: (questionId) => state.savedQuestionIds.includes(questionId),
       toggleSaved,
       reset,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- contentVersion is the bundle's change signal
-  }, [state, ready, licenceCategory, contentVersion, recordAnswer, completeLesson, recordMockAttempt, toggleSaved, reset]);
+  }, [state, ready, licenceCategory, contentVersion, recordAnswer, completeLesson, recordMockAttempt, recordPracticeSession, toggleSaved, reset]);
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
 }

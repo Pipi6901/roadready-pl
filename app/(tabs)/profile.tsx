@@ -79,7 +79,7 @@ export default function ProfileScreen() {
       // app uses because it's instantly legible; replacing it would cost
       // recognisability for no real gain.
       icon: 'flame',
-      value: String(progress.state.streakDays),
+      value: String(progress.streak),
       label: 'Day streak',
       bg: t.colors.amber50,
       edge: t.colors.amber,
