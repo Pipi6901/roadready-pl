@@ -2,16 +2,15 @@
  * Published legal documents.
  *
  * App Review requires a subscription app to link a reachable privacy policy
- * from inside the app, not only from the store listing — the Settings row
- * under "About" is that link.
+ * and terms from inside the app, not only from the store listing — the
+ * Settings rows under "About" and the footnote on the purchase screens are
+ * those links.
  *
- * NOT PUBLISHED YET. The URL below is the intended address for the Polish
- * app's own policy; the UK document must not be reused, because it names a
- * different app and a different data controller. Publish the document before
- * the first store submission — App Review opens this link.
- *
- * Terms of Service are not linked yet because none are published. An empty
- * row leading to a 404 is worse at review than no row at all: add the
- * constant and the row together when the document exists.
+ * Both pages are the Polish app's own documents (bilingual PL/EN, the page
+ * picks by browser language; `?lang=pl` / `?lang=en` forces one). The UK
+ * document must not be reused: it names a different app and a different
+ * provider. Sources live in docs/legal/ and are uploaded to pmoffice.space
+ * by hand — keep the file names, App Review opens these exact URLs.
  */
 export const PRIVACY_POLICY_URL = 'https://pmoffice.space/roadready-pl-privacy.html';
+export const TERMS_OF_USE_URL = 'https://pmoffice.space/roadready-pl-terms.html';

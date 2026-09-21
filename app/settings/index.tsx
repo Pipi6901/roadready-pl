@@ -12,7 +12,7 @@ import { SettingsSection, useCardShadow } from '@/components/settings/SettingsSe
 import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { Slider } from '@/components/ui/Slider';
 import { COUNTRY_SELECTOR_ENABLED } from '@/constants/flags';
-import { PRIVACY_POLICY_URL } from '@/constants/legal';
+import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/legal';
 import type { StringKey } from '@/features/i18n/strings';
 import { useDateLocale, useT } from '@/features/i18n/useT';
 import { useMediaPack } from '@/features/media/useMediaPack';
@@ -378,14 +378,19 @@ export default function SettingsScreen() {
             <SettingsRow
               label={tr('settings.row.privacyPolicy')}
               onPress={() => void openLegal(PRIVACY_POLICY_URL, tr('settings.row.privacyPolicy'))}
+            />
+            <SettingsRow
+              label={tr('settings.row.termsOfUse')}
+              onPress={() => void openLegal(TERMS_OF_USE_URL, tr('settings.row.termsOfUse'))}
               last
             />
           </SettingsSection>
 
-          {/* NFR-11. Deliberately no DVSA or Crown Copyright wording — that
-              attribution is only correct once the content licence is signed. */}
+          {/* Source attribution: the catalogue is the ministry's public question
+              bank, not a licensed DVSA-style package, so this names the source
+              and disclaims affiliation — same wording as the legal pages. */}
           <Txt size={11} color={t.colors.textMuted} lineHeight={16}>
-            Contains public sector information licensed under the Open Government Licence v3.0.
+            {tr('settings.legal.attribution')}
           </Txt>
         </View>
       </ScreenScroll>

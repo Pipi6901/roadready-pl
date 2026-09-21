@@ -78,6 +78,8 @@ export const EN = {
   'settings.section.about': 'About',
   'settings.row.appVersion': 'App version',
   'settings.row.privacyPolicy': 'Privacy Policy',
+  'settings.row.termsOfUse': 'Terms of Use',
+  'settings.legal.attribution': 'Exam questions and media come from the official question bank published by the Polish Ministry of Infrastructure. RoadReady PL is not affiliated with the Ministry or WORD. Translations and explanations are our own.',
 
   'settings.restore.restoredTitle': 'Purchase restored',
   'settings.restore.restoredBody': 'Your subscription is active again on this device.',
@@ -242,6 +244,8 @@ const PL: Catalogue = {
   'settings.section.about': 'O aplikacji',
   'settings.row.appVersion': 'Wersja aplikacji',
   'settings.row.privacyPolicy': 'Polityka prywatności',
+  'settings.row.termsOfUse': 'Regulamin',
+  'settings.legal.attribution': 'Pytania egzaminacyjne i materiały pochodzą z oficjalnej bazy pytań publikowanej przez Ministerstwo Infrastruktury. RoadReady PL nie jest powiązana z Ministerstwem ani WORD. Tłumaczenia i wyjaśnienia są naszym opracowaniem.',
 
   'settings.restore.restoredTitle': 'Zakup przywrócony',
   'settings.restore.restoredBody': 'Subskrypcja jest znów aktywna na tym urządzeniu.',
@@ -403,6 +407,8 @@ const UK: Catalogue = {
   'settings.section.about': 'Про застосунок',
   'settings.row.appVersion': 'Версія застосунку',
   'settings.row.privacyPolicy': 'Політика конфіденційності',
+  'settings.row.termsOfUse': 'Умови використання',
+  'settings.legal.attribution': 'Екзаменаційні запитання та матеріали походять з офіційної бази запитань, яку публікує Міністерство інфраструктури Польщі. RoadReady PL не пов’язана з Міністерством чи WORD. Переклади та пояснення — наша власна розробка.',
 
   'settings.restore.restoredTitle': 'Покупку відновлено',
   'settings.restore.restoredBody': 'Підписка знову активна на цьому пристрої.',
@@ -564,6 +570,8 @@ const RU: Catalogue = {
   'settings.section.about': 'О приложении',
   'settings.row.appVersion': 'Версия приложения',
   'settings.row.privacyPolicy': 'Политика конфиденциальности',
+  'settings.row.termsOfUse': 'Условия использования',
+  'settings.legal.attribution': 'Экзаменационные вопросы и материалы взяты из официальной базы вопросов, публикуемой Министерством инфраструктуры Польши. RoadReady PL не связана с Министерством или WORD. Переводы и объяснения — наша собственная разработка.',
 
   'settings.restore.restoredTitle': 'Покупка восстановлена',
   'settings.restore.restoredBody': 'Подписка снова активна на этом устройстве.',
@@ -725,6 +733,8 @@ const ES: Catalogue = {
   'settings.section.about': 'Información',
   'settings.row.appVersion': 'Versión de la app',
   'settings.row.privacyPolicy': 'Política de privacidad',
+  'settings.row.termsOfUse': 'Condiciones de uso',
+  'settings.legal.attribution': 'Las preguntas de examen y los materiales proceden del banco oficial de preguntas publicado por el Ministerio de Infraestructura de Polonia. RoadReady PL no está vinculada al Ministerio ni a WORD. Las traducciones y explicaciones son obra propia.',
 
   'settings.restore.restoredTitle': 'Compra restaurada',
   'settings.restore.restoredBody': 'Tu suscripción vuelve a estar activa en este dispositivo.',
@@ -886,6 +896,8 @@ const TR: Catalogue = {
   'settings.section.about': 'Hakkında',
   'settings.row.appVersion': 'Uygulama sürümü',
   'settings.row.privacyPolicy': 'Gizlilik politikası',
+  'settings.row.termsOfUse': 'Kullanım koşulları',
+  'settings.legal.attribution': 'Sınav soruları ve materyaller, Polonya Altyapı Bakanlığı’nın yayımladığı resmi soru bankasından alınmıştır. RoadReady PL, Bakanlık veya WORD ile bağlantılı değildir. Çeviriler ve açıklamalar kendi çalışmamızdır.',
 
   'settings.restore.restoredTitle': 'Satın alım geri yüklendi',
   'settings.restore.restoredBody': 'Aboneliğiniz bu cihazda yeniden etkin.',

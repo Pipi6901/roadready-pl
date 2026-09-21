@@ -1,11 +1,12 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Linking, StyleSheet, View } from 'react-native';
 
 import { useCardShadow } from '@/components/settings/SettingsSection';
 import { PLAN_PRICE } from '@/components/settings/plan';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
+import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/legal';
 import { FREE_QUESTIONS_PER_DAY } from '@/constants/rules';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -128,8 +129,30 @@ export default function TrialEndedModal() {
         <View style={{ gap: 10 }}>
           <Button label={`Subscribe — ${PLAN_PRICE.monthly}/month`} icon="gem" onPress={onSubscribe} />
           <Button label="Continue with limited access" variant="ghost" onPress={() => router.back()} />
+          {/* App Review wants both documents reachable from every purchase
+              surface, not just mentioned — the two spans are tappable. */}
           <Txt size={10} color={t.colors.textMuted} align="center" lineHeight={14}>
-            Billed through the store. Cancel anytime. Terms of Service and Privacy Policy apply.
+            Billed through the store. Cancel anytime.{' '}
+            <Txt
+              size={10}
+              color={t.colors.textSecondary}
+              style={{ textDecorationLine: 'underline' }}
+              onPress={() => void Linking.openURL(TERMS_OF_USE_URL)}
+              accessibilityRole="link"
+            >
+              Terms of Use
+            </Txt>
+            {' and '}
+            <Txt
+              size={10}
+              color={t.colors.textSecondary}
+              style={{ textDecorationLine: 'underline' }}
+              onPress={() => void Linking.openURL(PRIVACY_POLICY_URL)}
+              accessibilityRole="link"
+            >
+              Privacy Policy
+            </Txt>
+            {' apply.'}
           </Txt>
         </View>
       </ScreenScroll>
