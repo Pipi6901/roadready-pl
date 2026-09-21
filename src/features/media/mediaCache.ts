@@ -1,4 +1,5 @@
 import { Directory, File, Paths } from 'expo-file-system';
+import { Platform } from 'react-native';
 
 import { DEMO_BUNDLE } from '@/data/demo-bundle';
 import { EVENTS, track } from '@/features/analytics/analytics';
@@ -290,19 +291,55 @@ export function ensureAsset(asset: MediaAsset): Promise<string | null> {
  * clip is already local. Never rejects; a failed file just streams later.
  */
 export function prefetchQuestionMedia(questions: { mediaId: string | null }[], concurrency = 2): void {
+  void preloadQuestionMedia(questions, undefined, concurrency);
+}
+
+export interface PreloadProgress {
+  /** Files that were not on disk when the preload began. */
+  total: number;
+  /** Files finished so far, failures included. */
+  done: number;
+  failed: number;
+}
+
+/**
+ * Same warm-up, but awaited and reported: the mock test waits on this before
+ * its clock starts, so that no picture or clip has to load while the
+ * per-question timer is already running. Resolves with the final tally
+ * rather than rejecting — a file that failed simply streams when reached.
+ *
+ * On the web there is no file cache (see useMediaUri), so it resolves
+ * immediately with nothing to do.
+ */
+export function preloadQuestionMedia(
+  questions: { mediaId: string | null }[],
+  onProgress?: (p: PreloadProgress) => void,
+  concurrency = 3,
+): Promise<PreloadProgress> {
   const seen = new Set<string>();
   const assets: MediaAsset[] = [];
-  for (const q of questions) {
-    if (!q.mediaId || seen.has(q.mediaId)) continue;
-    seen.add(q.mediaId);
-    const asset = DEMO_BUNDLE.media[q.mediaId];
-    if (asset && !cachedUri(asset)) assets.push(asset);
+  if (Platform.OS !== 'web') {
+    for (const q of questions) {
+      if (!q.mediaId || seen.has(q.mediaId)) continue;
+      seen.add(q.mediaId);
+      const asset = DEMO_BUNDLE.media[q.mediaId];
+      if (asset && !cachedUri(asset)) assets.push(asset);
+    }
   }
-  if (assets.length === 0) return;
+  const progress: PreloadProgress = { total: assets.length, done: 0, failed: 0 };
+  onProgress?.(progress);
+  if (assets.length === 0) return Promise.resolve(progress);
 
   let next = 0;
   const worker = async () => {
-    while (next < assets.length) await ensureAsset(assets[next++]);
+    while (next < assets.length) {
+      const uri = await ensureAsset(assets[next++]);
+      progress.done += 1;
+      if (!uri) progress.failed += 1;
+      onProgress?.({ ...progress });
+    }
   };
-  for (let i = 0; i < Math.min(concurrency, assets.length); i += 1) void worker();
+  const workers = [];
+  for (let i = 0; i < Math.min(concurrency, assets.length); i += 1) workers.push(worker());
+  return Promise.all(workers).then(() => ({ ...progress }));
 }

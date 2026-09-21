@@ -8,19 +8,17 @@ import { ScoreHistoryChart } from '@/components/practice/ScoreHistoryChart';
 import { cardShadow } from '@/components/practice/shadow';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
-import { mockSession } from '@/features/practice/mockSession';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useSubscription } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
-import { EVENTS, track } from '@/features/analytics/analytics';
 
 /** Mock Test Setup — mockup frame "Mock Test Setup". */
 export default function MockSetupScreen() {
   const t = useTheme();
   const router = useRouter();
-  const { country, mockQuestions } = useContent();
+  const { country } = useContent();
   const progress = useProgress();
   const { localeName, translationEnabled } = useSettings();
   const { can } = useSubscription();
@@ -66,12 +64,10 @@ export default function MockSetupScreen() {
       : []),
   ];
 
-  const start = () => {
-    mockSession.start(mockQuestions(), country.mockTest);
-    track(EVENTS.mockTestStarted, { time_limit_minutes: timeLimitMinutes });
-    // replace(): the running exam must not be escapable with a back swipe.
-    router.replace('/mock/run');
-  };
+  // The paper is drawn and its media preloaded on the preparing screen; the
+  // session (and its clock) starts there, once everything is local. push()
+  // rather than replace() so that Cancel returns here.
+  const start = () => router.push('/mock/preparing');
 
   if (!can('mock_test')) {
     return (
