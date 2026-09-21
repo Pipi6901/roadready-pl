@@ -7,21 +7,28 @@ import { PLAN_PRICE } from '@/components/settings/plan';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/legal';
-import { FREE_QUESTIONS_PER_DAY } from '@/constants/rules';
+import { FREE_TIER } from '@/constants/rules';
 import { useTheme } from '@/theme/ThemeProvider';
 
 interface CompareRow {
   feature: string;
-  free: string | false;
+  free: string | boolean;
   pro: string | true;
 }
 
+/**
+ * Derived from FREE_TIER so the table can never promise a limit the app
+ * does not enforce (or hide one it does). The daily cap row only appears
+ * when there is a cap.
+ */
 const COMPARISON: CompareRow[] = [
-  { feature: 'Questions per day', free: String(FREE_QUESTIONS_PER_DAY), pro: 'Unlimited' },
-  { feature: 'Translations', free: false, pro: true },
-  { feature: 'Mock tests', free: false, pro: true },
-  { feature: 'Weak spot practice', free: false, pro: true },
-  { feature: 'Offline mode', free: false, pro: true },
+  ...(FREE_TIER.questionsPerDay !== null
+    ? [{ feature: 'Questions per day', free: String(FREE_TIER.questionsPerDay), pro: 'Unlimited' } as CompareRow]
+    : [{ feature: 'Lessons', free: 'Unlimited', pro: 'Unlimited' } as CompareRow]),
+  { feature: 'Translations', free: FREE_TIER.translation, pro: true },
+  { feature: 'Mock tests', free: FREE_TIER.mockTest, pro: true },
+  { feature: 'Weak spot practice', free: FREE_TIER.weakSpots, pro: true },
+  { feature: 'Offline mode', free: FREE_TIER.offline, pro: true },
 ];
 
 /** Trial ended — ТЗ 8.4. */
@@ -88,7 +95,7 @@ export default function TrialEndedModal() {
             <Row
               key={row.feature}
               accessible
-              accessibilityLabel={`${row.feature}. Free: ${row.free === false ? 'not included' : row.free}. Pro: ${row.pro === true ? 'included' : row.pro}.`}
+              accessibilityLabel={`${row.feature}. Free: ${row.free === false ? 'not included' : row.free === true ? 'included' : row.free}. Pro: ${row.pro === true ? 'included' : row.pro}.`}
               style={{
                 paddingVertical: 14,
                 paddingHorizontal: 16,
@@ -104,6 +111,8 @@ export default function TrialEndedModal() {
               <View style={{ flex: 1, alignItems: 'center' }}>
                 {row.free === false ? (
                   <Icon name="x" size={16} color={t.colors.textMuted} />
+                ) : row.free === true ? (
+                  <Icon name="check" size={16} color={t.colors.successDark} />
                 ) : (
                   <Txt size={13} color={t.colors.textSecondary}>
                     {row.free}

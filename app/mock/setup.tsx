@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { ProLocked } from '@/components/ProLocked';
 import { NavBar } from '@/components/practice/NavBar';
 import { ScoreHistoryChart } from '@/components/practice/ScoreHistoryChart';
 import { cardShadow } from '@/components/practice/shadow';
@@ -11,6 +12,7 @@ import { mockSession } from '@/features/practice/mockSession';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
+import { useSubscription } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 import { EVENTS, track } from '@/features/analytics/analytics';
 
@@ -21,6 +23,7 @@ export default function MockSetupScreen() {
   const { country, mockQuestions } = useContent();
   const progress = useProgress();
   const { localeName, translationEnabled } = useSettings();
+  const { can } = useSubscription();
 
   const { questionCount, timeLimitMinutes, passMark, maxPoints, timing } = country.mockTest;
   // Poland scores in points, not answers, so the pass mark reads 68 / 74
@@ -69,6 +72,17 @@ export default function MockSetupScreen() {
     // replace(): the running exam must not be escapable with a back swipe.
     router.replace('/mock/run');
   };
+
+  if (!can('mock_test')) {
+    return (
+      <ProLocked
+        feature="mock_test"
+        icon="clipboard-check"
+        title="Mock Test is a Pro feature"
+        body={`The full ${questionCount}-question exam simulation with the real timer is part of RoadReady Pro. Lessons stay free.`}
+      />
+    );
+  }
 
   return (
     <Screen>

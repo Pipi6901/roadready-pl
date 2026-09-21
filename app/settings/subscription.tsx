@@ -9,6 +9,7 @@ import { SettingsRow } from '@/components/settings/SettingsRow';
 import { SettingsSection, useCardShadow } from '@/components/settings/SettingsSection';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
+import { FREE_TIER } from '@/constants/rules';
 import type { Plan } from '@/store/SubscriptionProvider';
 import { useSubscription } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -30,6 +31,26 @@ const PLANS: Plan[] = ['monthly', 'yearly'];
  * require subscription management to go through their own UI, and the app has
  * no server-side billing of its own (ADR-002 / ADR-012).
  */
+/**
+ * One sentence on what Free covers, read off FREE_TIER so this never drifts
+ * from what the gates actually do.
+ */
+function freePlanSummary(): string {
+  const lessons =
+    FREE_TIER.questionsPerDay === null
+      ? 'unlimited lessons'
+      : `${FREE_TIER.questionsPerDay} questions a day`;
+  const locked: string[] = [];
+  if (!FREE_TIER.translation) locked.push('translations');
+  if (!FREE_TIER.mockTest) locked.push('mock tests');
+  if (!FREE_TIER.weakSpots) locked.push('weak spot practice');
+  if (!FREE_TIER.offline) locked.push('offline mode');
+  if (!locked.length) return lessons;
+  const last = locked.pop();
+  const list = locked.length ? `${locked.join(', ')} and ${last}` : last;
+  return `${lessons}${FREE_TIER.translation ? ' with translations' : ''}; ${list} need Pro`;
+}
+
 export default function SubscriptionScreen() {
   const t = useTheme();
   const dateLocale = useDateLocale();
@@ -101,7 +122,7 @@ export default function SubscriptionScreen() {
             <Txt size={13} color={t.colors.textSecondary} lineHeight={19}>
               {isPro
                 ? `Renews on ${formatDate(state.renewsAt, dateLocale)}.`
-                : 'You are on the free plan — 10 questions a day, no translations and no mock tests.'}
+                : `You are on the free plan — ${freePlanSummary()}.`}
             </Txt>
           </View>
 

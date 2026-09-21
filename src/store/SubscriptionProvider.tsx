@@ -3,7 +3,7 @@ import Purchases, { type CustomerInfo, type CustomerInfoUpdateListener } from 'r
 
 import { BILLING_CONFIGURED, ENTITLEMENT_ID, PRODUCT_IDS, REVENUECAT_API_KEY } from '@/constants/billing';
 import { HAZARD_ENABLED as HAZARD_FLAG, PAYWALL_ENABLED } from '@/constants/flags';
-import { FREE_QUESTIONS_PER_DAY } from '@/constants/rules';
+import { FREE_TIER } from '@/constants/rules';
 import { KEYS, load, save } from './storage';
 
 export type Plan = 'monthly' | 'yearly';
@@ -149,14 +149,25 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     // src/constants/flags.ts and BILLING_CONFIGURED.
     const unlocked = !PAYWALL_ENABLED || !BILLING_CONFIGURED || isPro;
 
+    const cap = FREE_TIER.questionsPerDay;
     return {
       ready,
       state,
       isPro,
-      questionsLeftToday: unlocked ? Infinity : Math.max(0, FREE_QUESTIONS_PER_DAY - usedToday),
+      questionsLeftToday: unlocked || cap === null ? Infinity : Math.max(0, cap - usedToday),
       can: (feature) => {
-        if (unlocked) return feature !== 'hazard' || HAZARD_ENABLED;
-        return false;
+        if (feature === 'hazard') return unlocked && HAZARD_ENABLED;
+        if (unlocked) return true;
+        switch (feature) {
+          case 'translation':
+            return FREE_TIER.translation;
+          case 'mock_test':
+            return FREE_TIER.mockTest;
+          case 'weak_spots':
+            return FREE_TIER.weakSpots;
+          case 'offline':
+            return FREE_TIER.offline;
+        }
       },
       restore,
       countQuestion,

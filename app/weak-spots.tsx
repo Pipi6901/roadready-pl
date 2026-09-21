@@ -2,12 +2,14 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { View } from 'react-native';
 
+import { ProLocked } from '@/components/ProLocked';
 import { QuestionRunner } from '@/components/practice/QuestionRunner';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Screen, Txt } from '@/components/ui/primitives';
 import { QUICK_QUIZ_SIZE } from '@/constants/rules';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
+import { useSubscription } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { DisplayQuestion } from '@/types/content';
 
@@ -37,6 +39,7 @@ export default function WeakSpotsScreen() {
   const { questionId } = useLocalSearchParams<{ questionId?: string }>();
   const { getQuestion } = useContent();
   const progress = useProgress();
+  const { can } = useSubscription();
 
   const backToPractice = () => router.replace('/practice');
 
@@ -64,6 +67,17 @@ export default function WeakSpotsScreen() {
       .filter((q): q is DisplayQuestion => !!q);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionId, progress.ready]);
+
+  if (!can('weak_spots')) {
+    return (
+      <ProLocked
+        feature="weak_spots"
+        icon="trending-down"
+        title="Weak Spots is a Pro feature"
+        body="Adaptive review of the questions you got wrong is part of RoadReady Pro. Lessons stay free."
+      />
+    );
+  }
 
   if (!questions.length) {
     return (
