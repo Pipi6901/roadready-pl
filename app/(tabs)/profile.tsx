@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { type Href, useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -194,9 +194,18 @@ export default function ProfileScreen() {
                 <Avatar name={displayName} size={80} radius={26} fontSize={26} edge={4} />
               </View>
 
-              <Txt size={19} weight="700">
-                {displayName}
-              </Txt>
+              <Pressable
+                onPress={() => router.push('/(modals)/edit-name' as Href)}
+                accessibilityRole="button"
+                accessibilityLabel={`${displayName}. Edit name`}
+                hitSlop={8}
+                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 8, opacity: pressed ? 0.7 : 1 })}
+              >
+                <Txt size={19} weight="700">
+                  {displayName}
+                </Txt>
+                <Icon name="pencil" size={15} color={t.colors.textMuted} />
+              </Pressable>
               <Txt size={12} color={t.colors.textSecondary}>
                 Learning since {monthYear(firstLaunchAt, dateLocale)}
               </Txt>

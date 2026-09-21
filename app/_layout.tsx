@@ -34,6 +34,27 @@ function AnalyticsIdentity() {
   return null;
 }
 
+/**
+ * ThemeProvider has to sit inside SettingsProvider to read the chosen scheme,
+ * and everything visual sits inside it — so the providers between the two
+ * (subscription, progress, content) are nested here rather than in
+ * RootLayout, which cannot call useSettings.
+ */
+function ThemedApp() {
+  const { themeMode } = useSettings();
+  return (
+    <ThemeProvider mode={themeMode}>
+      <SubscriptionProvider>
+        <ProgressProvider>
+          <ContentProvider>
+            <RootStack />
+          </ContentProvider>
+        </ProgressProvider>
+      </SubscriptionProvider>
+    </ThemeProvider>
+  );
+}
+
 function RootStack() {
   const t = useTheme();
   return (
@@ -92,17 +113,9 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ThemeProvider>
-          <SettingsProvider>
-            <SubscriptionProvider>
-              <ProgressProvider>
-                <ContentProvider>
-                  <RootStack />
-                </ContentProvider>
-              </ProgressProvider>
-            </SubscriptionProvider>
-          </SettingsProvider>
-        </ThemeProvider>
+        <SettingsProvider>
+          <ThemedApp />
+        </SettingsProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

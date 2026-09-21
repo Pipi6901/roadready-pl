@@ -14,9 +14,16 @@ export interface Theme {
 
 const ThemeContext = createContext<Theme | null>(null);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export type ThemeMode = ThemeName | 'system';
+
+/**
+ * `mode` comes from Settings (see SettingsProvider.themeMode); 'system'
+ * follows the OS switch the way the app always did before the setting
+ * existed.
+ */
+export function ThemeProvider({ mode = 'system', children }: { mode?: ThemeMode; children: React.ReactNode }) {
   const scheme = useColorScheme();
-  const name: ThemeName = scheme === 'dark' ? 'dark' : 'light';
+  const name: ThemeName = mode === 'system' ? (scheme === 'dark' ? 'dark' : 'light') : mode;
 
   const value = useMemo<Theme>(
     () => ({

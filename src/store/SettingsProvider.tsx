@@ -28,6 +28,13 @@ export interface Settings {
    * so that changing the phone's language keeps working afterwards.
    */
   uiLocale: string | null;
+  /**
+   * Colour scheme. 'dark' by default rather than 'system': the app was
+   * designed dark-first and that is the look it is sold on; light is an
+   * opt-in for people who read better on white, 'system' for those who
+   * want the phone's schedule to decide.
+   */
+  themeMode: 'dark' | 'light' | 'system';
   examDate: string | null;
   displayName: string;
   firstLaunchAt: string;
@@ -51,6 +58,7 @@ const DEFAULTS: Settings = {
   licenceCategory: 'B',
   licenceChosen: false,
   uiLocale: null,
+  themeMode: 'dark',
   examDate: null,
   displayName: 'Learner',
   firstLaunchAt: new Date().toISOString(),

@@ -2,13 +2,14 @@ import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { Alert, Linking, View } from 'react-native';
+import { Alert, Linking, Pressable, View } from 'react-native';
 
 import { Avatar } from '@/components/settings/Avatar';
 import { NavBar } from '@/components/settings/NavBar';
 import { formatDate, planLabel } from '@/components/settings/plan';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { SettingsSection, useCardShadow } from '@/components/settings/SettingsSection';
+import { Icon } from '@/components/ui/Icon';
 import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { Slider } from '@/components/ui/Slider';
 import { COUNTRY_SELECTOR_ENABLED } from '@/constants/flags';
@@ -347,6 +348,47 @@ export default function SettingsScreen() {
               onSwitchChange={(autoReadQuestions) => settings.update({ autoReadQuestions })}
               last
             />
+          </SettingsSection>
+
+          <SettingsSection title={tr('settings.section.appearance')} icon="moon">
+            {/* Three options, all visible at once: a picker modal for a choice
+                this small would be one tap too many. */}
+            <Row style={{ gap: 8, padding: 12 }}>
+              {(
+                [
+                  { mode: 'dark', icon: 'moon', label: tr('settings.theme.dark') },
+                  { mode: 'light', icon: 'sun', label: tr('settings.theme.light') },
+                  { mode: 'system', icon: 'smartphone', label: tr('settings.theme.system') },
+                ] as const
+              ).map((opt) => {
+                const selected = settings.themeMode === opt.mode;
+                return (
+                  <Pressable
+                    key={opt.mode}
+                    onPress={() => settings.update({ themeMode: opt.mode })}
+                    accessibilityRole="radio"
+                    accessibilityState={{ selected }}
+                    accessibilityLabel={opt.label}
+                    style={({ pressed }) => ({
+                      flex: 1,
+                      alignItems: 'center',
+                      gap: 6,
+                      paddingVertical: 12,
+                      borderRadius: t.radius.md,
+                      backgroundColor: selected ? t.colors.sage100 : t.colors.surface,
+                      borderWidth: 2,
+                      borderColor: selected ? t.colors.accent : t.colors.border,
+                      opacity: pressed ? 0.85 : 1,
+                    })}
+                  >
+                    <Icon name={opt.icon} size={20} color={selected ? t.colors.accentDark : t.colors.textMuted} />
+                    <Txt size={12} weight={selected ? '700' : '500'} color={selected ? t.colors.textPrimary : t.colors.textSecondary}>
+                      {opt.label}
+                    </Txt>
+                  </Pressable>
+                );
+              })}
+            </Row>
           </SettingsSection>
 
           <SettingsSection title={tr('settings.section.feedback')} icon="vibrate">
