@@ -109,17 +109,24 @@ export default function ProfileScreen() {
   ];
 
   // Each earned badge gets its own colour in the mockup; locked ones are flat.
-  const badgePalette: Record<string, { bg: string; edge: string }> = {
-    'first-lesson': { bg: t.colors.blue800, edge: t.colors.blue900 },
-    'streak-5': { bg: t.colors.amber, edge: t.colors.amberDark },
-    'questions-100': { bg: t.colors.success, edge: t.colors.successDark },
-    'mock-passed': { bg: t.colors.accent, edge: t.colors.accentDark },
-    'streak-14': { bg: t.colors.amber, edge: t.colors.amberDark },
-    'xp-500': { bg: t.colors.blue800, edge: t.colors.blue900 },
-    'topic-master': { bg: t.colors.success, edge: t.colors.successDark },
-    'road-ready': { bg: t.colors.accent, edge: t.colors.accentDark },
-    'fifty-correct': { bg: t.colors.blue800, edge: t.colors.blue900 },
-    'mock-x3': { bg: t.colors.success, edge: t.colors.successDark },
+  // `fg` travels with the fill: textInverse flips to near-black in dark mode,
+  // which is right on the bright amber/green/blue slabs and invisible on the
+  // navy ones — those get onBlue, which stays white in both themes.
+  const navy = { bg: t.colors.blue800, edge: t.colors.blue900, fg: t.colors.onBlue };
+  const amber = { bg: t.colors.amber, edge: t.colors.amberDark, fg: t.colors.textInverse };
+  const green = { bg: t.colors.success, edge: t.colors.successDark, fg: t.colors.textInverse };
+  const blue = { bg: t.colors.accent, edge: t.colors.accentDark, fg: t.colors.textInverse };
+  const badgePalette: Record<string, { bg: string; edge: string; fg: string }> = {
+    'first-lesson': navy,
+    'streak-5': amber,
+    'questions-100': green,
+    'mock-passed': blue,
+    'streak-14': amber,
+    'xp-500': navy,
+    'topic-master': green,
+    'road-ready': blue,
+    'fifty-correct': navy,
+    'mock-x3': green,
   };
 
   const earnedCount = ACHIEVEMENT_IDS.filter((id) => progress.state.achievements.includes(id)).length;
@@ -337,7 +344,7 @@ export default function ProfileScreen() {
                         <Icon
                           name={earned ? meta.icon : 'lock'}
                           size={earned ? 26 : 22}
-                          color={earned ? t.colors.textInverse : t.colors.textMuted}
+                          color={earned ? colors.fg : t.colors.textMuted}
                         />
                       </View>
 

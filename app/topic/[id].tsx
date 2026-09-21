@@ -101,10 +101,14 @@ export default function TopicDetailScreen() {
               borderRadius: 28,
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: t.colors.blue800,
+              // Same skin as the current node on the map. The old deep-navy
+              // slab (blue800 + a textInverse glyph) only works in light mode:
+              // in dark mode blue800 is nearly the page colour and textInverse
+              // is nearly black, so the header sank into the background.
+              backgroundColor: t.colors.accent,
               borderBottomWidth: 4,
-              borderBottomColor: t.colors.blue900,
-              shadowColor: t.colors.blue900,
+              borderBottomColor: t.colors.accentDark,
+              shadowColor: t.colors.accentDark,
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.2,
               shadowRadius: 12,
@@ -119,7 +123,13 @@ export default function TopicDetailScreen() {
           </Txt>
 
           <View style={{ width: 220, alignItems: 'center', gap: 6 }}>
-            <ProgressBar value={stats.total ? stats.mastered / stats.total : 0} />
+            {/* sage200 track: the default sage100 is one step off the dark
+                page and the empty bar disappeared. */}
+            <ProgressBar
+              value={stats.total ? stats.mastered / stats.total : 0}
+              trackColor={t.isDark ? t.colors.sage200 : undefined}
+              fillColor={t.colors.accent}
+            />
             <Txt size={12} color={t.colors.textSecondary}>
               {stats.mastered}/{stats.total} questions mastered
             </Txt>

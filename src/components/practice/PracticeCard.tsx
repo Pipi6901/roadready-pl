@@ -18,6 +18,8 @@ interface PracticeCardProps {
   /** Icon box fill and its 4px bottom edge, per the mockup's slab treatment. */
   iconBg: string;
   iconEdge: string;
+  /** Glyph colour; defaults to textInverse, which is wrong on a navy fill in dark mode — pass onBlue there. */
+  iconColor?: string;
   title: string;
   subtitle: string;
   badges?: PracticeCardBadge[];
@@ -31,7 +33,7 @@ interface PracticeCardProps {
 
 /** One row of the Practice Hub — mockup frames "Mock Test Card" and siblings. */
 export function PracticeCard({
-  icon, iconBg, iconEdge, title, subtitle, badges = [], disabled = false, onPress,
+  icon, iconBg, iconEdge, iconColor, title, subtitle, badges = [], disabled = false, onPress,
   accessibilityHint, iconSize = 56,
 }: PracticeCardProps) {
   const t = useTheme();
@@ -75,7 +77,7 @@ export function PracticeCard({
           borderBottomColor: iconEdge,
         }}
       >
-        <Icon name={icon} size={Math.round(iconSize * 0.46)} color={t.colors.textInverse} />
+        <Icon name={icon} size={Math.round(iconSize * 0.46)} color={iconColor ?? t.colors.textInverse} />
       </View>
 
       <View style={{ flex: 1, gap: 4 }}>

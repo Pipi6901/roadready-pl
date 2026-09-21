@@ -61,6 +61,7 @@ export default function PracticeScreen() {
             icon="clipboard-check"
             iconBg={t.colors.blue800}
             iconEdge={t.colors.blue900}
+            iconColor={t.colors.onBlue}
             iconSize={64}
             title="Mock Test"
             subtitle={`Simulate the real exam — ${questionCount} questions, ${timeLimitMinutes} minutes`}
