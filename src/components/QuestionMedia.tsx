@@ -1,5 +1,6 @@
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { ActivityIndicator, Image, View } from 'react-native';
+import React from 'react';
+import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
@@ -69,7 +70,15 @@ function QuestionImage({ media }: { media: MediaAsset }) {
   );
 }
 
+function clipLength(durationMs?: number | null): string | null {
+  if (!durationMs) return null;
+  const total = Math.round(durationMs / 1000);
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
+
 function QuestionVideo({ media }: { media: MediaAsset }) {
+  const t = useTheme();
+  const tr = useT();
   const frame = useFrameStyle();
   const uri = useMediaUri(media);
   // Hazard clips are watched once and scored on when the learner taps, so
@@ -78,9 +87,27 @@ function QuestionVideo({ media }: { media: MediaAsset }) {
   // source while the clip downloads and the local file afterwards is fine.
   const player = useVideoPlayer(uri, (p) => {
     p.loop = false;
+    // Every clip in the ministry's archive is silent, and muted playback is
+    // also the only kind iOS and the browsers will start on their own.
+    p.muted = true;
+    // At WORD the clip runs by itself while the candidate reads. A frozen
+    // first frame here is usually a street with nothing in it yet — which is
+    // exactly what makes an illustrated question look like the wrong picture.
+    p.play();
   });
 
+  // The play() above covers iOS and Android, where the player owns the
+  // playback itself. On the web it cannot: expo-video's web player forwards
+  // play() to the <video> elements currently mounted, and at setup time there
+  // are none — VideoView registers itself in its own effect, which runs before
+  // this one.
+  React.useEffect(() => {
+    if (uri) player.play();
+  }, [uri, player]);
+
   if (!uri) return <LoadingFrame media={media} />;
+
+  const length = clipLength(media.durationMs);
 
   return (
     <View style={frame}>
@@ -88,10 +115,44 @@ function QuestionVideo({ media }: { media: MediaAsset }) {
         player={player}
         style={{ width: '100%', aspectRatio: aspectOf(media) }}
         contentFit="contain"
-        nativeControls
-        accessible
-        accessibilityLabel="Question video clip"
+        // Own controls rather than the native ones: those hide themselves
+        // after a second, leaving a clip indistinguishable from a photo, and
+        // there is nothing to scrub through in ten seconds anyway.
+        nativeControls={false}
+        accessibilityLabel={tr('media.clip')}
       />
+
+      {/* The whole frame replays — the one thing anyone wants from a clip
+          they have just watched, and a bigger target than any button. */}
+      <Pressable
+        onPress={() => player.replay()}
+        accessibilityRole="button"
+        accessibilityLabel={tr('media.replay')}
+        style={StyleSheet.absoluteFill}
+      />
+
+      <View
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          left: 8,
+          bottom: 8,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 6,
+          paddingVertical: 4,
+          paddingHorizontal: 8,
+          borderRadius: 12,
+          // Literal, not a token: it sits on the video, which is dark in both
+          // themes — same reason t.colors.onBlue exists.
+          backgroundColor: '#000000A6',
+        }}
+      >
+        <Icon name="rotate-ccw" size={12} color={t.colors.onBlue} />
+        <Txt size={11} weight="600" color={t.colors.onBlue} numeric>
+          {length ?? tr('media.replay')}
+        </Txt>
+      </View>
     </View>
   );
 }
