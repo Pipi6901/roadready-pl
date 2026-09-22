@@ -3,6 +3,7 @@ import { View, type TextStyle } from 'react-native';
 
 import { useTheme } from '@/theme/ThemeProvider';
 import { Txt } from '@/components/ui/primitives';
+import { useQuestionLanguage } from '@/features/i18n/questionLanguage';
 import { useSettings } from '@/store/SettingsProvider';
 
 interface BilingualTextProps {
@@ -25,9 +26,11 @@ interface BilingualTextProps {
  * sits BELOW it, smaller and dimmer. Side-by-side columns are explicitly
  * forbidden. In "no translation" mode the second line is not rendered at all.
  *
- * The original is Polish here, not English: the exam is sat in Polish, so the
- * wording the candidate must recognise on the day is the one that has to stay
- * on top.
+ * Which language is on top is not fixed, it is decided by useQuestionLanguage:
+ * the exam may be sat in English, German or Ukrainian, so those REPLACE the
+ * Polish outright and nothing renders underneath. Everything else is a study
+ * aid and keeps Polish on top, because that is the paper the candidate will
+ * actually be handed.
  */
 export function BilingualText({
   original, translation, size = 17, weight = '600', translationSize, gap = 6, align,
@@ -35,13 +38,21 @@ export function BilingualText({
 }: BilingualTextProps) {
   const t = useTheme();
   const { localeDirection, translationEnabled } = useSettings();
+  const lang = useQuestionLanguage();
 
-  const showTranslation = translationEnabled && !!translation;
+  const secondary = lang.secondary(translation);
+  const showTranslation = translationEnabled && !!secondary;
 
   return (
     <View style={{ gap }}>
-      <Txt size={size} weight={weight} color={color ?? t.colors.textPrimary} align={align}>
-        {original}
+      <Txt
+        size={size}
+        weight={weight}
+        color={color ?? t.colors.textPrimary}
+        align={align}
+        style={lang.examLanguage ? { writingDirection: localeDirection } : undefined}
+      >
+        {lang.primary(original, translation)}
       </Txt>
       {showTranslation ? (
         <Txt
@@ -51,7 +62,7 @@ export function BilingualText({
           align={align}
           style={{ writingDirection: localeDirection }}
         >
-          {translation}
+          {secondary}
         </Txt>
       ) : null}
     </View>

@@ -8,7 +8,7 @@ import { QuestionMedia } from '@/components/QuestionMedia';
 import { SaveButton } from '@/components/SaveButton';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
-import { QUESTION_SPEECH_LANGUAGE } from '@/constants/rules';
+import { useQuestionLanguage } from '@/features/i18n/questionLanguage';
 import { prefetchQuestionMedia } from '@/features/media/mediaCache';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useProgress } from '@/store/ProgressProvider';
@@ -73,17 +73,21 @@ export function QuestionRunner({
   }, [questions]);
   const revealed = selectedId !== null;
   const answeredCorrectly = revealed && selectedId === question?.correctOptionId;
+  const lang = useQuestionLanguage();
 
   const speak = React.useCallback(
-    (text: string) => {
+    (original: string, translation?: string | null) => {
       void Speech.stop();
-      Speech.speak(text, { language: QUESTION_SPEECH_LANGUAGE, rate: voiceSpeed });
+      // Reads whatever is on screen: the Polish, or the exam language that
+      // replaced it — each in its own voice (see useQuestionLanguage).
+      const { text, language } = lang.spoken(original, translation);
+      Speech.speak(text, { language, rate: voiceSpeed });
     },
-    [voiceSpeed],
+    [lang, voiceSpeed],
   );
 
   React.useEffect(() => {
-    if (autoReadQuestions && question && !done) speak(question.text);
+    if (autoReadQuestions && question && !done) speak(question.text, question.translation?.text);
     return () => {
       void Speech.stop();
     };
@@ -216,7 +220,7 @@ export function QuestionRunner({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Read the question aloud"
-            onPress={() => speak(question.text)}
+            onPress={() => speak(question.text, question.translation?.text)}
             hitSlop={4}
             style={{
               width: 40,

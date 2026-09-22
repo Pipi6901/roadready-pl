@@ -12,8 +12,8 @@ import { LessonTopBar } from '@/components/learning/LessonTopBar';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, Txt } from '@/components/ui/primitives';
 import { PAYWALL_ENABLED } from '@/constants/flags';
-import { QUESTION_SPEECH_LANGUAGE } from '@/constants/rules';
 import { EVENTS, track } from '@/features/analytics/analytics';
+import { useQuestionLanguage } from '@/features/i18n/questionLanguage';
 import { prefetchQuestionMedia } from '@/features/media/mediaCache';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useContent } from '@/store/ContentProvider';
@@ -126,12 +126,17 @@ export default function LessonScreen() {
     track(EVENTS.lessonStarted, { topic_id: topicId, lesson_index: lessonIndex });
   }, [topicId, lessonIndex]);
 
+  const lang = useQuestionLanguage();
+
   const speak = React.useCallback(
-    (text: string) => {
+    (original: string, translation?: string | null) => {
       Speech.stop();
-      Speech.speak(text, { language: QUESTION_SPEECH_LANGUAGE, rate: voiceSpeed });
+      // Reads whatever is on screen: the Polish, or the exam language that
+      // replaced it — each in its own voice (see useQuestionLanguage).
+      const { text, language } = lang.spoken(original, translation);
+      Speech.speak(text, { language, rate: voiceSpeed });
     },
-    [voiceSpeed],
+    [lang, voiceSpeed],
   );
 
   // Stop any narration when the screen goes away.
@@ -143,7 +148,7 @@ export default function LessonScreen() {
   );
 
   React.useEffect(() => {
-    if (autoReadQuestions && question && !answered) speak(question.text);
+    if (autoReadQuestions && question && !answered) speak(question.text, question.translation?.text);
     // Only when the card changes, not on every answer state flip.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question?.id]);
@@ -366,7 +371,7 @@ export default function LessonScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Read the question aloud"
-            onPress={() => speak(question.text)}
+            onPress={() => speak(question.text, question.translation?.text)}
             style={({ pressed }) => ({
               width: 44,
               height: 44,

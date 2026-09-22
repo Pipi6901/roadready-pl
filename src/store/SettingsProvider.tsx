@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LOCALES } from '@/data/demo-bundle';
-import { deviceUiLocale, findUiLocale } from '@/features/i18n/locales';
+import { deviceUiLocale, findUiLocale, isExamLanguage } from '@/features/i18n/locales';
 import { cancelDailyReminder, hasNotificationPermission, scheduleDailyReminder } from '@/features/notifications/reminders';
 import { KEYS, load, save } from './storage';
 
@@ -82,6 +82,11 @@ interface SettingsContextValue extends Settings {
   reset: () => void;
   /** Convenience: is a translation language selected AND allowed. */
   translationEnabled: boolean;
+  /**
+   * The selected language is one the exam itself can be sat in, so it REPLACES
+   * the Polish rather than sitting underneath it (see EXAM_LANGUAGES).
+   */
+  examLanguage: boolean;
   localeDirection: 'ltr' | 'rtl';
   localeName: string;
   /** Interface language actually in force, with the device fallback resolved. */
@@ -165,6 +170,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       update,
       reset,
       translationEnabled: !!locale,
+      examLanguage: isExamLanguage(locale?.code),
       localeDirection: locale?.direction ?? 'ltr',
       localeName: locale?.nameNative ?? 'Polish only',
       uiLocaleCode,

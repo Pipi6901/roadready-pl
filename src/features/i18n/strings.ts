@@ -35,7 +35,7 @@ export const EN = {
   'settings.section.country': 'Country',
   'settings.row.country': 'Country',
   'settings.section.language': 'Language',
-  'settings.row.translationLanguage': 'Translation language',
+  'settings.row.translationLanguage': 'Question language',
   'settings.row.interfaceLanguage': 'Interface language',
   'settings.section.appearance': 'Appearance',
   'settings.theme.dark': 'Dark',
@@ -113,12 +113,19 @@ export const EN = {
   'uiLang.followDeviceHint': 'Follows the language your phone is set to',
 
   'transLang.navTitle': 'Language',
-  'transLang.heading': 'Choose your translation language',
-  'transLang.subtitle': 'Questions will show in Polish + your chosen language.',
+  'transLang.heading': 'Choose your question language',
+  'transLang.subtitle':
+    'Decides what you read on the question card. The app’s own language is set separately.',
   'transLang.note':
-    'The exam itself is sat in Polish, English, German or Ukrainian. A translation into any other language is a study aid, not something you can use on the day.',
+    'You can change this whenever you like — it never affects your progress.',
   'transLang.polishOnly': 'Polish only (no translation)',
   'transLang.polishOnlyA11y': 'Polish only, no translation',
+  'transLang.examSection': 'Exam languages',
+  'transLang.examHint':
+    'The exam can be sat in these, so the question, the answers and the explanation are shown in that language alone.',
+  'transLang.aidSection': 'Study translations',
+  'transLang.aidHint':
+    'Not exam languages: the Polish stays on top and the translation sits underneath, because the paper at WORD will be in Polish.',
   'home.title': 'Driving licence',
   'home.category': 'Category {code}',
   'home.sectionLearn': 'LEARN',
@@ -182,6 +189,8 @@ export const EN = {
   'licence.T': 'Agricultural tractor',
   'licence.PT': 'Tram',
   'media.pending': 'The picture or clip for this question is on its way — it arrives with a content update, no app update needed.',
+  'media.clip': 'Question video clip',
+  'media.replay': 'Play the clip again',
 } as const;
 
 export type StringKey = keyof typeof EN;
@@ -210,7 +219,7 @@ const PL: Catalogue = {
   'settings.section.country': 'Kraj',
   'settings.row.country': 'Kraj',
   'settings.section.language': 'Język',
-  'settings.row.translationLanguage': 'Język tłumaczenia',
+  'settings.row.translationLanguage': 'Język pytań',
   'settings.row.interfaceLanguage': 'Język aplikacji',
   'settings.section.appearance': 'Wygląd',
   'settings.theme.dark': 'Ciemny',
@@ -288,12 +297,19 @@ const PL: Catalogue = {
   'uiLang.followDeviceHint': 'Używa języka ustawionego w telefonie',
 
   'transLang.navTitle': 'Język',
-  'transLang.heading': 'Wybierz język tłumaczenia',
-  'transLang.subtitle': 'Pytania będą pokazywane po polsku i w wybranym języku.',
+  'transLang.heading': 'Wybierz język pytań',
+  'transLang.subtitle':
+    'Decyduje o tym, co czytasz na karcie pytania. Język aplikacji ustawiasz osobno.',
   'transLang.note':
-    'Egzamin zdaje się po polsku, angielsku, niemiecku lub ukraińsku. Tłumaczenie na inny język pomaga w nauce, ale nie będzie dostępne na egzaminie.',
+    'Możesz to zmienić w każdej chwili — nie wpływa to na Twoje postępy.',
   'transLang.polishOnly': 'Tylko polski (bez tłumaczenia)',
   'transLang.polishOnlyA11y': 'Tylko polski, bez tłumaczenia',
+  'transLang.examSection': 'Języki egzaminu',
+  'transLang.examHint':
+    'W tych językach można zdawać egzamin, więc pytanie, odpowiedzi i wyjaśnienie pokazujemy wyłącznie w wybranym języku.',
+  'transLang.aidSection': 'Tłumaczenia pomocnicze',
+  'transLang.aidHint':
+    'To nie są języki egzaminu: u góry zostaje polski, a tłumaczenie jest pod nim — w WORD arkusz będzie po polsku.',
   'home.title': 'Prawo jazdy',
   'home.category': 'Kategoria {code}',
   'home.sectionLearn': 'NAUKA',
@@ -357,6 +373,8 @@ const PL: Catalogue = {
   'licence.T': 'Ciągnik rolniczy',
   'licence.PT': 'Tramwaj',
   'media.pending': 'Zdjęcie lub film do tego pytania pojawi się wkrótce — razem z aktualizacją treści, bez aktualizacji aplikacji.',
+  'media.clip': 'Film do pytania',
+  'media.replay': 'Odtwórz film jeszcze raz',
 };
 
 const UK: Catalogue = {
@@ -382,7 +400,7 @@ const UK: Catalogue = {
   'settings.section.country': 'Країна',
   'settings.row.country': 'Країна',
   'settings.section.language': 'Мова',
-  'settings.row.translationLanguage': 'Мова перекладу',
+  'settings.row.translationLanguage': 'Мова запитань',
   'settings.row.interfaceLanguage': 'Мова застосунку',
   'settings.section.appearance': 'Вигляд',
   'settings.theme.dark': 'Темна',
@@ -460,12 +478,19 @@ const UK: Catalogue = {
   'uiLang.followDeviceHint': 'Використовує мову, встановлену на телефоні',
 
   'transLang.navTitle': 'Мова',
-  'transLang.heading': 'Оберіть мову перекладу',
-  'transLang.subtitle': 'Питання показуватимуться польською та обраною мовою.',
+  'transLang.heading': 'Оберіть мову запитань',
+  'transLang.subtitle':
+    'Визначає, якою мовою ви читаєте картку запитання. Мова застосунку налаштовується окремо.',
   'transLang.note':
-    'Сам іспит складають польською, англійською, німецькою або українською. Переклад іншою мовою — це допомога в підготовці, на іспиті його не буде.',
+    'Це можна змінити будь-коли — на ваш прогрес це не впливає.',
   'transLang.polishOnly': 'Тільки польська (без перекладу)',
   'transLang.polishOnlyA11y': 'Тільки польська, без перекладу',
+  'transLang.examSection': 'Мови іспиту',
+  'transLang.examHint':
+    'Цими мовами можна складати іспит, тому запитання, відповіді та пояснення показуємо лише обраною мовою.',
+  'transLang.aidSection': 'Допоміжні переклади',
+  'transLang.aidHint':
+    'Це не мови іспиту: зверху залишається польська, а переклад — під нею, адже в WORD білет буде польською.',
   'home.title': 'Водійські права',
   'home.category': 'Категорія {code}',
   'home.sectionLearn': 'НАВЧАННЯ',
@@ -529,6 +554,8 @@ const UK: Catalogue = {
   'licence.T': 'Сільськогосподарський трактор',
   'licence.PT': 'Трамвай',
   'media.pending': 'Зображення або відео до цього питання з’явиться незабаром — разом з оновленням контенту, без оновлення застосунку.',
+  'media.clip': 'Відео до запитання',
+  'media.replay': 'Відтворити відео ще раз',
 };
 
 const RU: Catalogue = {
@@ -554,7 +581,7 @@ const RU: Catalogue = {
   'settings.section.country': 'Страна',
   'settings.row.country': 'Страна',
   'settings.section.language': 'Язык',
-  'settings.row.translationLanguage': 'Язык перевода',
+  'settings.row.translationLanguage': 'Язык вопросов',
   'settings.row.interfaceLanguage': 'Язык приложения',
   'settings.section.appearance': 'Оформление',
   'settings.theme.dark': 'Тёмная',
@@ -632,12 +659,19 @@ const RU: Catalogue = {
   'uiLang.followDeviceHint': 'Использует язык, установленный на телефоне',
 
   'transLang.navTitle': 'Язык',
-  'transLang.heading': 'Выберите язык перевода',
-  'transLang.subtitle': 'Вопросы будут показываться на польском и на выбранном языке.',
+  'transLang.heading': 'Выберите язык вопросов',
+  'transLang.subtitle':
+    'Определяет, на каком языке вы читаете карточку вопроса. Язык приложения настраивается отдельно.',
   'transLang.note':
-    'Сам экзамен сдают на польском, английском, немецком или украинском. Перевод на другой язык — помощь в подготовке, на экзамене его не будет.',
+    'Это можно изменить в любой момент — на прогресс не влияет.',
   'transLang.polishOnly': 'Только польский (без перевода)',
   'transLang.polishOnlyA11y': 'Только польский, без перевода',
+  'transLang.examSection': 'Языки экзамена',
+  'transLang.examHint':
+    'На этих языках можно сдавать экзамен, поэтому вопрос, ответы и пояснение показываются только на выбранном языке.',
+  'transLang.aidSection': 'Вспомогательные переводы',
+  'transLang.aidHint':
+    'Это не языки экзамена: сверху остаётся польский, а перевод — под ним, ведь в WORD билет будет на польском.',
   'home.title': 'Водительские права',
   'home.category': 'Категория {code}',
   'home.sectionLearn': 'ОБУЧЕНИЕ',
@@ -701,6 +735,8 @@ const RU: Catalogue = {
   'licence.T': 'Сельскохозяйственный трактор',
   'licence.PT': 'Трамвай',
   'media.pending': 'Изображение или видео к этому вопросу появится скоро — вместе с обновлением контента, без обновления приложения.',
+  'media.clip': 'Видео к вопросу',
+  'media.replay': 'Воспроизвести видео ещё раз',
 };
 
 const ES: Catalogue = {
@@ -726,7 +762,7 @@ const ES: Catalogue = {
   'settings.section.country': 'País',
   'settings.row.country': 'País',
   'settings.section.language': 'Idioma',
-  'settings.row.translationLanguage': 'Idioma de la traducción',
+  'settings.row.translationLanguage': 'Idioma de las preguntas',
   'settings.row.interfaceLanguage': 'Idioma de la aplicación',
   'settings.section.appearance': 'Apariencia',
   'settings.theme.dark': 'Oscuro',
@@ -804,12 +840,19 @@ const ES: Catalogue = {
   'uiLang.followDeviceHint': 'Usa el idioma configurado en el teléfono',
 
   'transLang.navTitle': 'Idioma',
-  'transLang.heading': 'Elige tu idioma de traducción',
-  'transLang.subtitle': 'Las preguntas se mostrarán en polaco y en el idioma que elijas.',
+  'transLang.heading': 'Elige el idioma de las preguntas',
+  'transLang.subtitle':
+    'Determina lo que lees en la tarjeta de la pregunta. El idioma de la app se elige aparte.',
   'transLang.note':
-    'El examen se hace en polaco, inglés, alemán o ucraniano. Una traducción a otro idioma es una ayuda para estudiar, no algo que puedas usar ese día.',
+    'Puedes cambiarlo cuando quieras: no afecta a tu progreso.',
   'transLang.polishOnly': 'Solo polaco (sin traducción)',
   'transLang.polishOnlyA11y': 'Solo polaco, sin traducción',
+  'transLang.examSection': 'Idiomas del examen',
+  'transLang.examHint':
+    'El examen puede hacerse en estos idiomas, así que la pregunta, las respuestas y la explicación se muestran solo en el idioma elegido.',
+  'transLang.aidSection': 'Traducciones de apoyo',
+  'transLang.aidHint':
+    'No son idiomas del examen: el polaco se queda arriba y la traducción debajo, porque en el WORD el examen será en polaco.',
   'home.title': 'Permiso de conducir',
   'home.category': 'Categoría {code}',
   'home.sectionLearn': 'ESTUDIO',
@@ -873,6 +916,8 @@ const ES: Catalogue = {
   'licence.T': 'Tractor agrícola',
   'licence.PT': 'Tranvía',
   'media.pending': 'La imagen o el vídeo de esta pregunta llegará pronto, con una actualización de contenido, sin actualizar la app.',
+  'media.clip': 'Vídeo de la pregunta',
+  'media.replay': 'Reproducir el vídeo otra vez',
 };
 
 const TR: Catalogue = {
@@ -898,7 +943,7 @@ const TR: Catalogue = {
   'settings.section.country': 'Ülke',
   'settings.row.country': 'Ülke',
   'settings.section.language': 'Dil',
-  'settings.row.translationLanguage': 'Çeviri dili',
+  'settings.row.translationLanguage': 'Soru dili',
   'settings.row.interfaceLanguage': 'Uygulama dili',
   'settings.section.appearance': 'Görünüm',
   'settings.theme.dark': 'Koyu',
@@ -975,12 +1020,19 @@ const TR: Catalogue = {
   'uiLang.followDeviceHint': 'Telefonunuzda ayarlı olan dili kullanır',
 
   'transLang.navTitle': 'Dil',
-  'transLang.heading': 'Çeviri dilinizi seçin',
-  'transLang.subtitle': 'Sorular Lehçe ve seçtiğiniz dilde gösterilir.',
+  'transLang.heading': 'Soru dilini seçin',
+  'transLang.subtitle':
+    'Soru kartında ne okuyacağınızı belirler. Uygulamanın dili ayrıca seçilir.',
   'transLang.note':
-    'Sınavın kendisi Lehçe, İngilizce, Almanca ya da Ukraynaca yapılır. Başka bir dile çeviri çalışma yardımıdır; sınav günü kullanılamaz.',
+    'İstediğiniz zaman değiştirebilirsiniz; ilerlemenizi etkilemez.',
   'transLang.polishOnly': 'Yalnızca Lehçe (çevirisiz)',
   'transLang.polishOnlyA11y': 'Yalnızca Lehçe, çevirisiz',
+  'transLang.examSection': 'Sınav dilleri',
+  'transLang.examHint':
+    'Sınav bu dillerde verilebilir, bu yüzden soru, şıklar ve açıklama yalnızca seçtiğiniz dilde gösterilir.',
+  'transLang.aidSection': 'Yardımcı çeviriler',
+  'transLang.aidHint':
+    'Bunlar sınav dili değildir: Lehçe üstte kalır, çeviri altında yer alır; WORD’deki sınav Lehçe olacaktır.',
   'home.title': 'Sürücü belgesi',
   'home.category': '{code} sınıfı',
   'home.sectionLearn': 'ÖĞRENME',
@@ -1044,6 +1096,189 @@ const TR: Catalogue = {
   'licence.T': 'Tarım traktörü',
   'licence.PT': 'Tramvay',
   'media.pending': 'Bu sorunun görseli veya videosu yakında geliyor — uygulama güncellemesi gerekmeden, içerik güncellemesiyle.',
+  'media.clip': 'Sorunun videosu',
+  'media.replay': 'Videoyu yeniden oynat',
 };
 
-export const CATALOGUES: Record<string, Catalogue> = { en: EN, pl: PL, uk: UK, ru: RU, es: ES, tr: TR };
+const DE: Catalogue = {
+  'tabs.home': 'Start',
+  'tabs.learn': 'Lernen',
+  'tabs.practice': 'Üben',
+  'tabs.profile': 'Profil',
+
+  'learn.continueTopic': 'Thema fortsetzen',
+  'learn.title': 'Themen',
+  'learn.basicSection': 'Grundfragen',
+  'learn.basicHint': '20 der 32 Fragen · mit TAK oder NIE zu beantworten',
+  'learn.specialistSection': 'Spezialfragen',
+  'learn.specialistHint': '12 der 32 Fragen · drei Antworten A / B / C',
+
+  'common.cancel': 'Abbrechen',
+  'common.delete': 'Löschen',
+  'common.reset': 'Zurücksetzen',
+  'common.notSet': 'Nicht festgelegt',
+
+  'settings.title': 'Einstellungen',
+  'settings.progressOnDevice': 'Dein Fortschritt bleibt auf diesem Gerät',
+  'settings.section.country': 'Land',
+  'settings.row.country': 'Land',
+  'settings.section.language': 'Sprache',
+  'settings.row.translationLanguage': 'Sprache der Fragen',
+  'settings.row.interfaceLanguage': 'Sprache der App',
+  'settings.section.appearance': 'Darstellung',
+  'settings.theme.dark': 'Dunkel',
+  'settings.theme.light': 'Hell',
+  'settings.theme.system': 'System',
+  'editName.navTitle': 'Dein Name',
+  'editName.heading': 'Wie sollen wir dich nennen?',
+  'editName.subtitle': 'Steht nur in deinem Profil — er verlässt dieses Telefon nie.',
+  'editName.placeholder': 'Dein Name',
+  'editName.save': 'Speichern',
+  'settings.section.examDate': 'Prüfungstermin',
+  'settings.row.testDate': 'Prüfungstag',
+  'settings.daysAway': 'in {days} Tagen',
+  'settings.section.notifications': 'Mitteilungen',
+  'settings.row.dailyReminder': 'Tägliche Erinnerung',
+  'settings.row.reminderTime': 'Uhrzeit der Erinnerung',
+  'settings.row.questionOfTheDay': 'Frage des Tages',
+  'settings.section.offline': 'Offline',
+  'settings.row.questionsExplanations': 'Fragen und Erklärungen',
+  'settings.value.includedInApp': 'In der App enthalten',
+  'settings.row.imagesClips': 'Bilder und Videos',
+  'settings.offline.nothingToDownload':
+    'Im aktuellen Inhalt gibt es keine bebilderten Fragen — nichts zum Herunterladen.',
+  'settings.offline.cached': '{cached} von {total} · {size}',
+  'settings.offline.downloading': 'Wird geladen… {percent}%',
+  'settings.offline.downloadAll': 'Alle Medien für offline herunterladen',
+  'settings.offline.failed': '{count} Datei(en) konnten nicht geladen werden. Zum Wiederholen tippen.',
+  'settings.offline.allCached':
+    'Alles liegt auf diesem Gerät — bebilderte Fragen funktionieren ohne Verbindung.',
+  'settings.offline.downloadHint':
+    'Lädt jedes Bild und jedes Video der Fragen auf dieses Gerät',
+  'settings.offline.estimate': 'Klasse {code}: {count} Dateien, etwa {size}. WLAN empfohlen.',
+  'settings.offline.estimateNoSize': 'Klasse {code}: {count} Dateien. WLAN empfohlen.',
+  'settings.offline.delete': 'Heruntergeladene Medien löschen',
+  'settings.section.purchases': 'Käufe',
+  'settings.row.currentPlan': 'Aktueller Tarif',
+  'settings.row.renewalDate': 'Verlängerung am',
+  'settings.row.manageSubscription': 'Abo verwalten',
+  'settings.row.restoring': 'Wird wiederhergestellt…',
+  'settings.row.restorePurchase': 'Kauf wiederherstellen',
+  'settings.restoreHint': 'Sucht nach einem Abo, das mit diesem Store-Konto gekauft wurde',
+  'settings.row.resetProgress': 'Fortschritt zurücksetzen',
+  'settings.section.audio': 'Ton',
+  'settings.row.voiceSpeed': 'Sprechtempo',
+  'settings.row.autoRead': 'Fragen automatisch vorlesen',
+  'settings.section.feedback': 'Rückmeldung',
+  'settings.row.vibration': 'Vibration',
+  'settings.vibrationSubtitle': 'Vibriert bei einer richtigen Antwort in Lektionen, Quiz und Wiederholungen',
+  'settings.section.about': 'Über die App',
+  'settings.row.appVersion': 'App-Version',
+  'settings.row.privacyPolicy': 'Datenschutzerklärung',
+  'settings.row.termsOfUse': 'Nutzungsbedingungen',
+  'settings.legal.attribution': 'Die Prüfungsfragen und Medien stammen aus dem offiziellen Fragenkatalog des polnischen Infrastrukturministeriums. RoadReady PL steht weder mit dem Ministerium noch mit WORD in Verbindung. Übersetzungen und Erklärungen stammen von uns.',
+
+  'settings.restore.restoredTitle': 'Kauf wiederhergestellt',
+  'settings.restore.restoredBody': 'Dein Abo ist auf diesem Gerät wieder aktiv.',
+  'settings.restore.nothingTitle': 'Nichts wiederherzustellen',
+  'settings.restore.nothingBody':
+    'Für dieses Store-Konto haben wir kein aktives Abo gefunden.',
+  'settings.reset.title': 'Fortschritt zurücksetzen?',
+  'settings.reset.body':
+    'Das löscht auf diesem Gerät deine XP, deine Serie, die gemeisterten Fragen und die Prüfungsergebnisse. Es lässt sich nicht rückgängig machen.',
+  'settings.notifOff.title': 'Mitteilungen sind aus',
+  'settings.notifOff.body':
+    'Erlaube dieser App in den Geräteeinstellungen Mitteilungen, um eine tägliche Erinnerung zu bekommen.',
+  'settings.deleteMedia.title': 'Heruntergeladene Medien löschen?',
+  'settings.deleteMedia.body':
+    'Bilder und Videos werden bei Bedarf wieder gestreamt — das schafft nur Platz, dein Fortschritt bleibt.',
+  'settings.legal.openFailed': 'Der Browser ließ sich nicht öffnen. Das Dokument steht unter {url}',
+
+  'uiLang.navTitle': 'Sprache der App',
+  'uiLang.heading': 'Wähle die Sprache der App',
+  'uiLang.subtitle': 'Ändert, was die App selbst sagt. Die Fragen bleiben davon unberührt.',
+  'uiLang.followDevice': 'Wie mein Gerät',
+  'uiLang.followDeviceHint': 'Folgt der Sprache, die auf deinem Telefon eingestellt ist',
+
+  'transLang.navTitle': 'Sprache',
+  'transLang.heading': 'Wähle die Sprache der Fragen',
+  'transLang.subtitle':
+    'Bestimmt, was du auf der Fragenkarte liest. Die Sprache der App wird getrennt eingestellt.',
+  'transLang.note':
+    'Du kannst das jederzeit ändern — auf deinen Fortschritt wirkt es sich nie aus.',
+  'transLang.polishOnly': 'Nur Polnisch (ohne Übersetzung)',
+  'transLang.polishOnlyA11y': 'Nur Polnisch, ohne Übersetzung',
+  'transLang.examSection': 'Prüfungssprachen',
+  'transLang.examHint':
+    'In diesen Sprachen kann die Prüfung abgelegt werden, deshalb erscheinen Frage, Antworten und Erklärung ausschließlich in der gewählten Sprache.',
+  'transLang.aidSection': 'Übersetzungen zum Lernen',
+  'transLang.aidHint':
+    'Keine Prüfungssprachen: Polnisch bleibt oben, die Übersetzung steht darunter — der Bogen im WORD ist auf Polnisch.',
+  'home.title': 'Führerschein',
+  'home.category': 'Klasse {code}',
+  'home.sectionLearn': 'LERNEN',
+  'home.sectionPractice': 'ÜBEN',
+  'home.card.topics': 'Nach Themen lernen',
+  'home.card.topicsSub': 'Fragen in {count} Themen',
+  'home.card.topicsProgress': '{done} von {total} Themen geschafft',
+  'home.card.exam': 'Prüfung',
+  'home.card.examSub': 'WORD-Prüfung simulieren',
+  'home.card.examAttempts': '{count} abgeschlossen',
+  'home.card.saved': 'Gemerkte Fragen',
+  'home.card.savedSub': 'Zurück zu deinen Lesezeichen',
+  'home.card.savedCount': '{count} gemerkt',
+  'home.card.mistakes': 'Falsche Antworten',
+  'home.card.mistakesSub': 'Deine Fehler durchgehen',
+  'home.card.mistakesCount': '{count} zu wiederholen',
+  'home.card.mistakesNone': 'Noch keine Fehler',
+  'home.dailyGoal': 'Tagesziel',
+  'home.lessonsToday': 'heute {done}/{goal} Lektionen',
+  'home.goalMet': 'Tagesziel geschafft',
+  'home.goalHint': 'Schaffe {goal} Lektionen für das heutige Ziel',
+  'home.examIn': 'Deine Prüfung ist in {days} Tagen',
+  'home.readiness': 'Du bist zu {percent}% bereit',
+  'home.streak': '{days} Tage Serie',
+
+  'saved.add': 'Diese Frage merken',
+  'saved.remove': 'Aus den gemerkten entfernen',
+  'saved.title': 'Gemerkte Fragen',
+  'saved.count': '{count} gemerkt',
+  'saved.hint': 'Tippe bei einer Frage auf das Lesezeichen, dann liegt sie hier',
+  'saved.emptyTitle': 'Noch nichts gemerkt',
+  'saved.emptyBody':
+    'Tippe bei einer Frage auf das Lesezeichen — in einer Lektion, im Quiz oder in der Prüfung — und sie wartet hier auf dich.',
+  'saved.practiseAll': 'Alle gemerkten üben',
+  'saved.summaryTitle': 'Gemerkte Fragen geschafft!',
+  'saved.summarySubtitle': 'Sie bleiben gemerkt, bis du das Lesezeichen selbst entfernst.',
+  'saved.backToList': 'Zurück zu den gemerkten',
+  'saved.backHome': 'Zurück zum Start',
+  'settings.row.licence': 'Führerscheinklasse',
+  'licence.navTitle': 'Führerscheinklasse',
+  'licence.heading': 'Welchen Führerschein machst du?',
+  'licence.subtitle': 'Die Prüfung läuft für jede Klasse gleich ab — 32 Fragen, 25 Minuten, 68 von 74 Punkten. Es ändert sich nur, welche Fragen du bekommst.',
+  'licence.changeLater': 'Du kannst das jederzeit auf dem Startbildschirm oder in den Einstellungen ändern.',
+  'licence.minAge': 'ab {age} Jahren',
+  'licence.questions': '{count} Fragen',
+  'licence.group.car': 'Autos',
+  'licence.group.moto': 'Motorräder und Mofas',
+  'licence.group.truck': 'Lkw',
+  'licence.group.bus': 'Busse',
+  'licence.group.other': 'Sonstige',
+  'licence.AM': 'Moped, leichtes Quad',
+  'licence.A1': 'Motorrad bis 125 cm³',
+  'licence.A2': 'Motorrad bis 35 kW',
+  'licence.A': 'Motorrad, ohne Grenze',
+  'licence.B1': 'Vierrädriges Leichtfahrzeug',
+  'licence.B': 'Auto',
+  'licence.C1': 'Lkw bis 7,5 t',
+  'licence.C': 'Lkw',
+  'licence.D1': 'Kleinbus bis 17 Sitze',
+  'licence.D': 'Bus',
+  'licence.T': 'Traktor',
+  'licence.PT': 'Straßenbahn',
+  'media.pending': 'Das Bild oder Video zu dieser Frage ist unterwegs — es kommt mit einem Inhalts-Update, ganz ohne App-Update.',
+  'media.clip': 'Video zur Frage',
+  'media.replay': 'Video noch einmal abspielen',
+};
+
+export const CATALOGUES: Record<string, Catalogue> = { en: EN, pl: PL, uk: UK, ru: RU, de: DE, es: ES, tr: TR };

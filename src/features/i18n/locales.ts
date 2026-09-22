@@ -23,6 +23,7 @@ export const UI_LOCALES: UiLocale[] = [
   { code: 'uk', nameNative: 'Українська', nameEnglish: 'Ukrainian', flagEmoji: '🇺🇦' },
   { code: 'ru', nameNative: 'Русский', nameEnglish: 'Russian', flagEmoji: '🇷🇺' },
   { code: 'en', nameNative: 'English', nameEnglish: 'English', flagEmoji: '🇬🇧' },
+  { code: 'de', nameNative: 'Deutsch', nameEnglish: 'German', flagEmoji: '🇩🇪' },
   { code: 'es', nameNative: 'Español', nameEnglish: 'Spanish', flagEmoji: '🇪🇸' },
   { code: 'tr', nameNative: 'Türkçe', nameEnglish: 'Turkish', flagEmoji: '🇹🇷' },
 ];
@@ -68,8 +69,37 @@ export function deviceUiLocale(): string {
  * a date looks like.
  */
 export function dateLocaleFor(uiLocaleCode: string): string {
-  const REGION: Record<string, string> = {
-    pl: 'pl-PL', uk: 'uk-UA', ru: 'ru-RU', en: 'en-GB', es: 'es-ES', tr: 'tr-TR',
-  };
-  return REGION[uiLocaleCode] ?? 'en-GB';
+  return bcp47For(uiLocaleCode);
+}
+
+const BCP47: Record<string, string> = {
+  pl: 'pl-PL', uk: 'uk-UA', ru: 'ru-RU', en: 'en-GB', de: 'de-DE', es: 'es-ES', tr: 'tr-TR',
+};
+
+/** Full BCP-47 tag for a bare language code — dates, and the speech engine. */
+export function bcp47For(code: string): string {
+  return BCP47[code] ?? 'en-GB';
+}
+
+/**
+ * The languages the Polish theory exam is actually sat in.
+ *
+ * Article 51 of the driving-licence act lets a candidate take the exam in
+ * Polish, English, German or Ukrainian, and the ministry publishes the
+ * catalogue in all four. For those the app shows the question in that language
+ * ALONE: it is the wording the candidate will meet at WORD, so putting Polish
+ * above it would be showing them a language they will never have to read.
+ *
+ * Every other language in LOCALES is a study aid. There the Polish stays on
+ * top and the translation sits underneath, because on the day the paper will
+ * be in Polish whatever the app showed.
+ *
+ * Not in content.json on purpose: remoteContent replaces the locale list
+ * wholesale on every publish, and which languages a state exam accepts is a
+ * fact about the exam, not about a content bundle.
+ */
+export const EXAM_LANGUAGES = ['pl', 'en', 'de', 'uk'] as const;
+
+export function isExamLanguage(code: string | null | undefined): boolean {
+  return !!code && (EXAM_LANGUAGES as readonly string[]).includes(code);
 }

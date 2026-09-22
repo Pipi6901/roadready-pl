@@ -108,9 +108,3 @@ export const ACHIEVEMENT_META: Record<string, { title: string; description: stri
   },
 };
 
-/**
- * BCP-47 tag handed to the speech engine for question text. Questions are in
- * the language of the exam, whatever the interface is set to — reading Polish
- * with an English voice produced something no learner would recognise.
- */
-export const QUESTION_SPEECH_LANGUAGE = 'pl-PL';
