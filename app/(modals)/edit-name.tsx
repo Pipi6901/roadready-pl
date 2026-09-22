@@ -1,11 +1,13 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
+import { Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/settings/Avatar';
 import { NavBar } from '@/components/settings/NavBar';
-import { Button, Screen, Txt } from '@/components/ui/primitives';
+import { Button, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { useT } from '@/features/i18n/useT';
+import { useKeyboardHeight } from '@/hooks/useKeyboardHeight';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -22,6 +24,8 @@ export default function EditNameModal() {
   const t = useTheme();
   const tr = useT();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const keyboard = useKeyboardHeight();
   const { displayName, update } = useSettings();
   const [draft, setDraft] = React.useState(displayName);
 
@@ -34,15 +38,23 @@ export default function EditNameModal() {
     router.back();
   };
 
+  // The screen's own bottom inset is already under the keyboard when it is
+  // up, so only what sticks out above it has to be made up for.
+  const keyboardPad = Math.max(0, keyboard - insets.bottom);
+
   return (
     <Screen edges={['top', 'bottom']}>
       <NavBar title={tr('editName.navTitle')} action="close" />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{ flex: 1 }}
-      >
-        <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 4, paddingBottom: 24, gap: 14 }}>
+      <View style={{ flex: 1, paddingBottom: keyboardPad }}>
+        {/* Scrolls rather than squeezes: with the keyboard up a small phone
+            has barely 300px left, and the avatar must not push the field out
+            of reach. */}
+        <ScreenScroll
+          style={{ flex: 1 }}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 16, gap: 14 }}
+        >
           <Txt size={22} weight="700">
             {tr('editName.heading')}
           </Txt>
@@ -50,9 +62,11 @@ export default function EditNameModal() {
             {tr('editName.subtitle')}
           </Txt>
 
-          <View style={{ alignItems: 'center', paddingVertical: 12 }}>
-            <Avatar name={trimmed || displayName} size={72} radius={24} fontSize={24} edge={4} />
-          </View>
+          <Pressable onPress={Keyboard.dismiss} accessible={false}>
+            <View style={{ alignItems: 'center', paddingVertical: 12 }}>
+              <Avatar name={trimmed || displayName} size={72} radius={24} fontSize={24} edge={4} />
+            </View>
+          </Pressable>
 
           <View
             style={{
@@ -84,12 +98,14 @@ export default function EditNameModal() {
               {draft.length}/{MAX_LENGTH}
             </Txt>
           </View>
+        </ScreenScroll>
 
-          <View style={{ flex: 1 }} />
-
+        {/* Outside the scroll view: Save stays put above the keyboard instead
+            of scrolling away behind it. */}
+        <View style={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16 }}>
           <Button label={tr('editName.save')} onPress={save} disabled={!canSave} />
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Screen>
   );
 }
