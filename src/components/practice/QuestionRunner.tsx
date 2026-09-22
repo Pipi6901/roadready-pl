@@ -8,7 +8,7 @@ import { QuestionMedia } from '@/components/QuestionMedia';
 import { SaveButton } from '@/components/SaveButton';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
-import { useQuestionLanguage } from '@/features/i18n/questionLanguage';
+import { bcp47For } from '@/features/i18n/locales';
 import { prefetchQuestionMedia } from '@/features/media/mediaCache';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useProgress } from '@/store/ProgressProvider';
@@ -73,21 +73,20 @@ export function QuestionRunner({
   }, [questions]);
   const revealed = selectedId !== null;
   const answeredCorrectly = revealed && selectedId === question?.correctOptionId;
-  const lang = useQuestionLanguage();
 
   const speak = React.useCallback(
-    (original: string, translation?: string | null) => {
+    (text: string, locale: string) => {
       void Speech.stop();
-      // Reads whatever is on screen: the Polish, or the exam language that
-      // replaced it — each in its own voice (see useQuestionLanguage).
-      const { text, language } = lang.spoken(original, translation);
-      Speech.speak(text, { language, rate: voiceSpeed });
+      // In the voice of whatever is on the card: the questions are shown in
+      // the language the exam will be sat in, and reading English aloud with
+      // a Polish voice is no more use than the reverse.
+      Speech.speak(text, { language: bcp47For(locale), rate: voiceSpeed });
     },
-    [lang, voiceSpeed],
+    [voiceSpeed],
   );
 
   React.useEffect(() => {
-    if (autoReadQuestions && question && !done) speak(question.text, question.translation?.text);
+    if (autoReadQuestions && question && !done) speak(question.text, question.textLocale);
     return () => {
       void Speech.stop();
     };
@@ -220,7 +219,7 @@ export function QuestionRunner({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Read the question aloud"
-            onPress={() => speak(question.text, question.translation?.text)}
+            onPress={() => speak(question.text, question.textLocale)}
             hitSlop={4}
             style={{
               width: 40,

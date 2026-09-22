@@ -200,8 +200,25 @@ export interface ContentBundle {
   versionHash: string;
 }
 
-/** A question resolved for display: English plus optional translation and media. */
+/**
+ * A question resolved for display: its own fields already in the language the
+ * learner reads (ContentProvider.decorate swaps them), an optional second
+ * language for the line underneath, and its media.
+ */
 export interface DisplayQuestion extends Question {
+  /**
+   * The question as the catalogue wrote it, in Polish, kept because `text`,
+   * `options` and `explanation` above may have been replaced with another
+   * language — and because decorating an already-decorated question has to
+   * give the same answer as decorating a fresh one.
+   */
+  source: QuestionTranslation;
+  /**
+   * Which language `text`, `options` and `explanation` are actually in. Not
+   * always the one that was asked for — a missing translation falls back to
+   * the Polish — and the speech engine needs to know which voice to use.
+   */
+  textLocale: string;
   translation: QuestionTranslation | null;
   media: MediaAsset | null;
 }

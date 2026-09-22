@@ -20,7 +20,7 @@ export default function MockSetupScreen() {
   const router = useRouter();
   const { country } = useContent();
   const progress = useProgress();
-  const { localeName, translationEnabled } = useSettings();
+  const { localeName, questionLocaleName, translationEnabled } = useSettings();
   const { can } = useSubscription();
 
   const { questionCount, timeLimitMinutes, passMark, maxPoints, timing } = country.mockTest;
@@ -180,8 +180,8 @@ export default function MockSetupScreen() {
           <Icon name="languages" size={14} color={t.colors.textMuted} />
           <Txt size={12} color={t.colors.textMuted} style={{ flex: 1 }}>
             {translationEnabled
-              ? `Questions shown in Polish + ${localeName}`
-              : 'Questions shown in Polish only'}
+              ? `Questions shown in ${questionLocaleName} + ${localeName}`
+              : `Questions shown in ${questionLocaleName}`}
           </Txt>
         </Row>
       </ScreenScroll>

@@ -13,7 +13,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Screen, Txt } from '@/components/ui/primitives';
 import { PAYWALL_ENABLED } from '@/constants/flags';
 import { EVENTS, track } from '@/features/analytics/analytics';
-import { useQuestionLanguage } from '@/features/i18n/questionLanguage';
+import { bcp47For } from '@/features/i18n/locales';
 import { prefetchQuestionMedia } from '@/features/media/mediaCache';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useContent } from '@/store/ContentProvider';
@@ -126,17 +126,16 @@ export default function LessonScreen() {
     track(EVENTS.lessonStarted, { topic_id: topicId, lesson_index: lessonIndex });
   }, [topicId, lessonIndex]);
 
-  const lang = useQuestionLanguage();
 
   const speak = React.useCallback(
-    (original: string, translation?: string | null) => {
+    (text: string, locale: string) => {
       Speech.stop();
-      // Reads whatever is on screen: the Polish, or the exam language that
-      // replaced it — each in its own voice (see useQuestionLanguage).
-      const { text, language } = lang.spoken(original, translation);
-      Speech.speak(text, { language, rate: voiceSpeed });
+      // In the voice of whatever is on the card: the questions are shown in
+      // the language the exam will be sat in, and reading English aloud with
+      // a Polish voice is no more use than the reverse.
+      Speech.speak(text, { language: bcp47For(locale), rate: voiceSpeed });
     },
-    [lang, voiceSpeed],
+    [voiceSpeed],
   );
 
   // Stop any narration when the screen goes away.
@@ -148,7 +147,7 @@ export default function LessonScreen() {
   );
 
   React.useEffect(() => {
-    if (autoReadQuestions && question && !answered) speak(question.text, question.translation?.text);
+    if (autoReadQuestions && question && !answered) speak(question.text, question.textLocale);
     // Only when the card changes, not on every answer state flip.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question?.id]);
@@ -371,7 +370,7 @@ export default function LessonScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Read the question aloud"
-            onPress={() => speak(question.text, question.translation?.text)}
+            onPress={() => speak(question.text, question.textLocale)}
             style={({ pressed }) => ({
               width: 44,
               height: 44,

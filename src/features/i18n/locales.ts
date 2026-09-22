@@ -7,10 +7,15 @@
  * on purpose: someone sitting the exam in Polish may still want the app in
  * Ukrainian, and someone comfortable in Polish may want no translation at all.
  *
- * Polish is here and absent from the translation list for the same reason: it
- * is the original the questions are written in, so it can never be a
- * translation, but it is a perfectly ordinary choice for the interface.
+ * Polish is here for the same reason it is not in LOCALES: content.json has
+ * no Polish translation catalogue because Polish is the original the
+ * questions are written in — but it is a perfectly ordinary choice for the
+ * interface, and POLISH_LOCALE below puts it back into the question and
+ * translation pickers, where it is a choice like any other.
  */
+import { LOCALES } from '@/data/demo-bundle';
+import type { Locale } from '@/types/content';
+
 export interface UiLocale {
   code: string;
   nameNative: string;
@@ -102,4 +107,39 @@ export const EXAM_LANGUAGES = ['pl', 'en', 'de', 'uk'] as const;
 
 export function isExamLanguage(code: string | null | undefined): boolean {
   return !!code && (EXAM_LANGUAGES as readonly string[]).includes(code);
+}
+
+/**
+ * Polish as an entry in the language lists.
+ *
+ * It is absent from LOCALES because content.json carries a translation
+ * catalogue per locale and Polish is the original, not a translation — but
+ * both pickers need it as a choice: as the language the exam is sat in, and
+ * as the line underneath when the exam is sat in one of the other three.
+ */
+export const POLISH_LOCALE: Locale = {
+  code: 'pl',
+  nameNative: 'Polski',
+  nameEnglish: 'Polish',
+  direction: 'ltr',
+  flagEmoji: '🇵🇱',
+};
+
+/** Every language a question can be shown in, Polish included. */
+export function allLocales(): Locale[] {
+  return [POLISH_LOCALE, ...LOCALES];
+}
+
+export function findLocale(code: string | null | undefined): Locale | null {
+  if (!code) return null;
+  return allLocales().find((l) => l.code === code) ?? null;
+}
+
+/**
+ * The languages the exam can be sat in, in the order the pickers show them:
+ * Polish first because it is the original and the default, then whichever of
+ * the others the content bundle actually carries.
+ */
+export function examLocales(): Locale[] {
+  return allLocales().filter((l) => isExamLanguage(l.code));
 }

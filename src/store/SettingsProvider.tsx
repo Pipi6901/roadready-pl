@@ -1,14 +1,25 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { LOCALES } from '@/data/demo-bundle';
-import { deviceUiLocale, findUiLocale, isExamLanguage } from '@/features/i18n/locales';
+import { deviceUiLocale, findLocale, findUiLocale, isExamLanguage } from '@/features/i18n/locales';
 import { cancelDailyReminder, hasNotificationPermission, scheduleDailyReminder } from '@/features/notifications/reminders';
 import { KEYS, load, save } from './storage';
 
 export interface Settings {
   onboarded: boolean;
   countryCode: string;
-  /** null = "Polish only (no translation)" */
+  /**
+   * The language the questions themselves are shown in — one of the four the
+   * exam can be sat in (see EXAM_LANGUAGES). This is the line on top of every
+   * card, and it is what the candidate will be reading at WORD.
+   */
+  questionLocale: string;
+  /**
+   * The language shown UNDER the question, as a study aid. null = none.
+   *
+   * Any language except the one already on top, Polish included: someone
+   * sitting the exam in Ukrainian may still want to see the Polish wording,
+   * and someone sitting it in Polish may want Russian underneath.
+   */
   localeCode: string | null;
   /**
    * The licence the learner is going for — 'B' for a car, 'A' for a
@@ -54,6 +65,7 @@ export interface Settings {
 const DEFAULTS: Settings = {
   onboarded: false,
   countryCode: 'PL',
+  questionLocale: 'pl',
   localeCode: null,
   licenceCategory: 'B',
   licenceChosen: false,
@@ -80,14 +92,12 @@ interface SettingsContextValue extends Settings {
   ready: boolean;
   update: (patch: Partial<Settings>) => void;
   reset: () => void;
-  /** Convenience: is a translation language selected AND allowed. */
+  /** Convenience: a second language is selected, and it differs from the first. */
   translationEnabled: boolean;
-  /**
-   * The selected language is one the exam itself can be sat in, so it REPLACES
-   * the Polish rather than sitting underneath it (see EXAM_LANGUAGES).
-   */
-  examLanguage: boolean;
+  /** Native name of the language the questions are shown in. */
+  questionLocaleName: string;
   localeDirection: 'ltr' | 'rtl';
+  /** Native name of the second language, empty when there is none. */
   localeName: string;
   /** Interface language actually in force, with the device fallback resolved. */
   uiLocaleCode: string;
@@ -96,6 +106,32 @@ interface SettingsContextValue extends Settings {
 }
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
+
+/**
+ * Settings written by an older build, brought up to date on load.
+ *
+ * `localeCode` used to carry both jobs. Choosing English there meant "show the
+ * questions in English instead of Polish", because an exam language replaced
+ * the original; choosing Russian meant "show Russian underneath the Polish".
+ * They are two settings now, so an exam language stored in the old field moves
+ * to the field that means what it used to do — anyone who picked English keeps
+ * seeing English questions, not English-under-Polish.
+ *
+ * Gated on the ABSENCE of questionLocale, which is what makes the blob an old
+ * one, and not on the value of localeCode: "Ukrainian questions with the
+ * Polish underneath" is a perfectly ordinary setting now, and a migration
+ * that looked only at localeCode would undo it on every single launch.
+ *
+ * Runs on the raw stored object, before DEFAULTS are merged in — merging
+ * first would give every blob a questionLocale and there would be nothing
+ * left to recognise.
+ */
+function migrate(stored: Partial<Settings>): Partial<Settings> {
+  if (stored.questionLocale === undefined && isExamLanguage(stored.localeCode)) {
+    return { ...stored, questionLocale: stored.localeCode!, localeCode: null };
+  }
+  return stored;
+}
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
@@ -110,7 +146,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     load<Settings>(KEYS.settings, DEFAULTS).then((s) => {
-      const next = { ...DEFAULTS, ...s, ...pendingRef.current };
+      const next = { ...DEFAULTS, ...migrate(s), ...pendingRef.current };
       if (Object.keys(pendingRef.current).length) void save(KEYS.settings, next);
       pendingRef.current = {};
       readyRef.current = true;
@@ -157,7 +193,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo<SettingsContextValue>(() => {
-    const locale = LOCALES.find((l) => l.code === settings.localeCode) ?? null;
+    const questionLocale = isExamLanguage(settings.questionLocale) ? settings.questionLocale : 'pl';
+    // A translation into the language already on top is not a translation.
+    const locale =
+      settings.localeCode && settings.localeCode !== questionLocale
+        ? findLocale(settings.localeCode)
+        : null;
     const uiLocaleCode = settings.uiLocale ?? deviceUiLocale();
     let daysUntilExam: number | null = null;
     if (settings.examDate) {
@@ -169,10 +210,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       ready,
       update,
       reset,
+      questionLocale,
       translationEnabled: !!locale,
-      examLanguage: isExamLanguage(locale?.code),
+      questionLocaleName: findLocale(questionLocale)?.nameNative ?? questionLocale,
       localeDirection: locale?.direction ?? 'ltr',
-      localeName: locale?.nameNative ?? 'Polish only',
+      localeName: locale?.nameNative ?? '',
       uiLocaleCode,
       uiLocaleName: findUiLocale(uiLocaleCode)?.nameNative ?? uiLocaleCode,
       daysUntilExam,

@@ -35,7 +35,8 @@ export const EN = {
   'settings.section.country': 'Country',
   'settings.row.country': 'Country',
   'settings.section.language': 'Language',
-  'settings.row.translationLanguage': 'Question language',
+  'settings.row.questionLanguage': 'Question language',
+  'settings.row.translation': 'Translation',
   'settings.row.interfaceLanguage': 'Interface language',
   'settings.section.appearance': 'Appearance',
   'settings.theme.dark': 'Dark',
@@ -112,20 +113,20 @@ export const EN = {
   'uiLang.followDevice': 'Match my device',
   'uiLang.followDeviceHint': 'Follows the language your phone is set to',
 
-  'transLang.navTitle': 'Language',
-  'transLang.heading': 'Choose your question language',
+  'qLang.navTitle': 'Question language',
+  'qLang.heading': 'Which language will you sit the exam in?',
+  'qLang.subtitle':
+    'Questions, answers and explanations are all shown in it.',
+  'qLang.note':
+    'The Polish exam can be sat in these four languages. Any other language can be added underneath as a translation.',
+  'transLang.navTitle': 'Translation',
+  'transLang.heading': 'Add a second language?',
   'transLang.subtitle':
-    'Decides what you read on the question card. The app’s own language is set separately.',
+    'Shown in smaller print under every question. The question itself stays in {lang}.',
   'transLang.note':
-    'You can change this whenever you like — it never affects your progress.',
-  'transLang.polishOnly': 'Polish only (no translation)',
-  'transLang.polishOnlyA11y': 'Polish only, no translation',
-  'transLang.examSection': 'Exam languages',
-  'transLang.examHint':
-    'The exam can be sat in these, so the question, the answers and the explanation are shown in that language alone.',
-  'transLang.aidSection': 'Study translations',
-  'transLang.aidHint':
-    'Not exam languages: the Polish stays on top and the translation sits underneath, because the paper at WORD will be in Polish.',
+    'Either language can be changed at any time — it never affects your progress.',
+  'transLang.none': 'No translation',
+  'transLang.noneA11y': 'No translation',
   'home.title': 'Driving licence',
   'home.category': 'Category {code}',
   'home.sectionLearn': 'LEARN',
@@ -219,7 +220,8 @@ const PL: Catalogue = {
   'settings.section.country': 'Kraj',
   'settings.row.country': 'Kraj',
   'settings.section.language': 'Język',
-  'settings.row.translationLanguage': 'Język pytań',
+  'settings.row.questionLanguage': 'Język pytań',
+  'settings.row.translation': 'Tłumaczenie',
   'settings.row.interfaceLanguage': 'Język aplikacji',
   'settings.section.appearance': 'Wygląd',
   'settings.theme.dark': 'Ciemny',
@@ -296,20 +298,20 @@ const PL: Catalogue = {
   'uiLang.followDevice': 'Jak w telefonie',
   'uiLang.followDeviceHint': 'Używa języka ustawionego w telefonie',
 
-  'transLang.navTitle': 'Język',
-  'transLang.heading': 'Wybierz język pytań',
+  'qLang.navTitle': 'Język pytań',
+  'qLang.heading': 'W jakim języku zdajesz egzamin?',
+  'qLang.subtitle':
+    'W nim pokazujemy pytania, odpowiedzi i wyjaśnienia.',
+  'qLang.note':
+    'Egzamin w Polsce można zdawać w tych czterech językach. Każdy inny język możesz dodać pod spodem jako tłumaczenie.',
+  'transLang.navTitle': 'Tłumaczenie',
+  'transLang.heading': 'Dodać drugi język?',
   'transLang.subtitle':
-    'Decyduje o tym, co czytasz na karcie pytania. Język aplikacji ustawiasz osobno.',
+    'Pokazujemy go mniejszą czcionką pod każdym pytaniem. Samo pytanie zostaje w języku: {lang}.',
   'transLang.note':
-    'Możesz to zmienić w każdej chwili — nie wpływa to na Twoje postępy.',
-  'transLang.polishOnly': 'Tylko polski (bez tłumaczenia)',
-  'transLang.polishOnlyA11y': 'Tylko polski, bez tłumaczenia',
-  'transLang.examSection': 'Języki egzaminu',
-  'transLang.examHint':
-    'W tych językach można zdawać egzamin, więc pytanie, odpowiedzi i wyjaśnienie pokazujemy wyłącznie w wybranym języku.',
-  'transLang.aidSection': 'Tłumaczenia pomocnicze',
-  'transLang.aidHint':
-    'To nie są języki egzaminu: u góry zostaje polski, a tłumaczenie jest pod nim — w WORD arkusz będzie po polsku.',
+    'Oba języki możesz zmienić w każdej chwili — nie wpływa to na Twoje postępy.',
+  'transLang.none': 'Bez tłumaczenia',
+  'transLang.noneA11y': 'Bez tłumaczenia',
   'home.title': 'Prawo jazdy',
   'home.category': 'Kategoria {code}',
   'home.sectionLearn': 'NAUKA',
@@ -400,7 +402,8 @@ const UK: Catalogue = {
   'settings.section.country': 'Країна',
   'settings.row.country': 'Країна',
   'settings.section.language': 'Мова',
-  'settings.row.translationLanguage': 'Мова запитань',
+  'settings.row.questionLanguage': 'Мова запитань',
+  'settings.row.translation': 'Переклад',
   'settings.row.interfaceLanguage': 'Мова застосунку',
   'settings.section.appearance': 'Вигляд',
   'settings.theme.dark': 'Темна',
@@ -477,20 +480,20 @@ const UK: Catalogue = {
   'uiLang.followDevice': 'Як на телефоні',
   'uiLang.followDeviceHint': 'Використовує мову, встановлену на телефоні',
 
-  'transLang.navTitle': 'Мова',
-  'transLang.heading': 'Оберіть мову запитань',
+  'qLang.navTitle': 'Мова запитань',
+  'qLang.heading': 'Якою мовою ви складатимете іспит?',
+  'qLang.subtitle':
+    'Нею показуємо запитання, відповіді та пояснення.',
+  'qLang.note':
+    'Іспит у Польщі можна складати цими чотирма мовами. Будь-яку іншу мову можна додати знизу як переклад.',
+  'transLang.navTitle': 'Переклад',
+  'transLang.heading': 'Додати другу мову?',
   'transLang.subtitle':
-    'Визначає, якою мовою ви читаєте картку запитання. Мова застосунку налаштовується окремо.',
+    'Показуємо її дрібнішим шрифтом під кожним запитанням. Саме запитання залишається мовою: {lang}.',
   'transLang.note':
-    'Це можна змінити будь-коли — на ваш прогрес це не впливає.',
-  'transLang.polishOnly': 'Тільки польська (без перекладу)',
-  'transLang.polishOnlyA11y': 'Тільки польська, без перекладу',
-  'transLang.examSection': 'Мови іспиту',
-  'transLang.examHint':
-    'Цими мовами можна складати іспит, тому запитання, відповіді та пояснення показуємо лише обраною мовою.',
-  'transLang.aidSection': 'Допоміжні переклади',
-  'transLang.aidHint':
-    'Це не мови іспиту: зверху залишається польська, а переклад — під нею, адже в WORD білет буде польською.',
+    'Обидві мови можна змінити будь-коли — на ваш прогрес це не впливає.',
+  'transLang.none': 'Без перекладу',
+  'transLang.noneA11y': 'Без перекладу',
   'home.title': 'Водійські права',
   'home.category': 'Категорія {code}',
   'home.sectionLearn': 'НАВЧАННЯ',
@@ -581,7 +584,8 @@ const RU: Catalogue = {
   'settings.section.country': 'Страна',
   'settings.row.country': 'Страна',
   'settings.section.language': 'Язык',
-  'settings.row.translationLanguage': 'Язык вопросов',
+  'settings.row.questionLanguage': 'Язык вопросов',
+  'settings.row.translation': 'Перевод',
   'settings.row.interfaceLanguage': 'Язык приложения',
   'settings.section.appearance': 'Оформление',
   'settings.theme.dark': 'Тёмная',
@@ -658,20 +662,20 @@ const RU: Catalogue = {
   'uiLang.followDevice': 'Как на телефоне',
   'uiLang.followDeviceHint': 'Использует язык, установленный на телефоне',
 
-  'transLang.navTitle': 'Язык',
-  'transLang.heading': 'Выберите язык вопросов',
+  'qLang.navTitle': 'Язык вопросов',
+  'qLang.heading': 'На каком языке вы сдаёте экзамен?',
+  'qLang.subtitle':
+    'На нём показываем вопросы, ответы и пояснения.',
+  'qLang.note':
+    'Экзамен в Польше можно сдавать на этих четырёх языках. Любой другой язык можно добавить снизу как перевод.',
+  'transLang.navTitle': 'Перевод',
+  'transLang.heading': 'Добавить второй язык?',
   'transLang.subtitle':
-    'Определяет, на каком языке вы читаете карточку вопроса. Язык приложения настраивается отдельно.',
+    'Показываем его мелким шрифтом под каждым вопросом. Сам вопрос остаётся на языке: {lang}.',
   'transLang.note':
-    'Это можно изменить в любой момент — на прогресс не влияет.',
-  'transLang.polishOnly': 'Только польский (без перевода)',
-  'transLang.polishOnlyA11y': 'Только польский, без перевода',
-  'transLang.examSection': 'Языки экзамена',
-  'transLang.examHint':
-    'На этих языках можно сдавать экзамен, поэтому вопрос, ответы и пояснение показываются только на выбранном языке.',
-  'transLang.aidSection': 'Вспомогательные переводы',
-  'transLang.aidHint':
-    'Это не языки экзамена: сверху остаётся польский, а перевод — под ним, ведь в WORD билет будет на польском.',
+    'Оба языка можно изменить в любой момент — на прогресс это не влияет.',
+  'transLang.none': 'Без перевода',
+  'transLang.noneA11y': 'Без перевода',
   'home.title': 'Водительские права',
   'home.category': 'Категория {code}',
   'home.sectionLearn': 'ОБУЧЕНИЕ',
@@ -762,7 +766,8 @@ const ES: Catalogue = {
   'settings.section.country': 'País',
   'settings.row.country': 'País',
   'settings.section.language': 'Idioma',
-  'settings.row.translationLanguage': 'Idioma de las preguntas',
+  'settings.row.questionLanguage': 'Idioma de las preguntas',
+  'settings.row.translation': 'Traducción',
   'settings.row.interfaceLanguage': 'Idioma de la aplicación',
   'settings.section.appearance': 'Apariencia',
   'settings.theme.dark': 'Oscuro',
@@ -839,20 +844,20 @@ const ES: Catalogue = {
   'uiLang.followDevice': 'Como en el teléfono',
   'uiLang.followDeviceHint': 'Usa el idioma configurado en el teléfono',
 
-  'transLang.navTitle': 'Idioma',
-  'transLang.heading': 'Elige el idioma de las preguntas',
+  'qLang.navTitle': 'Idioma de las preguntas',
+  'qLang.heading': '¿En qué idioma harás el examen?',
+  'qLang.subtitle':
+    'En él se muestran las preguntas, las respuestas y las explicaciones.',
+  'qLang.note':
+    'El examen en Polonia puede hacerse en estos cuatro idiomas. Cualquier otro idioma puede añadirse debajo como traducción.',
+  'transLang.navTitle': 'Traducción',
+  'transLang.heading': '¿Añadir un segundo idioma?',
   'transLang.subtitle':
-    'Determina lo que lees en la tarjeta de la pregunta. El idioma de la app se elige aparte.',
+    'Se muestra en letra más pequeña bajo cada pregunta. La pregunta se queda en {lang}.',
   'transLang.note':
-    'Puedes cambiarlo cuando quieras: no afecta a tu progreso.',
-  'transLang.polishOnly': 'Solo polaco (sin traducción)',
-  'transLang.polishOnlyA11y': 'Solo polaco, sin traducción',
-  'transLang.examSection': 'Idiomas del examen',
-  'transLang.examHint':
-    'El examen puede hacerse en estos idiomas, así que la pregunta, las respuestas y la explicación se muestran solo en el idioma elegido.',
-  'transLang.aidSection': 'Traducciones de apoyo',
-  'transLang.aidHint':
-    'No son idiomas del examen: el polaco se queda arriba y la traducción debajo, porque en el WORD el examen será en polaco.',
+    'Puedes cambiar cualquiera de los dos idiomas cuando quieras: no afecta a tu progreso.',
+  'transLang.none': 'Sin traducción',
+  'transLang.noneA11y': 'Sin traducción',
   'home.title': 'Permiso de conducir',
   'home.category': 'Categoría {code}',
   'home.sectionLearn': 'ESTUDIO',
@@ -943,7 +948,8 @@ const TR: Catalogue = {
   'settings.section.country': 'Ülke',
   'settings.row.country': 'Ülke',
   'settings.section.language': 'Dil',
-  'settings.row.translationLanguage': 'Soru dili',
+  'settings.row.questionLanguage': 'Soru dili',
+  'settings.row.translation': 'Çeviri',
   'settings.row.interfaceLanguage': 'Uygulama dili',
   'settings.section.appearance': 'Görünüm',
   'settings.theme.dark': 'Koyu',
@@ -1019,20 +1025,20 @@ const TR: Catalogue = {
   'uiLang.followDevice': 'Telefondaki gibi',
   'uiLang.followDeviceHint': 'Telefonunuzda ayarlı olan dili kullanır',
 
-  'transLang.navTitle': 'Dil',
-  'transLang.heading': 'Soru dilini seçin',
+  'qLang.navTitle': 'Soru dili',
+  'qLang.heading': 'Sınava hangi dilde gireceksin?',
+  'qLang.subtitle':
+    'Sorular, şıklar ve açıklamalar bu dilde gösterilir.',
+  'qLang.note':
+    'Polonya’daki sınav bu dört dilde verilebilir. Başka bir dili altına çeviri olarak ekleyebilirsin.',
+  'transLang.navTitle': 'Çeviri',
+  'transLang.heading': 'İkinci bir dil eklensin mi?',
   'transLang.subtitle':
-    'Soru kartında ne okuyacağınızı belirler. Uygulamanın dili ayrıca seçilir.',
+    'Her sorunun altında daha küçük puntoyla görünür. Sorunun kendisi şu dilde kalır: {lang}.',
   'transLang.note':
-    'İstediğiniz zaman değiştirebilirsiniz; ilerlemenizi etkilemez.',
-  'transLang.polishOnly': 'Yalnızca Lehçe (çevirisiz)',
-  'transLang.polishOnlyA11y': 'Yalnızca Lehçe, çevirisiz',
-  'transLang.examSection': 'Sınav dilleri',
-  'transLang.examHint':
-    'Sınav bu dillerde verilebilir, bu yüzden soru, şıklar ve açıklama yalnızca seçtiğiniz dilde gösterilir.',
-  'transLang.aidSection': 'Yardımcı çeviriler',
-  'transLang.aidHint':
-    'Bunlar sınav dili değildir: Lehçe üstte kalır, çeviri altında yer alır; WORD’deki sınav Lehçe olacaktır.',
+    'İki dili de istediğin zaman değiştirebilirsin; ilerlemeni etkilemez.',
+  'transLang.none': 'Çevirisiz',
+  'transLang.noneA11y': 'Çevirisiz',
   'home.title': 'Sürücü belgesi',
   'home.category': '{code} sınıfı',
   'home.sectionLearn': 'ÖĞRENME',
@@ -1123,7 +1129,8 @@ const DE: Catalogue = {
   'settings.section.country': 'Land',
   'settings.row.country': 'Land',
   'settings.section.language': 'Sprache',
-  'settings.row.translationLanguage': 'Sprache der Fragen',
+  'settings.row.questionLanguage': 'Sprache der Fragen',
+  'settings.row.translation': 'Übersetzung',
   'settings.row.interfaceLanguage': 'Sprache der App',
   'settings.section.appearance': 'Darstellung',
   'settings.theme.dark': 'Dunkel',
@@ -1200,20 +1207,20 @@ const DE: Catalogue = {
   'uiLang.followDevice': 'Wie mein Gerät',
   'uiLang.followDeviceHint': 'Folgt der Sprache, die auf deinem Telefon eingestellt ist',
 
-  'transLang.navTitle': 'Sprache',
-  'transLang.heading': 'Wähle die Sprache der Fragen',
+  'qLang.navTitle': 'Sprache der Fragen',
+  'qLang.heading': 'In welcher Sprache legst du die Prüfung ab?',
+  'qLang.subtitle':
+    'In ihr zeigen wir Fragen, Antworten und Erklärungen.',
+  'qLang.note':
+    'Die Prüfung in Polen kann in diesen vier Sprachen abgelegt werden. Jede andere Sprache lässt sich darunter als Übersetzung einblenden.',
+  'transLang.navTitle': 'Übersetzung',
+  'transLang.heading': 'Eine zweite Sprache dazu?',
   'transLang.subtitle':
-    'Bestimmt, was du auf der Fragenkarte liest. Die Sprache der App wird getrennt eingestellt.',
+    'Sie steht kleiner unter jeder Frage. Die Frage selbst bleibt auf {lang}.',
   'transLang.note':
-    'Du kannst das jederzeit ändern — auf deinen Fortschritt wirkt es sich nie aus.',
-  'transLang.polishOnly': 'Nur Polnisch (ohne Übersetzung)',
-  'transLang.polishOnlyA11y': 'Nur Polnisch, ohne Übersetzung',
-  'transLang.examSection': 'Prüfungssprachen',
-  'transLang.examHint':
-    'In diesen Sprachen kann die Prüfung abgelegt werden, deshalb erscheinen Frage, Antworten und Erklärung ausschließlich in der gewählten Sprache.',
-  'transLang.aidSection': 'Übersetzungen zum Lernen',
-  'transLang.aidHint':
-    'Keine Prüfungssprachen: Polnisch bleibt oben, die Übersetzung steht darunter — der Bogen im WORD ist auf Polnisch.',
+    'Beide Sprachen kannst du jederzeit ändern — auf deinen Fortschritt wirkt sich das nie aus.',
+  'transLang.none': 'Ohne Übersetzung',
+  'transLang.noneA11y': 'Ohne Übersetzung',
   'home.title': 'Führerschein',
   'home.category': 'Klasse {code}',
   'home.sectionLearn': 'LERNEN',

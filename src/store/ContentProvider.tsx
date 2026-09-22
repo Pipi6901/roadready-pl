@@ -10,6 +10,7 @@ import {
   type Country,
   type DisplayQuestion,
   type Question,
+  type QuestionTranslation,
   type Topic,
 } from '@/types/content';
 import { useProgress } from './ProgressProvider';
@@ -28,6 +29,23 @@ import { useSubscription } from './SubscriptionProvider';
  * useContent().
  */
 
+/**
+ * The question as the catalogue wrote it: Polish, in the shape a translation
+ * has, so the two can be used interchangeably below.
+ */
+function polishOf(q: Question): QuestionTranslation {
+  return {
+    text: q.text,
+    options: Object.fromEntries(q.options.map((o) => [o.id, o.text])),
+    explanation: q.explanation,
+  };
+}
+
+/** One language of a question, or null if the bundle does not carry it. */
+function translationOf(q: Question, locale: string, source: QuestionTranslation) {
+  return locale === 'pl' ? source : (DEMO_BUNDLE.translations[locale]?.[q.id] ?? null);
+}
+
 interface ContentContextValue {
   country: Country;
   countries: Country[];
@@ -45,7 +63,7 @@ interface ContentContextValue {
 const ContentContext = createContext<ContentContextValue | null>(null);
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
-  const { localeCode, countryCode, licenceCategory } = useSettings();
+  const { localeCode, questionLocale, countryCode, licenceCategory } = useSettings();
   const { can } = useSubscription();
   const progress = useProgress();
 
@@ -66,15 +84,39 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     remoteContentStore.getVersion,
   );
 
-  const showTranslation = !!localeCode && can('translation');
+  // The second line only. The first one is not gated: reading the paper in
+  // one of the four languages the exam is actually sat in is the exam, not a
+  // feature, and a learner who will answer in English should never be shown
+  // Polish because they have not paid.
+  const showTranslation = !!localeCode && localeCode !== questionLocale && can('translation');
 
   const decorate = useCallback(
-    (q: Question): DisplayQuestion => ({
-      ...q,
-      translation: showTranslation ? (DEMO_BUNDLE.translations[localeCode!]?.[q.id] ?? null) : null,
-      media: q.mediaId ? (DEMO_BUNDLE.media[q.mediaId] ?? null) : null,
-    }),
-    [showTranslation, localeCode],
+    (q: Question): DisplayQuestion => {
+      // Screens re-decorate questions they are already holding — the lesson
+      // queue is frozen at mount and decorated afresh on every render — so the
+      // Polish has to be carried along rather than read back off `text`, which
+      // by then may be in any of the four languages. Without this, picking
+      // Polish as the second line showed the first line twice.
+      const source = 'source' in q ? (q as DisplayQuestion).source : polishOf(q);
+      const base = translationOf(q, questionLocale, source) ?? source;
+      const translation = showTranslation ? translationOf(q, localeCode!, source) : null;
+      return {
+        ...q,
+        source,
+        // Field by field, so a translation that covers the question and not an
+        // option leaves that one option in Polish rather than blanking it.
+        text: base.text,
+        options: q.options.map((o) => ({
+          ...o,
+          text: base.options?.[o.id] ?? source.options[o.id] ?? o.text,
+        })),
+        explanation: base.explanation || source.explanation,
+        textLocale: base === source ? 'pl' : questionLocale,
+        translation,
+        media: q.mediaId ? (DEMO_BUNDLE.media[q.mediaId] ?? null) : null,
+      };
+    },
+    [showTranslation, localeCode, questionLocale],
   );
 
   const value = useMemo<ContentContextValue>(() => {

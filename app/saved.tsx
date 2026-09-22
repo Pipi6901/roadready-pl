@@ -8,7 +8,6 @@ import { QuestionRunner } from '@/components/practice/QuestionRunner';
 import { cardShadow } from '@/components/practice/shadow';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Card, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
-import { useQuestionLanguage } from '@/features/i18n/questionLanguage';
 import { useT } from '@/features/i18n/useT';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
@@ -129,7 +128,6 @@ function SavedRow({
   question, topicName, onPress,
 }: { question: DisplayQuestion; topicName: string; onPress: () => void }) {
   const t = useTheme();
-  const lang = useQuestionLanguage();
 
   // Two controls side by side, not one inside the other: the bookmark is its
   // own button, and a button nested in a button is invalid on the web and
@@ -168,11 +166,11 @@ function SavedRow({
             {topicName.toUpperCase()}
           </Txt>
           <Txt size={14} weight="600" numberOfLines={2}>
-            {lang.primary(question.text, question.translation?.text)}
+            {question.text}
           </Txt>
-          {lang.secondary(question.translation?.text) ? (
+          {question.translation?.text ? (
             <Txt size={12} color={t.colors.textSecondary} numberOfLines={1}>
-              {lang.secondary(question.translation?.text)}
+              {question.translation.text}
             </Txt>
           ) : null}
         </View>

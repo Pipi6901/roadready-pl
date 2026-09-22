@@ -172,9 +172,14 @@ export default function SettingsScreen() {
               onPress={() => router.push('/(modals)/change-ui-language')}
             />
             <SettingsRow
-              label={tr('settings.row.translationLanguage')}
-              value={settings.localeCode ? settings.localeName : tr('transLang.polishOnly')}
+              label={tr('settings.row.questionLanguage')}
+              value={settings.questionLocaleName}
               onPress={() => router.push('/(modals)/change-language')}
+            />
+            <SettingsRow
+              label={tr('settings.row.translation')}
+              value={settings.translationEnabled ? settings.localeName : tr('transLang.none')}
+              onPress={() => router.push('/(modals)/change-translation')}
               last
             />
           </SettingsSection>
