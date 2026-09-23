@@ -143,3 +143,15 @@ export function findLocale(code: string | null | undefined): Locale | null {
 export function examLocales(): Locale[] {
   return allLocales().filter((l) => isExamLanguage(l.code));
 }
+
+/**
+ * The languages that can only ever be a study aid.
+ *
+ * The exam cannot be sat in any of them, which is the whole reason the second
+ * line exists — and the reason nothing from examLocales() belongs here. Two
+ * exam languages on one card would be printing the question twice for a
+ * candidate who can already read either.
+ */
+export function studyLocales(): Locale[] {
+  return LOCALES.filter((l) => !isExamLanguage(l.code));
+}

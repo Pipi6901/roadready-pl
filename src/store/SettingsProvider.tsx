@@ -16,9 +16,9 @@ export interface Settings {
   /**
    * The language shown UNDER the question, as a study aid. null = none.
    *
-   * Any language except the one already on top, Polish included: someone
-   * sitting the exam in Ukrainian may still want to see the Polish wording,
-   * and someone sitting it in Polish may want Russian underneath.
+   * Only a language the exam cannot be sat in — Russian, Spanish, Turkish.
+   * It pairs with whichever of the four exam languages is on top, which is
+   * the point of the split: Russian under Ukrainian, Turkish under English.
    */
   localeCode: string | null;
   /**
@@ -194,11 +194,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<SettingsContextValue>(() => {
     const questionLocale = isExamLanguage(settings.questionLocale) ? settings.questionLocale : 'pl';
-    // A translation into the language already on top is not a translation.
-    const locale =
-      settings.localeCode && settings.localeCode !== questionLocale
-        ? findLocale(settings.localeCode)
-        : null;
+    // Only a language the exam cannot be sat in can be the second line: the
+    // other three are shown alone, the way Polish always has been.
+    const locale = isExamLanguage(settings.localeCode) ? null : findLocale(settings.localeCode);
     const uiLocaleCode = settings.uiLocale ?? deviceUiLocale();
     let daysUntilExam: number | null = null;
     if (settings.examDate) {
@@ -211,6 +209,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       update,
       reset,
       questionLocale,
+      // The effective setting, not the stored one: a stored exam language is
+      // ignored rather than shown twice, and every consumer reads it from
+      // here so no screen has to know that rule.
+      localeCode: locale?.code ?? null,
       translationEnabled: !!locale,
       questionLocaleName: findLocale(questionLocale)?.nameNative ?? questionLocale,
       localeDirection: locale?.direction ?? 'ltr',

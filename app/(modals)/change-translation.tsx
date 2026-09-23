@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { NavBar } from '@/components/settings/NavBar';
 import { Icon } from '@/components/ui/Icon';
 import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
-import { allLocales } from '@/features/i18n/locales';
+import { studyLocales } from '@/features/i18n/locales';
 import { useT } from '@/features/i18n/useT';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -15,11 +15,14 @@ const COLUMNS = 3;
 /**
  * The second language, shown under every question.
  *
- * Every language the bundle carries except the one already on top — Polish
- * included, which is the point of having two settings: a candidate sitting
- * the exam in Ukrainian can keep the Polish wording underneath, and one
- * sitting it in Polish can keep Russian. Before this, everything was
+ * Only the languages the exam cannot be sat in. Everything here pairs with
+ * whichever of the four is on top — that is the point of having two settings:
+ * Russian under Ukrainian, Turkish under English. Before this, everything was
  * translated from Polish and from nothing else.
+ *
+ * An exam language is never offered here. A candidate who reads English does
+ * not need the same question in English under a Polish one; they set English
+ * as the question language and see it alone, exactly as Polish behaves.
  *
  * The choice applies immediately: no confirmation and no reload, because
  * every language ships inside the same content bundle and switching only
@@ -29,14 +32,14 @@ export default function TranslationModal() {
   const t = useTheme();
   const tr = useT();
   const router = useRouter();
-  const { localeCode, questionLocale, questionLocaleName, update } = useSettings();
+  const { localeCode, questionLocaleName, update } = useSettings();
 
   const select = (code: string | null) => {
     update({ localeCode: code });
     router.back();
   };
 
-  const choices = allLocales().filter((l) => l.code !== questionLocale);
+  const choices = studyLocales();
   const rows: (typeof choices)[] = [];
   for (let i = 0; i < choices.length; i += COLUMNS) rows.push(choices.slice(i, i + COLUMNS));
 
