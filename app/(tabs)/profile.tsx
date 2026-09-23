@@ -8,7 +8,8 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { ACHIEVEMENT_META } from '@/constants/rules';
-import { useDateLocale } from '@/features/i18n/useT';
+import type { StringKey } from '@/features/i18n/strings';
+import { useDateLocale, useT } from '@/features/i18n/useT';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -55,6 +56,7 @@ function monthYear(iso: string, locale: string): string {
  */
 export default function ProfileScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const shadow = useCardShadow();
   const dateLocale = useDateLocale();
@@ -68,7 +70,7 @@ export default function ProfileScreen() {
       // app, this does.
       icon: 'zap',
       value: progress.state.totalXp.toLocaleString(dateLocale),
-      label: 'Total XP',
+      label: tr('profile.totalXp'),
       bg: t.colors.amber50,
       edge: t.colors.amber,
       fg: t.colors.amberDark,
@@ -80,7 +82,7 @@ export default function ProfileScreen() {
       // recognisability for no real gain.
       icon: 'flame',
       value: String(progress.streak),
-      label: 'Day streak',
+      label: tr('profile.dayStreak'),
       bg: t.colors.amber50,
       edge: t.colors.amber,
       fg: t.colors.amberDark,
@@ -90,7 +92,7 @@ export default function ProfileScreen() {
       // check on it does — this stat is specifically "questions mastered".
       icon: 'book-open-check',
       value: String(progress.masteredCount),
-      label: 'Mastered',
+      label: tr('profile.mastered'),
       bg: t.colors.successBg,
       edge: t.colors.success,
       fg: t.colors.successDark,
@@ -101,7 +103,7 @@ export default function ProfileScreen() {
       // Weak Spots and the goal-progress rings elsewhere in the app.
       icon: 'compass',
       value: `${progress.accuracy}%`,
-      label: 'Accuracy',
+      label: tr('summary.accuracy'),
       bg: t.colors.sage100,
       edge: t.colors.onSurfaceAlt,
       fg: t.colors.onSurfaceAlt,
@@ -137,12 +139,12 @@ export default function ProfileScreen() {
         {/* Top bar */}
         <Row style={{ justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 4 }}>
           <Txt size={26} weight="700">
-            Profile
+            {tr('profile.title')}
           </Txt>
           <Pressable
             onPress={() => router.push('/settings')}
             accessibilityRole="button"
-            accessibilityLabel="Settings"
+            accessibilityLabel={tr('profile.settings')}
             hitSlop={6}
             style={({ pressed }) => ({
               width: 38,
@@ -207,7 +209,7 @@ export default function ProfileScreen() {
                 <Icon name="pencil" size={15} color={t.colors.textMuted} />
               </Pressable>
               <Txt size={12} color={t.colors.textSecondary}>
-                Learning since {monthYear(firstLaunchAt, dateLocale)}
+                {tr('profile.learningSince', { date: monthYear(firstLaunchAt, dateLocale) })}
               </Txt>
             </View>
 
@@ -299,7 +301,7 @@ export default function ProfileScreen() {
           <View style={{ gap: 12 }}>
             <Row style={{ justifyContent: 'space-between' }}>
               <Txt size={16} weight="700">
-                Achievements
+                {tr('profile.achievements')}
               </Txt>
               <View
                 style={{
@@ -310,7 +312,7 @@ export default function ProfileScreen() {
                 }}
               >
                 <Txt size={11} weight="700" color={t.colors.amberDark}>
-                  {earnedCount} / {ACHIEVEMENT_IDS.length} earned
+                  {tr('profile.earned', { earned: earnedCount, total: ACHIEVEMENT_IDS.length })}
                 </Txt>
               </View>
             </Row>
@@ -318,6 +320,11 @@ export default function ProfileScreen() {
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', rowGap: 16, columnGap: 12 }}>
               {ACHIEVEMENT_IDS.map((id) => {
                 const meta = ACHIEVEMENT_META[id];
+                // The ids drive both the metadata and the catalogue keys —
+                // ACHIEVEMENT_IDS below is the single list that keeps them
+                // in step, so the cast is checked by the catalogue itself.
+                const title = tr(`ach.${id}.title` as StringKey);
+                const description = tr(`ach.${id}.desc` as StringKey);
                 const earned = progress.state.achievements.includes(id);
                 const colors = badgePalette[id];
 
@@ -327,8 +334,8 @@ export default function ProfileScreen() {
                     accessible
                     accessibilityLabel={
                       earned
-                        ? `${meta.title}, earned. ${meta.description}`
-                        : `${meta.title}, locked. ${meta.description}`
+                        ? tr('profile.earnedA11y', { title, description })
+                        : tr('profile.lockedA11y', { title, description })
                     }
                     style={{ width: '22%', alignItems: 'center', gap: 6 }}
                   >
@@ -383,7 +390,7 @@ export default function ProfileScreen() {
                       align="center"
                       color={earned ? t.colors.textPrimary : t.colors.textMuted}
                     >
-                      {meta.title}
+                      {title}
                     </Txt>
                   </View>
                 );

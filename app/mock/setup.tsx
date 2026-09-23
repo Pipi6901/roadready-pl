@@ -13,10 +13,12 @@ import { useProgress } from '@/store/ProgressProvider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useSubscription } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 
 /** Mock Test Setup — mockup frame "Mock Test Setup". */
 export default function MockSetupScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const { country } = useContent();
   const progress = useProgress();
@@ -74,7 +76,7 @@ export default function MockSetupScreen() {
       <ProLocked
         feature="mock_test"
         icon="clipboard-check"
-        title="Mock Test is a Pro feature"
+        title={tr('mock.proTitle')}
         body={`The full ${questionCount}-question exam simulation with the real timer is part of RoadReady Pro. Lessons stay free.`}
       />
     );
@@ -82,7 +84,7 @@ export default function MockSetupScreen() {
 
   return (
     <Screen>
-      <NavBar title="Mock Test" />
+      <NavBar title={tr('practice.mock')} />
 
       <ScreenScroll style={{ flex: 1 }} contentContainerStyle={{ padding: 20, paddingTop: 16, gap: 24 }}>
         <View style={{ alignItems: 'center', gap: 10 }}>
@@ -120,7 +122,7 @@ export default function MockSetupScreen() {
         >
           <Icon name="info" size={18} color={t.colors.onSurfaceAlt} />
           <Txt size={13} weight="600" style={{ flex: 1 }}>
-            This simulates the real theory test
+            {tr('mock.simulates')}
           </Txt>
         </Row>
 
@@ -180,14 +182,14 @@ export default function MockSetupScreen() {
           <Icon name="languages" size={14} color={t.colors.textMuted} />
           <Txt size={12} color={t.colors.textMuted} style={{ flex: 1 }}>
             {translationEnabled
-              ? `Questions shown in ${questionLocaleName} + ${localeName}`
-              : `Questions shown in ${questionLocaleName}`}
+              ? tr('mock.shownInPlus', { lang: questionLocaleName, second: localeName })
+              : tr('mock.shownIn', { lang: questionLocaleName })}
           </Txt>
         </Row>
       </ScreenScroll>
 
       <View style={{ paddingHorizontal: 20, paddingTop: 14, paddingBottom: 20 }}>
-        <Button label="Start Test" onPress={start} />
+        <Button label={tr('mock.start')} onPress={start} />
       </View>
     </Screen>
   );

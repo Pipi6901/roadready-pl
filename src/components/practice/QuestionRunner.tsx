@@ -9,6 +9,7 @@ import { SaveButton } from '@/components/SaveButton';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { bcp47For } from '@/features/i18n/locales';
+import { useT } from '@/features/i18n/useT';
 import { prefetchQuestionMedia } from '@/features/media/mediaCache';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useProgress } from '@/store/ProgressProvider';
@@ -40,6 +41,7 @@ export function QuestionRunner({
   restartLabel = 'Play Again', exitLabel = 'Back to Practice',
 }: QuestionRunnerProps) {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const progress = useProgress();
   const { autoReadQuestions, voiceSpeed } = useSettings();
@@ -164,7 +166,7 @@ export function QuestionRunner({
       <Row style={{ justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10 }}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Close practice"
+          accessibilityLabel={tr('question.closePractice')}
           onPress={onExit}
           hitSlop={11}
         >
@@ -218,7 +220,7 @@ export function QuestionRunner({
           </View>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Read the question aloud"
+            accessibilityLabel={tr('question.readAloud')}
             onPress={() => speak(question.text, question.textLocale)}
             hitSlop={4}
             style={{
@@ -237,7 +239,7 @@ export function QuestionRunner({
         <Row style={{ gap: 6 }}>
           <Icon name="info" size={15} color={t.colors.textMuted} />
           <Txt size={12} color={t.colors.textMuted}>
-            Tap the correct answer
+            {tr('question.tapAnswer')}
           </Txt>
         </Row>
 
@@ -260,8 +262,8 @@ export function QuestionRunner({
         <FeedbackSheet
           correct={!!answeredCorrectly}
           xp={xpEarned}
-          explanation={question.explanation}
-          explanationTranslation={question.translation?.explanation}
+          explanation={question.translation?.explanation || question.explanation}
+
           onContinue={advance}
         />
       ) : null}
@@ -276,14 +278,15 @@ interface FeedbackSheetProps {
   /** XP actually paid for this answer — 0 if the question had already earned
    *  its one-time reward before (see xpAwarded in ProgressProvider). */
   xp: number;
+  /** One language, chosen by the caller — see the sheet in learning/. */
   explanation: string;
-  explanationTranslation?: string | null;
   onContinue: () => void;
 }
 
 /** Mockup frames "Feedback Sheet" from Correct Answer / Incorrect Answer. */
-function FeedbackSheet({ correct, xp, explanation, explanationTranslation, onContinue }: FeedbackSheetProps) {
+function FeedbackSheet({ correct, xp, explanation, onContinue }: FeedbackSheetProps) {
   const t = useTheme();
+  const tr = useT();
 
   return (
     <View
@@ -319,7 +322,7 @@ function FeedbackSheet({ correct, xp, explanation, explanationTranslation, onCon
             color={correct ? t.colors.successText : t.colors.error}
           />
           <Txt size={19} weight="700" color={correct ? t.colors.successText : t.colors.error}>
-            {correct ? 'Correct!' : 'Not quite'}
+            {correct ? tr('feedback.correct') : tr('feedback.notQuite')}
           </Txt>
         </Row>
 
@@ -344,26 +347,21 @@ function FeedbackSheet({ correct, xp, explanation, explanationTranslation, onCon
       {/* The official catalogue ships no explanations, so this is often
           empty: the highlighted option above is then the whole feedback. */}
       {explanation.trim() ? (
-        <BilingualText
-          original={explanation}
-          translation={explanationTranslation}
-          size={14}
-          weight="400"
-          translationSize={12}
-          gap={4}
-        />
+        <Txt size={14} lineHeight={20} color={t.colors.textPrimary}>
+          {explanation}
+        </Txt>
       ) : null}
 
       {correct ? null : (
         <Row style={{ gap: 6, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 12, backgroundColor: t.colors.sage100 }}>
           <Icon name="rotate-ccw" size={14} color={t.colors.textMuted} />
           <Txt size={12} color={t.colors.textSecondary}>
-            This question will appear again later
+            {tr('feedback.retryLater')}
           </Txt>
         </Row>
       )}
 
-      <Button label={correct ? 'Continue' : 'Got it'} onPress={onContinue} />
+      <Button label={correct ? tr('feedback.continue') : tr('feedback.gotIt')} onPress={onContinue} />
     </View>
   );
 }
@@ -388,6 +386,7 @@ function SummaryView({
   title, subtitle, answered, correct, xpEarned, onRestart, restartLabel, onExit, exitLabel,
 }: SummaryViewProps) {
   const t = useTheme();
+  const tr = useT();
   const accuracy = answered ? Math.round((correct / answered) * 100) : 0;
 
   const chips: { icon: IconName; iconColor: string; bg: string; edge: string; value: string; label: string }[] = [
@@ -397,7 +396,7 @@ function SummaryView({
       bg: t.colors.successBg,
       edge: t.colors.success,
       value: `${correct}`,
-      label: 'Correct',
+      label: tr('summary.correct'),
     },
     {
       icon: 'zap',
@@ -405,7 +404,7 @@ function SummaryView({
       bg: t.colors.amber50,
       edge: t.colors.amber,
       value: `${xpEarned}`,
-      label: 'XP earned',
+      label: tr('summary.xpEarned'),
     },
     {
       icon: 'target',
@@ -413,7 +412,7 @@ function SummaryView({
       bg: t.colors.sage100,
       edge: t.colors.onSurfaceAlt,
       value: `${accuracy}%`,
-      label: 'Accuracy',
+      label: tr('summary.accuracy'),
     },
   ];
 

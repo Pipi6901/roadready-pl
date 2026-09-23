@@ -18,11 +18,13 @@ import {
 import { prefetchQuestionMedia } from '@/features/media/mediaCache';
 import { useSubmitMock } from '@/features/practice/useSubmitMock';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 import { questionCategory } from '@/types/content';
 
 /** Mock Test Question — mockup frame "Pytanie podstawowe (TAK/NIE)". */
 export default function MockRunScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const params = useLocalSearchParams<{ index?: string }>();
   const submit = useSubmitMock();
@@ -121,7 +123,7 @@ export default function MockRunScreen() {
       <Row style={{ justifyContent: 'space-between', gap: 8, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10 }}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Leave the exam"
+          accessibilityLabel={tr('mock.leaveA11y')}
           onPress={abandon}
           hitSlop={12}
           style={{ width: 32, height: 44, alignItems: 'flex-start', justifyContent: 'center' }}
@@ -147,7 +149,7 @@ export default function MockRunScreen() {
           accessibilityLabel={
             clock
               ? `${clock.phase === 'reading' ? 'Reading time' : 'Answer time'}, ${clock.secondsLeft} seconds left`
-              : `Time remaining ${formatClock(left)}`
+              : tr('mock.timeA11y', { time: formatClock(left) })
           }
           style={{
             gap: 5,
@@ -228,14 +230,13 @@ export default function MockRunScreen() {
 
         {locked ? (
           <Txt size={12} color={t.colors.textSecondary} align="center">
-            Reading time — answering opens in {clock?.secondsLeft} s
+            {tr('mock.readingTime', { seconds: clock?.secondsLeft ?? 0 })}
           </Txt>
         ) : null}
 
         {canGoBack ? null : (
           <Txt size={12} color={t.colors.textSecondary} align="center">
-            You cannot return to a question once you move on, the same as on the
-            day.
+            {tr('mock.oneWay')}
           </Txt>
         )}
       </ScreenScroll>
@@ -244,7 +245,7 @@ export default function MockRunScreen() {
         <Row style={{ gap: 10 }}>
           {canGoBack ? (
             <SoftButton
-              label="Previous"
+              label={tr('mock.previous')}
               disabled={index === 0}
               onPress={() => mockSession.goTo(index - 1)}
               style={{ flex: 1 }}
@@ -264,7 +265,7 @@ export default function MockRunScreen() {
         </Row>
 
         {isLast || !canGoBack ? null : (
-          <Button label="Finish Test" variant="ghost" onPress={() => router.push('/mock/review')} />
+          <Button label={tr('mock.finish')} variant="ghost" onPress={() => router.push('/mock/review')} />
         )}
       </View>
     </Screen>

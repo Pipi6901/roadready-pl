@@ -4,6 +4,7 @@ import { Pressable, View } from 'react-native';
 import { SaveButton } from '@/components/SaveButton';
 import { Icon } from '@/components/ui/Icon';
 import { Row } from '@/components/ui/primitives';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 interface LessonTopBarProps {
@@ -26,6 +27,7 @@ interface LessonTopBarProps {
  */
 export function LessonTopBar({ total, index, answered, onClose, questionId }: LessonTopBarProps) {
   const t = useTheme();
+  const tr = useT();
 
   return (
     <View>
@@ -39,7 +41,7 @@ export function LessonTopBar({ total, index, answered, onClose, questionId }: Le
       >
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Close lesson"
+          accessibilityLabel={tr('question.closeLesson')}
           onPress={onClose}
           hitSlop={12}
           style={{ width: 44, height: 44, alignItems: 'flex-start', justifyContent: 'center' }}
@@ -49,7 +51,7 @@ export function LessonTopBar({ total, index, answered, onClose, questionId }: Le
 
         <Row
           accessible
-          accessibilityLabel={`Question ${index + 1} of ${total}`}
+          accessibilityLabel={tr('question.numberA11y', { index: index + 1, total })}
           style={{ gap: 6, flex: 1, justifyContent: 'center' }}
         >
           {Array.from({ length: total }, (_, i) => {

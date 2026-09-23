@@ -4,7 +4,7 @@ import { Alert, Linking, Platform, Pressable, StyleSheet, View } from 'react-nat
 
 import { NavBar } from '@/components/settings/NavBar';
 import { formatDate, PLAN_PERIOD, PLAN_PRICE, planLabel } from '@/components/settings/plan';
-import { useDateLocale } from '@/features/i18n/useT';
+import { useDateLocale, useT, type Translate } from '@/features/i18n/useT';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { SettingsSection, useCardShadow } from '@/components/settings/SettingsSection';
 import { Icon } from '@/components/ui/Icon';
@@ -35,24 +35,25 @@ const PLANS: Plan[] = ['monthly', 'yearly'];
  * One sentence on what Free covers, read off FREE_TIER so this never drifts
  * from what the gates actually do.
  */
-function freePlanSummary(): string {
+function freePlanSummary(tr: Translate): string {
   const lessons =
     FREE_TIER.questionsPerDay === null
-      ? 'unlimited lessons'
-      : `${FREE_TIER.questionsPerDay} questions a day`;
+      ? tr('free.unlimitedLessons')
+      : tr('free.questionsPerDay', { count: FREE_TIER.questionsPerDay });
   const locked: string[] = [];
-  if (!FREE_TIER.translation) locked.push('translations');
-  if (!FREE_TIER.mockTest) locked.push('mock tests');
-  if (!FREE_TIER.weakSpots) locked.push('weak spot practice');
-  if (!FREE_TIER.offline) locked.push('offline mode');
+  if (!FREE_TIER.translation) locked.push(tr('free.translations'));
+  if (!FREE_TIER.mockTest) locked.push(tr('free.mockTests'));
+  if (!FREE_TIER.weakSpots) locked.push(tr('free.weakSpots'));
+  if (!FREE_TIER.offline) locked.push(tr('free.offline'));
   if (!locked.length) return lessons;
   const last = locked.pop();
-  const list = locked.length ? `${locked.join(', ')} and ${last}` : last;
-  return `${lessons}${FREE_TIER.translation ? ' with translations' : ''}; ${list} need Pro`;
+  const list = locked.length ? `${locked.join(', ')} ${tr('common.and')} ${last}` : last;
+  return `${lessons}${FREE_TIER.translation ? ` ${tr('free.withTranslations')}` : ''}; ${tr('free.needPro', { list: list ?? '' })}`;
 }
 
 export default function SubscriptionScreen() {
   const t = useTheme();
+  const tr = useT();
   const dateLocale = useDateLocale();
   const router = useRouter();
   const shadow = useCardShadow();
@@ -84,18 +85,20 @@ export default function SubscriptionScreen() {
       return;
     }
     Alert.alert(
-      `Switch to ${plan === 'monthly' ? 'Monthly' : 'Yearly'}?`,
-      'Plan changes are handled by the store. We will take you to your subscription settings, where the switch takes effect at the end of the current period.',
+      tr('subscription.switchTitle', {
+        plan: plan === 'monthly' ? tr('subscription.monthly') : tr('subscription.yearly'),
+      }),
+      tr('subscription.switchBody'),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Continue', onPress: () => void openStore() },
+        { text: tr('common.cancel'), style: 'cancel' },
+        { text: tr('feedback.continue'), onPress: () => void openStore() },
       ],
     );
   };
 
   return (
     <Screen>
-      <NavBar title="Subscription" />
+      <NavBar title={tr('subscription.title')} />
 
       <ScreenScroll style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={{ paddingHorizontal: 20, paddingTop: 8, gap: 22 }}>
@@ -121,20 +124,20 @@ export default function SubscriptionScreen() {
             </Row>
             <Txt size={13} color={t.colors.textSecondary} lineHeight={19}>
               {isPro
-                ? `Renews on ${formatDate(state.renewsAt, dateLocale)}.`
-                : `You are on the free plan — ${freePlanSummary()}.`}
+                ? tr('subscription.renewsOn', { date: formatDate(state.renewsAt, dateLocale) })
+                : tr('subscription.freePlan', { summary: freePlanSummary(tr) })}
             </Txt>
           </View>
 
-          <SettingsSection title="Details" icon="gem" iconColor={t.colors.amberDark}>
-            <SettingsRow label="Current plan" value={planLabel(state)} />
-            <SettingsRow label="Renewal date" value={formatDate(state.renewsAt, dateLocale)} last />
+          <SettingsSection title={tr('subscription.details')} icon="gem" iconColor={t.colors.amberDark}>
+            <SettingsRow label={tr('settings.row.currentPlan')} value={planLabel(state)} />
+            <SettingsRow label={tr('settings.row.renewalDate')} value={formatDate(state.renewsAt, dateLocale)} last />
           </SettingsSection>
 
           {/* Change plan */}
           <View style={{ gap: 8 }}>
             <Txt variant="label" weight="700" color={t.colors.textMuted}>
-              CHANGE PLAN
+              {tr('subscription.changePlan')}
             </Txt>
 
             <Row style={{ gap: 10, alignItems: 'stretch' }}>

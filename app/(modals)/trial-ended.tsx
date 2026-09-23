@@ -9,6 +9,7 @@ import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitiv
 import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/legal';
 import { FREE_TIER } from '@/constants/rules';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 
 interface CompareRow {
   feature: string;
@@ -34,6 +35,7 @@ const COMPARISON: CompareRow[] = [
 /** Trial ended — ТЗ 8.4. */
 export default function TrialEndedModal() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const shadow = useCardShadow();
 
@@ -61,10 +63,10 @@ export default function TrialEndedModal() {
           </View>
 
           <Txt size={24} weight="700" align="center">
-            Your free trial has ended
+            {tr('trial.title')}
           </Txt>
           <Txt size={14} color={t.colors.textSecondary} align="center" lineHeight={20}>
-            Keep everything you unlocked, or carry on with the free plan.
+            {tr('trial.body')}
           </Txt>
         </View>
 
@@ -84,7 +86,7 @@ export default function TrialEndedModal() {
           <Row style={{ paddingVertical: 12, paddingHorizontal: 16, backgroundColor: t.colors.sage50 }}>
             <View style={{ flex: 1.4 }} />
             <Txt size={12} weight="700" color={t.colors.textSecondary} align="center" style={{ flex: 1 }}>
-              Free
+              {tr('trial.free')}
             </Txt>
             <Txt size={12} weight="700" color={t.colors.amberDark} align="center" style={{ flex: 1 }}>
               Pro
@@ -136,12 +138,12 @@ export default function TrialEndedModal() {
         <View style={{ flex: 1 }} />
 
         <View style={{ gap: 10 }}>
-          <Button label={`Subscribe — ${PLAN_PRICE.monthly}/month`} icon="gem" onPress={onSubscribe} />
-          <Button label="Continue with limited access" variant="ghost" onPress={() => router.back()} />
+          <Button label={tr('trial.subscribe', { price: PLAN_PRICE.monthly })} icon="gem" onPress={onSubscribe} />
+          <Button label={tr('trial.continueFree')} variant="ghost" onPress={() => router.back()} />
           {/* App Review wants both documents reachable from every purchase
               surface, not just mentioned — the two spans are tappable. */}
           <Txt size={10} color={t.colors.textMuted} align="center" lineHeight={14}>
-            Billed through the store. Cancel anytime.{' '}
+            {tr('legal.billed')}{' '}
             <Txt
               size={10}
               color={t.colors.textSecondary}
@@ -149,9 +151,9 @@ export default function TrialEndedModal() {
               onPress={() => void Linking.openURL(TERMS_OF_USE_URL)}
               accessibilityRole="link"
             >
-              Terms of Use
+              {tr('settings.row.termsOfUse')}
             </Txt>
-            {' and '}
+            {` ${tr('common.and')} `}
             <Txt
               size={10}
               color={t.colors.textSecondary}
@@ -159,9 +161,9 @@ export default function TrialEndedModal() {
               onPress={() => void Linking.openURL(PRIVACY_POLICY_URL)}
               accessibilityRole="link"
             >
-              Privacy Policy
+              {tr('settings.row.privacyPolicy')}
             </Txt>
-            {' apply.'}
+            {` ${tr('legal.apply')}`}
           </Txt>
         </View>
       </ScreenScroll>

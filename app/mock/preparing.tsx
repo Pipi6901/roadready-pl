@@ -9,6 +9,7 @@ import { preloadQuestionMedia, type PreloadProgress } from '@/features/media/med
 import { mockSession } from '@/features/practice/mockSession';
 import { useContent } from '@/store/ContentProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 
 /** Even when everything is already on disk the screen holds for this long — a flash of a loader is worse than a short one. */
 const MIN_VISIBLE_MS = 1200;
@@ -25,6 +26,7 @@ const MIN_VISIBLE_MS = 1200;
  */
 export default function MockPreparingScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const { country, mockQuestions } = useContent();
   const [progress, setProgress] = React.useState<PreloadProgress>({ total: 0, done: 0, failed: 0 });
@@ -73,7 +75,7 @@ export default function MockPreparingScreen() {
 
         <View style={{ alignItems: 'center', gap: 8 }}>
           <Txt size={22} weight="700" align="center">
-            Preparing your exam
+            {tr('mock.preparing')}
           </Txt>
           <Txt size={14} color={t.colors.textSecondary} align="center" lineHeight={20}>
             Every picture and clip is downloaded before the clock starts, so nothing has to load while you are answering.
@@ -88,7 +90,7 @@ export default function MockPreparingScreen() {
         </View>
 
         <Button
-          label="Cancel"
+          label={tr('common.cancel')}
           variant="ghost"
           fullWidth={false}
           onPress={() => {

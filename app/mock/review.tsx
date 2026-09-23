@@ -8,6 +8,7 @@ import { Button, Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitiv
 import { mockSession } from '@/features/practice/mockSession';
 import { useSubmitMock } from '@/features/practice/useSubmitMock';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 
 type CellStatus = 'answered' | 'unanswered' | 'flagged';
 
@@ -24,6 +25,7 @@ const COLUMNS = 5;
  */
 export default function MockReviewScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const submit = useSubmitMock();
 
@@ -49,7 +51,7 @@ export default function MockReviewScreen() {
       width: 1.5,
       fg: t.colors.successText,
       icon: 'check',
-      word: 'answered',
+      word: tr('mock.answered'),
     },
     unanswered: {
       bg: t.colors.sage50,
@@ -57,7 +59,7 @@ export default function MockReviewScreen() {
       width: 1.5,
       fg: t.colors.textMuted,
       icon: 'x',
-      word: 'not answered',
+      word: tr('mock.notAnswered'),
     },
     flagged: {
       bg: t.colors.amber50,
@@ -65,7 +67,7 @@ export default function MockReviewScreen() {
       width: 2,
       fg: t.colors.amberDark,
       icon: 'flag',
-      word: 'flagged',
+      word: tr('mock.flagged'),
     },
   };
 
@@ -79,7 +81,7 @@ export default function MockReviewScreen() {
 
   return (
     <Screen>
-      <NavBar title="Review Answers" />
+      <NavBar title={tr('mock.reviewAnswers')} />
 
       <ScreenScroll
         style={{ flex: 1 }}
@@ -112,7 +114,7 @@ export default function MockReviewScreen() {
         </Row>
 
         <Txt size={13} color={t.colors.textSecondary}>
-          {answered} of {total} answered
+          {tr('mock.answeredOf', { answered, total })}
         </Txt>
 
         <View style={{ gap: 8 }}>
@@ -127,8 +129,8 @@ export default function MockReviewScreen() {
                     <Pressable
                       key={question.id}
                       accessibilityRole="button"
-                      accessibilityLabel={`Question ${number}, ${s.word}`}
-                      accessibilityHint="Opens this question"
+                      accessibilityLabel={`${tr('question.numberA11y', { index: number, total })}, ${s.word}`}
+                      accessibilityHint={tr('mock.opensQuestion')}
                       onPress={() => router.push({ pathname: '/mock/run', params: { index: number - 1 } })}
                       style={{
                         flex: 1,
@@ -170,7 +172,7 @@ export default function MockReviewScreen() {
           borderTopColor: t.colors.border,
         }}
       >
-        <Button label="Submit Test" onPress={submit} />
+        <Button label={tr('mock.submit')} onPress={submit} />
       </View>
     </Screen>
   );

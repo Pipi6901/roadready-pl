@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo } fro
 
 import { COUNTRIES, DEMO_BUNDLE } from '@/data/demo-bundle';
 import { initRemoteContent, remoteContentStore } from '@/data/remoteContent';
+import { topicName } from '@/features/i18n/topicNames';
 import { LESSON_SIZE } from '@/constants/rules';
 import {
   questionAppliesTo,
@@ -63,7 +64,7 @@ interface ContentContextValue {
 const ContentContext = createContext<ContentContextValue | null>(null);
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
-  const { localeCode, questionLocale, countryCode, licenceCategory } = useSettings();
+  const { localeCode, questionLocale, countryCode, licenceCategory, uiLocaleCode } = useSettings();
   const { can } = useSubscription();
   const progress = useProgress();
 
@@ -129,7 +130,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     // from the whole catalogue. Sections with nothing in them for this
     // licence disappear from the map rather than sitting there empty.
     const bank = DEMO_BUNDLE.questions.filter((q) => questionAppliesTo(q, licenceCategory));
-    const topics = DEMO_BUNDLE.topics.filter((t) => bank.some((q) => q.topicId === t.id));
+    // Section names follow the interface language, not the question language:
+    // they are navigation, and a map of Polish headings is unreadable to the
+    // learner the app exists for. Falls back to the bundle's Polish for any
+    // id the catalogue in topicNames.ts does not know.
+    const named = (t: Topic): Topic => ({ ...t, name: topicName(uiLocaleCode, t.id, t.name) });
+    const topics = DEMO_BUNDLE.topics.filter((t) => bank.some((q) => q.topicId === t.id)).map(named);
 
     const questionsForTopic = (topicId: string) => bank.filter((q) => q.topicId === topicId);
 
@@ -146,7 +152,10 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       country,
       countries: COUNTRIES,
       topics,
-      getTopic: (topicId) => DEMO_BUNDLE.topics.find((t) => t.id === topicId),
+      getTopic: (topicId) => {
+        const topic = DEMO_BUNDLE.topics.find((t) => t.id === topicId);
+        return topic ? named(topic) : undefined;
+      },
       // By id, from the whole catalogue: a saved or wrong question stays
       // reachable after a change of licence category.
       getQuestion: (id) => {
@@ -231,7 +240,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     // unlock state only ever changes via completeLesson touching
     // `state.lessons`, so that's the one thing worth reacting to here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countryCode, licenceCategory, decorate, progress.state.lessons, contentVersion]);
+  }, [countryCode, licenceCategory, uiLocaleCode, decorate, progress.state.lessons, contentVersion]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }

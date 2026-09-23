@@ -19,6 +19,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
 import { afterOnboarding } from '@/features/onboarding/afterOnboarding';
 import { useSettings } from '@/store/SettingsProvider';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 /** "Deco 0"–"Deco 13" from the mockup, in mockup coordinates. */
@@ -85,6 +86,7 @@ function PulsingRing({ size, baseOpacity, scale, fade }: PulsingRingProps) {
 /** Splash — mockup frame "Splash Screen". Also the app's routing gate. */
 export default function SplashScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const { width, height } = useWindowDimensions();
   const { ready, onboarded, licenceChosen, hasSeenSplash, update } = useSettings();
@@ -238,7 +240,7 @@ export default function SplashScreen() {
           </Txt>
 
           <Txt size={13} align="center" color={t.colors.textSecondary} style={{ maxWidth: 260 }}>
-            Pass your driving theory test — in your language
+            {tr('splash.tagline')}
           </Txt>
         </View>
 
@@ -247,7 +249,7 @@ export default function SplashScreen() {
         >
           <Icon name="pointer" size={16} color={t.colors.textMuted} />
           <Txt size={12} weight="600" color={t.colors.textMuted}>
-            Tap anywhere to continue
+            {tr('splash.tap')}
           </Txt>
         </View>
       </Pressable>

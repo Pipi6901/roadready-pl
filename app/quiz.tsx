@@ -3,11 +3,13 @@ import React from 'react';
 
 import { QuestionRunner } from '@/components/practice/QuestionRunner';
 import { QUICK_QUIZ_SIZE } from '@/constants/rules';
+import { useT } from '@/features/i18n/useT';
 import { useContent } from '@/store/ContentProvider';
 
 /** Quick Quiz — the card scenario over a random draw. */
 export default function QuizScreen() {
   const router = useRouter();
+  const tr = useT();
   const { randomQuestions } = useContent();
 
   // Drawn once per round; "Play Again" bumps the seed to redraw.
@@ -23,11 +25,11 @@ export default function QuizScreen() {
   return (
     <QuestionRunner
       questions={questions}
-      summaryTitle="Quiz complete!"
-      summarySubtitle="Every round you play makes the next test easier."
+      summaryTitle={tr('quiz.completeTitle')}
+      summarySubtitle={tr('quiz.completeSubtitle')}
       onExit={backToPractice}
       onRestart={() => setRound((n) => n + 1)}
-      restartLabel="Play Again"
+      restartLabel={tr('quiz.playAgain')}
     />
   );
 }

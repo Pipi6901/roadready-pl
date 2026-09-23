@@ -6,6 +6,7 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 import { Button, Row, Screen, Txt } from '@/components/ui/primitives';
 import { PAYWALL_ENABLED } from '@/constants/flags';
 import { EVENTS, track } from '@/features/analytics/analytics';
+import { useT } from '@/features/i18n/useT';
 import type { Feature } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -29,6 +30,7 @@ interface Props {
  */
 export function ProLocked({ feature, icon, title, body }: Props) {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
 
   // Once per wall, not per render — otherwise one blocked learner would look
@@ -76,9 +78,9 @@ export function ProLocked({ feature, icon, title, body }: Props) {
 
         <View style={{ alignSelf: 'stretch', gap: 10, marginTop: 8 }}>
           {PAYWALL_ENABLED ? (
-            <Button label="See Pro plans" onPress={() => router.push(`/paywall?source=${feature}`)} />
+            <Button label={tr('pro.seePlans')} onPress={() => router.push(`/paywall?source=${feature}`)} />
           ) : null}
-          <Button label="Not now" variant="ghost" onPress={() => router.back()} />
+          <Button label={tr('pro.notNow')} variant="ghost" onPress={() => router.back()} />
         </View>
       </View>
     </Screen>

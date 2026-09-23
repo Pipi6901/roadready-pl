@@ -10,10 +10,12 @@ import { mockSession, requiredToPass } from '@/features/practice/mockSession';
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 
 /** Mock Test Results — mockup frame "Mock Test Results". */
 export default function MockResultsScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const { country, getTopic, getQuestion } = useContent();
   const progress = useProgress();
@@ -93,20 +95,20 @@ export default function MockResultsScreen() {
           </Row>
 
           <Txt size={12} color={t.colors.textSecondary}>
-            {required} of {attempt.total} points needed to pass
+            {tr('mock.pointsNeeded', { required, total: attempt.total })}
           </Txt>
         </View>
 
         <View style={{ gap: 7 }}>
           <Txt size={15} weight="700">
-            Accuracy by topic
+            {tr('mock.accuracyByTopic')}
           </Txt>
 
           {topicRows.map((row) => (
             <View
               key={row.topicId}
               accessible
-              accessibilityLabel={`${row.name}, ${row.pct} percent correct`}
+              accessibilityLabel={tr('mock.topicPctA11y', { name: row.name, pct: row.pct })}
               style={{ gap: 4 }}
             >
               <Row style={{ justifyContent: 'space-between' }}>
@@ -127,14 +129,14 @@ export default function MockResultsScreen() {
         {mistakes.length ? (
           <View style={{ gap: 10 }}>
             <Txt size={15} weight="700">
-              Incorrect answers ({mistakes.length})
+              {tr('mock.incorrectAnswers', { count: mistakes.length })}
             </Txt>
 
             {mistakes.map((mistake) => (
               <Pressable
                 key={mistake.id}
                 accessibilityRole="button"
-                accessibilityLabel={`Review ${mistake.topicName}${mistake.subtopic ? `, ${mistake.subtopic}` : ''}`}
+                accessibilityLabel={tr('mock.reviewA11y', { topic: mistake.topicName + (mistake.subtopic ? `, ${mistake.subtopic}` : '') })}
                 onPress={() => router.push({ pathname: '/weak-spots', params: { questionId: mistake.id } })}
                 style={{
                   gap: 10,
@@ -158,7 +160,7 @@ export default function MockResultsScreen() {
                 </Row>
                 <Row style={{ gap: 2, justifyContent: 'flex-end' }}>
                   <Txt size={12} weight="700" color={t.colors.onSurfaceAlt}>
-                    Review
+                    {tr('mock.review')}
                   </Txt>
                   <Icon name="chevron-right" size={14} color={t.colors.onSurfaceAlt} />
                 </Row>
@@ -179,12 +181,12 @@ export default function MockResultsScreen() {
         }}
       >
         <Button
-          label="Review All Mistakes"
+          label={tr('mock.reviewAll')}
           disabled={!mistakes.length}
           onPress={() => router.replace('/weak-spots')}
         />
-        <SoftButton label="Try Again" size={14} onPress={() => router.replace('/mock/setup')} />
-        <Button label="Back to Practice" variant="ghost" onPress={() => router.replace('/practice')} />
+        <SoftButton label={tr('mock.tryAgain')} size={14} onPress={() => router.replace('/mock/setup')} />
+        <Button label={tr('mock.backToPractice')} variant="ghost" onPress={() => router.replace('/practice')} />
       </View>
     </Screen>
   );

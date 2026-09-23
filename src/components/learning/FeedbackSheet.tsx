@@ -4,14 +4,20 @@ import { View } from 'react-native';
 import { BilingualText } from '@/components/BilingualText';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Row, Txt } from '@/components/ui/primitives';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 interface FeedbackSheetProps {
   correct: boolean;
   /** translateY (px) driven by the lesson screen's slide animation. */
   translateY: number;
+  /**
+   * One language, already chosen by the caller: the translation when there
+   * is one, the question's own language otherwise. The wording of a question
+   * is worth seeing twice — it is what the paper will say — but an
+   * explanation is there to be understood once.
+   */
   explanation: string;
-  explanationTranslation?: string | null;
   /** Right answer, shown only after a wrong pick. */
   correctAnswer: string;
   correctAnswerTranslation?: string | null;
@@ -29,10 +35,11 @@ interface FeedbackSheetProps {
  * Slides in only; no shake or bounce on a wrong answer (ТЗ 10.6).
  */
 export function FeedbackSheet({
-  correct, translateY, explanation, explanationTranslation, correctAnswer,
+  correct, translateY, explanation, correctAnswer,
   correctAnswerTranslation, xp, onContinue, bottomInset, onLayout, visible,
 }: FeedbackSheetProps) {
   const t = useTheme();
+  const tr = useT();
   const tone = correct ? t.colors.successDark : t.colors.error;
 
   return (
@@ -76,14 +83,14 @@ export function FeedbackSheet({
         <Row style={{ gap: 8, flex: 1 }}>
           <Icon name={correct ? 'circle-check' : 'circle-x'} size={26} color={tone} />
           <Txt size={19} weight="700" color={tone}>
-            {correct ? 'Correct!' : 'Not quite'}
+            {correct ? tr('feedback.correct') : tr('feedback.notQuite')}
           </Txt>
         </Row>
 
         {correct && xp > 0 ? (
           <Row
             accessible
-            accessibilityLabel={`Plus ${xp} experience points`}
+            accessibilityLabel={tr('feedback.xpA11y', { xp })}
             style={{
               gap: 4,
               paddingVertical: 6,
@@ -103,7 +110,7 @@ export function FeedbackSheet({
       {!correct ? (
         <View style={{ gap: 4 }}>
           <Txt size={12} weight="600" color={t.colors.textSecondary}>
-            Correct answer
+            {tr('feedback.correctAnswer')}
           </Txt>
           <BilingualText
             original={correctAnswer}
@@ -120,14 +127,9 @@ export function FeedbackSheet({
       {/* The official catalogue ships no explanations, so this is often
           empty: the highlighted option above is then the whole feedback. */}
       {explanation.trim() ? (
-        <BilingualText
-          original={explanation}
-          translation={explanationTranslation}
-          size={14}
-          weight="400"
-          translationSize={12}
-          gap={4}
-        />
+        <Txt size={14} lineHeight={20} color={t.colors.textPrimary}>
+          {explanation}
+        </Txt>
       ) : null}
 
       {!correct ? (
@@ -142,12 +144,12 @@ export function FeedbackSheet({
         >
           <Icon name="rotate-ccw" size={14} color={t.colors.textMuted} />
           <Txt size={12} color={t.colors.textSecondary} style={{ flex: 1 }}>
-            This question will appear again later
+            {tr('feedback.retryLater')}
           </Txt>
         </Row>
       ) : null}
 
-      <Button label={correct ? 'Continue' : 'Got it'} onPress={onContinue} />
+      <Button label={correct ? tr('feedback.continue') : tr('feedback.gotIt')} onPress={onContinue} />
     </View>
   );
 }

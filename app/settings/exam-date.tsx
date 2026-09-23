@@ -9,6 +9,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 
 const DAY_MS = 86_400_000;
 
@@ -22,6 +23,7 @@ const DAY_MS = 86_400_000;
  */
 export default function ExamDateScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const settings = useSettings();
   const [selected, setSelected] = React.useState<string | null>(settings.examDate);
@@ -45,7 +47,7 @@ export default function ExamDateScreen() {
 
   return (
     <Screen>
-      <NavBar title="Test date" />
+      <NavBar title={tr('settings.row.testDate')} />
 
       <ScreenScroll style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }}>
         <View style={{ paddingHorizontal: 20, paddingTop: 8, gap: 16 }}>
@@ -67,11 +69,11 @@ export default function ExamDateScreen() {
             </Row>
           ) : null}
 
-          <OnboardingButton label="Save" disabled={!selected} onPress={save} />
+          <OnboardingButton label={tr('common.save')} disabled={!selected} onPress={save} />
 
           {settings.examDate ? (
             <OnboardingButton
-              label="Clear date"
+              label={tr('settings.clearDate')}
               variant="soft"
               fontSize={14}
               paddingVertical={13}

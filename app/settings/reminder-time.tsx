@@ -8,6 +8,7 @@ import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { Slider } from '@/components/ui/Slider';
 import { useSettings } from '@/store/SettingsProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 import { formatTime } from '@/utils/time';
 
 const HOUR_TICKS = [0, 6, 12, 18, 23];
@@ -22,6 +23,7 @@ const MINUTE_TICKS = [0, 15, 30, 45];
  */
 export default function ReminderTimeScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const settings = useSettings();
 
@@ -38,7 +40,7 @@ export default function ReminderTimeScreen() {
 
   return (
     <Screen>
-      <NavBar title="Reminder time" />
+      <NavBar title={tr('settings.row.reminderTime')} />
 
       <ScreenScroll style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }}>
         <View style={{ paddingHorizontal: 20, paddingTop: 8, gap: 28 }}>
@@ -49,7 +51,7 @@ export default function ReminderTimeScreen() {
           <View style={{ gap: 10 }}>
             <Row style={{ justifyContent: 'space-between' }}>
               <Txt size={13} weight="600" color={t.colors.textSecondary}>
-                Hour
+                {tr('settings.hour')}
               </Txt>
               <Txt size={13} color={t.colors.textSecondary}>
                 {String(hour).padStart(2, '0')}
@@ -62,14 +64,14 @@ export default function ReminderTimeScreen() {
               value={hour}
               ticks={HOUR_TICKS}
               onValueChange={setHour}
-              accessibilityLabel="Reminder hour"
+              accessibilityLabel={tr('settings.hour')}
             />
           </View>
 
           <View style={{ gap: 10 }}>
             <Row style={{ justifyContent: 'space-between' }}>
               <Txt size={13} weight="600" color={t.colors.textSecondary}>
-                Minute
+                {tr('settings.minute')}
               </Txt>
               <Txt size={13} color={t.colors.textSecondary}>
                 {String(minute).padStart(2, '0')}
@@ -82,11 +84,11 @@ export default function ReminderTimeScreen() {
               value={minute}
               ticks={MINUTE_TICKS}
               onValueChange={setMinute}
-              accessibilityLabel="Reminder minute"
+              accessibilityLabel={tr('settings.minute')}
             />
           </View>
 
-          <OnboardingButton label="Save" onPress={save} />
+          <OnboardingButton label={tr('common.save')} onPress={save} />
         </View>
       </ScreenScroll>
     </Screen>

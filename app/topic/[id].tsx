@@ -8,12 +8,14 @@ import { Button, Card, ProgressBar, Row, Screen, ScreenScroll, Txt } from '@/com
 import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 
 type LessonState = 'completed' | 'current' | 'locked';
 
 /** Topic Detail — mockup frame "Topic Detail". */
 export default function TopicDetailScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getTopic } = useContent();
@@ -28,9 +30,9 @@ export default function TopicDetailScreen() {
       <Screen>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20, gap: 12 }}>
           <Txt size={16} weight="600">
-            Topic not found
+            {tr('topic.notFound')}
           </Txt>
-          <Button label="Back to topics" variant="secondary" fullWidth={false} onPress={() => router.back()} />
+          <Button label={tr('lesson.backToTopics')} variant="secondary" fullWidth={false} onPress={() => router.back()} />
         </View>
       </Screen>
     );
@@ -53,9 +55,9 @@ export default function TopicDetailScreen() {
   }));
 
   const statusText: Record<LessonState, string> = {
-    completed: 'Completed',
-    current: stats.completedLessons > 0 ? 'In progress' : 'Not started',
-    locked: 'Not started',
+    completed: tr('topic.completed'),
+    current: stats.completedLessons > 0 ? tr('topic.inProgress') : tr('topic.notStarted'),
+    locked: tr('topic.notStarted'),
   };
 
   return (
@@ -131,7 +133,7 @@ export default function TopicDetailScreen() {
               fillColor={t.colors.accent}
             />
             <Txt size={12} color={t.colors.textSecondary}>
-              {stats.mastered}/{stats.total} questions mastered
+              {tr('topic.mastered', { done: stats.mastered, total: stats.total })}
             </Txt>
           </View>
         </View>
@@ -142,7 +144,7 @@ export default function TopicDetailScreen() {
             <Row style={{ gap: 6 }}>
               <Icon name="target" size={16} color={t.colors.onSurfaceAlt} />
               <Txt size={12} color={t.colors.textSecondary}>
-                Accuracy
+                {tr('summary.accuracy')}
               </Txt>
             </Row>
             <Txt size={20} weight="700">
@@ -154,11 +156,11 @@ export default function TopicDetailScreen() {
             <Row style={{ gap: 6 }}>
               <Icon name="trending-down" size={16} color={t.colors.error} />
               <Txt size={12} color={t.colors.textSecondary}>
-                Weakest topic
+                {tr('topic.weakest')}
               </Txt>
             </Row>
             <Txt size={16} weight="700">
-              {stats.weakestSubtopic ?? 'None yet'}
+              {stats.weakestSubtopic ?? tr('topic.noneYet')}
             </Txt>
           </Card>
         </Row>
@@ -166,7 +168,7 @@ export default function TopicDetailScreen() {
         {/* Lessons */}
         <View style={{ gap: 12 }}>
           <Txt size={16} weight="700">
-            Lessons
+            {tr('topic.lessons')}
           </Txt>
 
           {empty ? (
@@ -174,11 +176,11 @@ export default function TopicDetailScreen() {
               <Row style={{ gap: 8 }}>
                 <Icon name="hourglass" size={16} color={t.colors.amberDark} />
                 <Txt size={14} weight="600">
-                  Questions for this section are on the way
+                  {tr('topic.pendingTitle')}
                 </Txt>
               </Row>
               <Txt size={12} color={t.colors.textSecondary}>
-                They arrive with the next content update — no app update needed.
+                {tr('topic.pendingBody')}
               </Txt>
             </Card>
           ) : null}
@@ -196,7 +198,7 @@ export default function TopicDetailScreen() {
                 <Pressable
                   key={index}
                   accessibilityRole="button"
-                  accessibilityLabel={`Lesson ${index + 1}, ${statusText[state]}`}
+                  accessibilityLabel={`${tr('topic.lesson', { n: index + 1 })}, ${statusText[state]}`}
                   accessibilityState={{ disabled: !actionable }}
                   disabled={!actionable}
                   onPress={() => router.push(`/lesson/${topic.id}`)}
@@ -235,7 +237,7 @@ export default function TopicDetailScreen() {
 
                   <View style={{ flex: 1, gap: 2 }}>
                     <Txt size={14} weight="600">
-                      Lesson {index + 1}
+                      {tr('topic.lesson', { n: index + 1 })}
                     </Txt>
                     <Txt size={12} color={t.colors.textSecondary}>
                       {statusText[state]}
@@ -268,7 +270,7 @@ export default function TopicDetailScreen() {
         }}
       >
         <Button
-          label={stats.completed ? 'Practise again' : 'Start next lesson'}
+          label={stats.completed ? tr('topic.practiseAgain') : tr('topic.startNext')}
           disabled={empty}
           onPress={() =>
             router.push(
@@ -279,7 +281,7 @@ export default function TopicDetailScreen() {
           }
         />
         {hasReview ? (
-          <SecondaryAction label="Review mistakes" onPress={() => router.push('/weak-spots')} />
+          <SecondaryAction label={tr('lesson.reviewMistakes')} onPress={() => router.push('/weak-spots')} />
         ) : null}
       </View>
     </Screen>

@@ -14,6 +14,7 @@ import { Button, Row, Screen, Txt } from '@/components/ui/primitives';
 import { PAYWALL_ENABLED } from '@/constants/flags';
 import { EVENTS, track } from '@/features/analytics/analytics';
 import { bcp47For } from '@/features/i18n/locales';
+import { useT } from '@/features/i18n/useT';
 import { prefetchQuestionMedia } from '@/features/media/mediaCache';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useContent } from '@/store/ContentProvider';
@@ -30,6 +31,7 @@ const SHEET_HIDDEN = 520;
 /** Lesson card flow — mockup frames "Question Card" / "Correct Answer" / "Incorrect Answer". */
 export default function LessonScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { topicId, lessonIndex: requestedLessonIndex } = useLocalSearchParams<{
@@ -292,17 +294,17 @@ export default function LessonScreen() {
           </View>
 
           <Txt size={24} weight="700" align="center">
-            Daily limit reached
+            {tr('lesson.limitTitle')}
           </Txt>
           <Txt size={14} color={t.colors.textSecondary} align="center">
-            You have used all of today&apos;s free questions. Come back tomorrow, or go unlimited with Pro.
+            {tr('lesson.limitBody')}
           </Txt>
 
           <View style={{ alignSelf: 'stretch', gap: 10, marginTop: 8 }}>
             {PAYWALL_ENABLED ? (
-              <Button label="See Pro plans" onPress={() => router.push('/paywall?source=daily_limit')} />
+              <Button label={tr('pro.seePlans')} onPress={() => router.push('/paywall?source=daily_limit')} />
             ) : null}
-            <Button label="Back to topics" variant="ghost" onPress={() => router.back()} />
+            <Button label={tr('lesson.backToTopics')} variant="ghost" onPress={() => router.back()} />
           </View>
         </View>
       </Screen>
@@ -315,9 +317,9 @@ export default function LessonScreen() {
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 12 }}>
           <Icon name="book-open-check" size={40} color={t.colors.textMuted} />
           <Txt size={16} weight="600" align="center">
-            No lessons left in this topic
+            {tr('lesson.noLessons')}
           </Txt>
-          <Button label="Back to topics" variant="secondary" fullWidth={false} onPress={() => router.back()} />
+          <Button label={tr('lesson.backToTopics')} variant="secondary" fullWidth={false} onPress={() => router.back()} />
         </View>
       </Screen>
     );
@@ -369,7 +371,7 @@ export default function LessonScreen() {
 
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Read the question aloud"
+            accessibilityLabel={tr('question.readAloud')}
             onPress={() => speak(question.text, question.textLocale)}
             style={({ pressed }) => ({
               width: 44,
@@ -389,7 +391,7 @@ export default function LessonScreen() {
           <Row style={{ gap: 6 }}>
             <Icon name="info" size={15} color={t.colors.textMuted} />
             <Txt size={12} color={t.colors.textMuted}>
-              Tap the correct answer
+              {tr('question.tapAnswer')}
             </Txt>
           </Row>
         ) : null}
@@ -414,8 +416,8 @@ export default function LessonScreen() {
       <FeedbackSheet
         correct={isCorrect}
         translateY={sheetYValue}
-        explanation={question.explanation}
-        explanationTranslation={question.translation?.explanation}
+        // One language only: whichever is being learnt from.
+        explanation={question.translation?.explanation || question.explanation}
         correctAnswer={correctOption?.text ?? ''}
         correctAnswerTranslation={
           correctOption ? question.translation?.options[correctOption.id] : null

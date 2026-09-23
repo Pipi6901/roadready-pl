@@ -9,6 +9,7 @@ import { Button, ProgressBar, Row, Screen, ScreenScroll, Txt } from '@/component
 import { DAILY_GOAL_LESSONS } from '@/constants/rules';
 import { useProgress } from '@/store/ProgressProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 
 const HERO = 140;
 const BADGE = 120;
@@ -29,6 +30,7 @@ const CONFETTI = [
 
 export default function LessonCompleteScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const progress = useProgress();
   const params = useLocalSearchParams<{
@@ -73,7 +75,7 @@ export default function LessonCompleteScreen() {
     {
       icon: 'check',
       value: total,
-      label: 'Exercises',
+      label: tr('summary.exercises'),
       bg: t.colors.successBg,
       edge: t.colors.success,
       fg: t.colors.successDark,
@@ -82,7 +84,7 @@ export default function LessonCompleteScreen() {
       icon: 'zap',
       value: xp,
       celebrate: perfect,
-      label: 'XP earned',
+      label: tr('summary.xpEarned'),
       bg: t.colors.amber50,
       edge: t.colors.amber,
       fg: t.colors.amber,
@@ -92,7 +94,7 @@ export default function LessonCompleteScreen() {
       value: accuracy,
       suffix: '%',
       celebrate: accuracy === 100,
-      label: 'Accuracy',
+      label: tr('summary.accuracy'),
       bg: t.colors.sage100,
       edge: t.colors.onSurfaceAlt,
       fg: t.colors.onSurfaceAlt,
@@ -180,10 +182,10 @@ export default function LessonCompleteScreen() {
 
         <View style={{ alignItems: 'center', gap: 8 }}>
           <Txt size={24} weight="700" align="center">
-            Lesson complete!
+            {tr('lesson.completeTitle')}
           </Txt>
           <Txt size={14} color={t.colors.textSecondary} align="center" style={{ maxWidth: 260 }}>
-            You&apos;re one step closer to reaching your goals!
+            {tr('lesson.completeSubtitle')}
           </Txt>
         </View>
 
@@ -192,7 +194,7 @@ export default function LessonCompleteScreen() {
           {perfect ? (
             <Row
               accessible
-              accessibilityLabel="Perfect score"
+              accessibilityLabel={tr('lesson.perfect')}
               style={{
                 gap: 6,
                 paddingVertical: 8,
@@ -203,7 +205,7 @@ export default function LessonCompleteScreen() {
             >
               <Icon name="star" size={15} color={t.colors.amber} />
               <Txt size={13} weight="700" color={t.colors.amberDark}>
-                Perfect score!
+                {tr('lesson.perfect')}
               </Txt>
             </Row>
           ) : null}
@@ -275,7 +277,7 @@ export default function LessonCompleteScreen() {
         <View style={{ alignSelf: 'stretch', gap: 8 }}>
           <Row style={{ justifyContent: 'space-between' }}>
             <Txt size={12} weight="600" color={t.colors.textSecondary}>
-              Daily goal
+              {tr('home.dailyGoal')}
             </Txt>
             <Txt size={12} weight="600" color={t.colors.textSecondary}>
               {Math.min(progress.lessonsToday, DAILY_GOAL_LESSONS)}/{DAILY_GOAL_LESSONS} lessons
@@ -294,9 +296,9 @@ export default function LessonCompleteScreen() {
           />
         ) : null}
         {hasReview ? (
-          <SecondaryAction label="Review mistakes" onPress={() => router.replace('/weak-spots')} />
+          <SecondaryAction label={tr('lesson.reviewMistakes')} onPress={() => router.replace('/weak-spots')} />
         ) : null}
-        <Button label="Back to topics" variant="ghost" onPress={() => router.replace('/(tabs)/learn')} />
+        <Button label={tr('lesson.backToTopics')} variant="ghost" onPress={() => router.replace('/(tabs)/learn')} />
       </View>
     </Screen>
   );

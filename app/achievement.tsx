@@ -6,9 +6,11 @@ import { cardShadow } from '@/components/practice/shadow';
 import { Icon } from '@/components/ui/Icon';
 import { Button, Txt } from '@/components/ui/primitives';
 import { ACHIEVEMENT_META } from '@/constants/rules';
+import type { StringKey } from '@/features/i18n/strings';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
-const FALLBACK = { title: 'Achievement unlocked', description: 'Nice work!', icon: 'trophy' };
+const FALLBACK_ICON = 'trophy';
 
 /** Decorative sunburst behind the badge. */
 const BURST = Array.from({ length: 12 }, (_, i) => ({
@@ -36,13 +38,18 @@ const BURST_BOX = 140;
  */
 export default function AchievementModal() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const { ids } = useLocalSearchParams<{ ids?: string }>();
   const [index, setIndex] = React.useState(0);
 
   const list = React.useMemo(() => (ids ? ids.split(',').filter(Boolean) : []), [ids]);
   const id = list[index];
-  const meta = (id ? ACHIEVEMENT_META[id] : undefined) ?? FALLBACK;
+  const meta = id ? ACHIEVEMENT_META[id] : undefined;
+  // A celebration for an id this build does not know still has to read as a
+  // celebration rather than as a blank card.
+  const title = meta ? tr(`ach.${id}.title` as StringKey) : tr('ach.fallbackTitle');
+  const description = meta ? tr(`ach.${id}.desc` as StringKey) : tr('ach.fallbackDesc');
   const isLast = index >= list.length - 1;
 
   const advance = () => {
@@ -115,23 +122,24 @@ export default function AchievementModal() {
               borderColor: t.colors.accent,
             }}
           >
-            <Icon name={meta.icon} size={52} color={t.colors.onSurfaceAlt} />
+            <Icon name={meta?.icon ?? FALLBACK_ICON} size={52} color={t.colors.onSurfaceAlt} />
           </View>
         </View>
 
         <View style={{ gap: 8, alignItems: 'center' }}>
           <Txt size={13} weight="700" color={t.colors.amberDark} accessibilityRole="header">
-            ACHIEVEMENT UNLOCKED{list.length > 1 ? ` (${index + 1}/${list.length})` : ''}
+            {tr('ach.unlocked')}
+            {list.length > 1 ? ` (${index + 1}/${list.length})` : ''}
           </Txt>
           <Txt size={24} weight="700" align="center">
-            {meta.title}
+            {title}
           </Txt>
           <Txt size={14} color={t.colors.textSecondary} align="center" lineHeight={20}>
-            {meta.description}
+            {description}
           </Txt>
         </View>
 
-        <Button label={isLast ? 'Nice!' : 'Next'} icon="party-popper" onPress={advance} />
+        <Button label={isLast ? tr('ach.nice') : tr('ach.next')} icon="party-popper" onPress={advance} />
       </View>
     </View>
   );

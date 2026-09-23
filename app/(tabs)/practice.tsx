@@ -9,10 +9,12 @@ import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { HAZARD_ENABLED, useSubscription } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 
 /** Practice Hub — mockup frame "Practice Hub". */
 export default function PracticeScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const { country } = useContent();
   const progress = useProgress();
@@ -32,7 +34,7 @@ export default function PracticeScreen() {
   const mockBadges: PracticeCardBadge[] = [
     {
       icon: 'check',
-      label: `${mockAttempts} completed`,
+      label: tr('home.card.examAttempts', { count: mockAttempts }),
       bg: t.colors.sage100,
       fg: t.colors.onSurfaceAlt,
     },
@@ -42,7 +44,7 @@ export default function PracticeScreen() {
   const weakBadges: PracticeCardBadge[] = [
     {
       icon: 'target',
-      label: weakSpots ? `${weakSpots} questions` : 'No mistakes yet',
+      label: weakSpots ? tr('licence.questions', { count: weakSpots }) : tr('home.card.mistakesNone'),
       bg: t.colors.successBg,
       fg: t.colors.successText,
     },
@@ -53,7 +55,7 @@ export default function PracticeScreen() {
     <Screen>
       <ScreenScroll contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 20, gap: 20 }}>
         <Txt size={26} weight="700">
-          Practice
+          {tr('practice.title')}
         </Txt>
 
         <View style={{ gap: 14 }}>
@@ -63,8 +65,8 @@ export default function PracticeScreen() {
             iconEdge={t.colors.blue900}
             iconColor={t.colors.onBlue}
             iconSize={64}
-            title="Mock Test"
-            subtitle={`Simulate the real exam — ${questionCount} questions, ${timeLimitMinutes} minutes`}
+            title={tr('practice.mock')}
+            subtitle={tr('practice.mockSub', { count: questionCount, minutes: timeLimitMinutes })}
             badges={mockBadges}
             onPress={() => router.push('/mock/setup')}
           />
@@ -73,8 +75,8 @@ export default function PracticeScreen() {
             icon="list-checks"
             iconBg={t.colors.amber}
             iconEdge={t.colors.amberDark}
-            title="Quick Quiz"
-            subtitle={`${QUICK_QUIZ_SIZE} random questions — fast practice`}
+            title={tr('practice.quiz')}
+            subtitle={tr('practice.quizSub', { count: QUICK_QUIZ_SIZE })}
             onPress={() => router.push('/quiz')}
           />
 
@@ -98,8 +100,8 @@ export default function PracticeScreen() {
             icon="trending-down"
             iconBg={t.colors.success}
             iconEdge={t.colors.successDark}
-            title="Your Weak Spots"
-            subtitle="Questions you got wrong — adaptive review"
+            title={tr('practice.weak')}
+            subtitle={tr('practice.weakSub')}
             badges={weakBadges}
             disabled={weakSpots === 0}
             onPress={() => router.push('/weak-spots')}

@@ -3,10 +3,23 @@ import { Pressable, View } from 'react-native';
 
 import { Icon } from '@/components/ui/Icon';
 import { Row, Txt } from '@/components/ui/primitives';
-import { useDateLocale } from '@/features/i18n/useT';
+import { useDateLocale, useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
-const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+/**
+ * Monday-first weekday initials, from the platform's own calendar data —
+ * a hardcoded ['M','T','W'…] is English and reads as noise in every other
+ * interface language. 1 Jan 2024 was a Monday, which is all the anchor this
+ * needs. Falls back to the English initials if Intl has no weekday data.
+ */
+function weekdayInitials(locale: string): string[] {
+  try {
+    const fmt = new Intl.DateTimeFormat(locale, { weekday: 'narrow', timeZone: 'UTC' });
+    return Array.from({ length: 7 }, (_, i) => fmt.format(new Date(Date.UTC(2024, 0, 1 + i))));
+  } catch {
+    return ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  }
+}
 const WEEKS = 6;
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -27,6 +40,7 @@ interface ExamCalendarProps {
  */
 export function ExamCalendar({ selected, onSelect }: ExamCalendarProps) {
   const t = useTheme();
+  const tr = useT();
   const dateLocale = useDateLocale();
   const today = React.useMemo(() => startOfDay(new Date()), []);
   const [view, setView] = React.useState(() => {
@@ -83,7 +97,7 @@ export function ExamCalendar({ selected, onSelect }: ExamCalendarProps) {
       >
         <Icon name="target" size={12} color={t.colors.successDark} />
         <Txt variant="label" size={10} weight="700" color={t.colors.successDark}>
-          EXAM DATE
+          {tr('settings.section.examDate').toUpperCase()}
         </Txt>
       </Row>
 
@@ -96,7 +110,7 @@ export function ExamCalendar({ selected, onSelect }: ExamCalendarProps) {
       </Row>
 
       <Row style={{ gap: 4 }}>
-        {WEEKDAYS.map((label, i) => (
+        {weekdayInitials(dateLocale).map((label, i) => (
           <Txt
             key={`${label}-${i}`}
             size={11}

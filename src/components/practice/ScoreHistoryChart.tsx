@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Row, Txt } from '@/components/ui/primitives';
 import type { MockAttempt } from '@/store/ProgressProvider';
-import { useDateLocale } from '@/features/i18n/useT';
+import { useDateLocale, useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 import { cardShadow } from './shadow';
 
@@ -36,6 +36,7 @@ interface Props {
 
 export function ScoreHistoryChart({ attempts, passMark, scoreMax }: Props) {
   const t = useTheme();
+  const tr = useT();
   const dateLocale = useDateLocale();
 
   // mockAttempts is stored newest-first; a chart has to read left to right in
@@ -63,7 +64,7 @@ export function ScoreHistoryChart({ attempts, passMark, scoreMax }: Props) {
     >
       <Row style={{ alignItems: 'center' }}>
         <Txt size={14} weight="700" style={{ flex: 1 }}>
-          Your last results
+          {tr('practice.lastResults')}
         </Txt>
         <Txt size={12} color={t.colors.textSecondary}>
           Pass mark {passMark} / {scoreMax}

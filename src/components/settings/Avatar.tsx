@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { Txt } from '@/components/ui/primitives';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 
 /**
  * There is no account and no uploaded picture (ADR-002), so the avatar is
@@ -26,10 +27,11 @@ interface AvatarProps {
 
 export function Avatar({ name, size, radius, fontSize, edge = 3 }: AvatarProps) {
   const t = useTheme();
+  const tr = useT();
   return (
     <View
       accessible
-      accessibilityLabel={`Avatar for ${name}`}
+      accessibilityLabel={tr('profile.avatarA11y', { name })}
       style={{
         width: size,
         height: size,

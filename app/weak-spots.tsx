@@ -11,6 +11,7 @@ import { useContent } from '@/store/ContentProvider';
 import { useProgress } from '@/store/ProgressProvider';
 import { useSubscription } from '@/store/SubscriptionProvider';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/features/i18n/useT';
 import type { DisplayQuestion } from '@/types/content';
 
 /** How many of the worst-performing questions to draw a random session from.
@@ -35,6 +36,7 @@ function shuffledIds(ids: string[]): string[] {
  */
 export default function WeakSpotsScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const { questionId } = useLocalSearchParams<{ questionId?: string }>();
   const { getQuestion } = useContent();
@@ -73,7 +75,7 @@ export default function WeakSpotsScreen() {
       <ProLocked
         feature="weak_spots"
         icon="trending-down"
-        title="Weak Spots is a Pro feature"
+        title={tr('weak.proTitle')}
         body="Adaptive review of the questions you got wrong is part of RoadReady Pro. Lessons stay free."
       />
     );
@@ -96,12 +98,12 @@ export default function WeakSpotsScreen() {
             <Icon name="target" size={44} color={t.colors.successText} />
           </View>
           <Txt size={20} weight="700" align="center">
-            No mistakes to review — nice work
+            {tr('weak.none')}
           </Txt>
           <Txt size={14} color={t.colors.textSecondary} align="center" style={{ maxWidth: 280 }}>
             Questions you get wrong land here automatically, ready for a second look.
           </Txt>
-          <Button label="Back to Practice" onPress={backToPractice} />
+          <Button label={tr('mock.backToPractice')} onPress={backToPractice} />
         </View>
       </Screen>
     );
@@ -110,10 +112,10 @@ export default function WeakSpotsScreen() {
   return (
     <QuestionRunner
       questions={questions}
-      summaryTitle="Review complete!"
-      summarySubtitle="Answer a question correctly twice in a row and it leaves your weak spots."
+      summaryTitle={tr('weak.completeTitle')}
+      summarySubtitle={tr('weak.completeSubtitle')}
       onExit={backToPractice}
-      exitLabel="Back to Practice"
+      exitLabel={tr('mock.backToPractice')}
     />
   );
 }
