@@ -1,6 +1,8 @@
+import { useEventListener } from 'expo';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import React from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
@@ -70,6 +72,9 @@ function QuestionImage({ media }: { media: MediaAsset }) {
   );
 }
 
+/** How often the clip reports its position, in seconds. */
+const TICK = 0.25;
+
 function clipLength(durationMs?: number | null): string | null {
   if (!durationMs) return null;
   const total = Math.round(durationMs / 1000);
@@ -87,6 +92,8 @@ function QuestionVideo({ media }: { media: MediaAsset }) {
   // source while the clip downloads and the local file afterwards is fine.
   const player = useVideoPlayer(uri, (p) => {
     p.loop = false;
+    // Off by default, and the progress line has nothing to move on without it.
+    p.timeUpdateEventInterval = TICK;
     // Every clip in the ministry's archive is silent, and muted playback is
     // also the only kind iOS and the browsers will start on their own.
     p.muted = true;
@@ -95,6 +102,25 @@ function QuestionVideo({ media }: { media: MediaAsset }) {
     // exactly what makes an illustrated question look like the wrong picture.
     p.play();
   });
+
+  // Where the line under the clip has got to, 0..1. A shared value rather
+  // than state: the position arrives four times a second and this way it
+  // never costs a React render.
+  const progress = useSharedValue(0);
+  const seconds = (media.durationMs ?? 0) / 1000;
+
+  useEventListener(player, 'timeUpdate', ({ currentTime }) => {
+    const next = seconds > 0 ? Math.min(1, currentTime / seconds) : 0;
+    // Forwards it eases across the gap between ticks, so the line moves
+    // evenly instead of stepping; a replay jumps back at once, because
+    // watching the line crawl backwards reads as a bug.
+    progress.value =
+      next < progress.value
+        ? next
+        : withTiming(next, { duration: TICK * 1000, easing: Easing.linear });
+  });
+
+  const progressStyle = useAnimatedStyle(() => ({ width: `${progress.value * 100}%` }));
 
   // The play() above covers iOS and Android, where the player owns the
   // playback itself. On the web it cannot: expo-video's web player forwards
@@ -131,12 +157,30 @@ function QuestionVideo({ media }: { media: MediaAsset }) {
         style={StyleSheet.absoluteFill}
       />
 
+      {/* The line the clip is running along. Bottom edge of the frame, full
+          width, so "it is playing" is legible without looking for a badge. */}
+      <View
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 3,
+          backgroundColor: '#FFFFFF33',
+        }}
+      >
+        <Animated.View
+          style={[{ height: 3, backgroundColor: t.colors.accent }, progressStyle]}
+        />
+      </View>
+
       <View
         pointerEvents="none"
         style={{
           position: 'absolute',
           left: 8,
-          bottom: 8,
+          bottom: 11,
           flexDirection: 'row',
           alignItems: 'center',
           gap: 6,
