@@ -18,22 +18,50 @@ import { useTheme } from '@/theme/ThemeProvider';
 const SCREEN_PADDING = 20;
 /** Extra vertical room on the trail where the question class changes. */
 const SECTION_GAP = 64;
-/** Baseline vertical distance between node centres — actual spacing jitters
- *  around this, see nodes useMemo below. */
-const ROW_PITCH = 124;
+/** TopicNode's label metrics, which the row pitch is measured against. A
+ *  fixed pitch could not work: "Piesi, rowerzyści, przejazdy kolejowe" is
+ *  three lines and "Ekologia" is one, so whatever spacing suited the short
+ *  labels buried the long ones under the next node. */
+const LABEL_TOP = 6;
+const LABEL_LINE = 14;
+/** The "CONTINUE TOPIC" caption, on the current node only. */
+const LABEL_TAG = 13;
+/** Roughly how many characters fit on one line of NODE_LABEL_WIDTH at 11px.
+ *  Deliberately low: over-estimating the lines only adds air, while
+ *  under-estimating puts a node back on top of a label. */
+const LABEL_CHARS = 14;
+/** Hard cap, matched by numberOfLines on the label itself. */
+const MAX_NAME_LINES = 3;
+/** Air between one node's last line and the next node's top edge. */
+const ROW_BREATH = 22;
 /** Furthest a node can drift from the centre line. Bounded well inside the
  *  map width so the node's label (NODE_LABEL_WIDTH) and the roadside decor
  *  icons never clip off-screen on a narrow phone. */
 const MAX_OFFSET = 100;
-/** How much a row's vertical pitch can vary either way, so the trail doesn't
- *  read as a fixed-height ladder. */
-const PITCH_JITTER = 18;
+/** Extra pitch a row can pick up, so the trail doesn't read as a ladder.
+ *  Positive only — jitter that pulled rows together would undo the spacing
+ *  computed from the label above. */
+const PITCH_JITTER = 20;
 /** Vertical space the floating "Continue topic" card needs to clear before
  *  it stops overlapping whatever's scrolled beneath it. Used both as the
  *  map's baseline top padding (so the very first node — the common case for
  *  a brand-new learner, since topic 0 starts as "current" — never renders
  *  directly under the card) and as the auto-scroll margin for deeper nodes. */
 const CARD_CLEARANCE = 130;
+
+/** Deterministic 0..1 "random" from an integer seed — stable across
+ *  re-renders (no Math.random) so the map's shape doesn't jump around every
+ *  time progress changes elsewhere in the app. */
+/** How much room a node's label needs below its centre. */
+function labelHeight(name: string, isCurrent: boolean): number {
+  const lines = Math.min(MAX_NAME_LINES, Math.max(1, Math.ceil(name.length / LABEL_CHARS)));
+  // +1 line for the "mastered / total" row under the name.
+  return LABEL_TOP + (isCurrent ? LABEL_TAG : 0) + (lines + 1) * LABEL_LINE;
+}
+
+function halfNode(state: TopicNodeState): number {
+  return (state === 'current' ? NODE_SIZE_CURRENT : NODE_SIZE) / 2;
+}
 
 /** Deterministic 0..1 "random" from an integer seed — stable across
  *  re-renders (no Math.random) so the map's shape doesn't jump around every
@@ -76,14 +104,21 @@ export default function LearnScreen() {
     // the shape stays put across re-renders instead of reshuffling every
     // time progress changes.
     let prevOffset = 0;
-    let y = NODE_SIZE / 2;
+
+    // No locked state any more: every section is open from the first launch.
+    // What a node shows is how far through it the learner is. Computed up
+    // front because the row spacing below needs the PREVIOUS node's state —
+    // the current one is drawn larger and carries an extra caption.
+    const states: TopicNodeState[] = stats.map(({ stat }, i) => {
+      if (stat.completed) return 'completed';
+      if (i === currentIndex) return 'current';
+      return stat.started ? 'started' : 'available';
+    });
+
+    let y = halfNode(states[0] ?? 'available');
 
     return stats.map(({ topic, stat }, i) => {
-      // No locked state any more: every section is open from the first
-      // launch. What the node shows is how far through it the learner is.
-      let state: TopicNodeState = stat.started ? 'started' : 'available';
-      if (stat.completed) state = 'completed';
-      else if (i === currentIndex) state = 'current';
+      const state = states[i];
 
       // The route runs through the basic sections first and the specialist
       // ones after, because that is the order of the paper itself. Where the
@@ -91,7 +126,14 @@ export default function LearnScreen() {
       // should be able to see, while scrolling, that the exam has two halves.
       const startsSpecialist = i > 0 && stats[i - 1].topic.category !== topic.category;
       if (i > 0) {
-        y += ROW_PITCH + (pseudoRandom(i * 3.17 + 11) * 2 - 1) * PITCH_JITTER;
+        // Measured, not fixed: whatever the label above actually needs, plus
+        // air, plus this node's own top half.
+        y +=
+          halfNode(states[i - 1]) +
+          labelHeight(stats[i - 1].topic.name, states[i - 1] === 'current') +
+          ROW_BREATH +
+          pseudoRandom(i * 3.17 + 11) * PITCH_JITTER +
+          halfNode(state);
         if (startsSpecialist) y += SECTION_GAP;
       }
       const offset = i === 0 ? 0 : Math.round(
@@ -111,7 +153,11 @@ export default function LearnScreen() {
   }, [topics, progress, centreX]);
 
   const current = nodes.find((n) => n.state === 'current');
-  const mapHeight = nodes.length ? nodes[nodes.length - 1].y + NODE_SIZE / 2 + 60 : 0;
+  const last = nodes[nodes.length - 1];
+  // Room for the final label too, or the bottom of the trail gets clipped.
+  const mapHeight = last
+    ? last.y + halfNode(last.state) + labelHeight(last.topic.name, last.state === 'current') + 40
+    : 0;
   const routePoints: RoutePoint[] = nodes.map((n) => ({ x: n.x, y: n.y }));
 
   const scrollRef = React.useRef<ScrollView>(null);

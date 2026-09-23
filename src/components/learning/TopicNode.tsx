@@ -23,11 +23,11 @@ interface TopicNodeProps {
   onPress?: () => void;
 }
 
-const STATE_TEXT: Record<TopicNodeState, string> = {
-  completed: 'completed',
-  current: 'in progress',
-  available: 'not started',
-  started: 'in progress',
+const STATE_KEY: Record<TopicNodeState, 'topic.completed' | 'topic.inProgress' | 'topic.notStarted'> = {
+  completed: 'topic.completed',
+  current: 'topic.inProgress',
+  available: 'topic.notStarted',
+  started: 'topic.inProgress',
 };
 
 export function TopicNode({ state, icon, name, mastered, total, onPress }: TopicNodeProps) {
@@ -75,7 +75,7 @@ export function TopicNode({ state, icon, name, mastered, total, onPress }: Topic
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${name}, ${mastered} of ${total} questions mastered, ${STATE_TEXT[state]}`}
+      accessibilityLabel={`${name}. ${tr('topic.mastered', { done: mastered, total })}. ${tr(STATE_KEY[state])}`}
       accessibilityState={{ disabled: !onPress }}
       disabled={!onPress}
       onPress={onPress}
@@ -110,15 +110,21 @@ export function TopicNode({ state, icon, name, mastered, total, onPress }: Topic
             {tr('learn.continueTopic').toUpperCase()}
           </Txt>
         ) : null}
+        {/* Name and count as separate lines, not one string with a
+            newline: the map measures this label to space its rows (see
+            learn.tsx), and numberOfLines can only hold that estimate if
+            the count is not competing with the name for the same lines. */}
         <Txt
           size={11}
           weight="600"
           align="center"
           lineHeight={14}
+          numberOfLines={3}
           color={t.colors.textPrimary}
         >
           {name}
-          {'\n'}
+        </Txt>
+        <Txt size={11} weight="600" align="center" lineHeight={14} color={t.colors.textPrimary}>
           {mastered}/{total}
         </Txt>
       </View>
