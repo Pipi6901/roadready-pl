@@ -35,6 +35,7 @@ workflows:
     environment:
       groups:
         - app_store_vars
+        - release_announce # GITHUB_ANNOUNCE_TOKEN: анонс релиза в Telegram, scripts/announce-release.sh
       node: 20.11.1
       xcode: latest
       cocoapods: default
@@ -140,6 +141,10 @@ workflows:
           done
           exit 1
 
+      - name: Сборка дошла до конца
+        # Маркер для анонса релиза: post-publish скрипты Codemagic идут и на упавшей сборке
+        script: touch ~/BUILD_OK
+
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
@@ -156,3 +161,10 @@ workflows:
         # published — an external group goes through Beta App Review, and both
         # of those are what it would fail on.
         submit_to_testflight: true
+      scripts:
+        - name: Анонс релиза в Telegram
+          script: |
+            # Анонс сам решает, новая ли это версия: сборка без нового выпуска в CHANGELOG ничего не шлет
+            [ -f ~/BUILD_OK ] || { echo "сборка не дошла до конца, анонса нет"; exit 0; }
+            cd "$CM_BUILD_DIR"
+            bash scripts/announce-release.sh ios TestFlight "$(ls build/ios/ipa/*.ipa | head -1)"
