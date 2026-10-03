@@ -1,0 +1,77 @@
+# Анонс мобильного релиза в Telegram.
+#
+# Зовется после загрузки сборки в стор: из Codemagic (post-publish, scripts/announce-release.sh)
+# или руками после fastlane / eas submit. Анонс сам решает, новая ли это версия: сборка без
+# нового выпуска в CHANGELOG ничего не шлет, а первая сборка второй платформы той же версии
+# дает короткое сообщение вместо повтора заметок.
+#
+# Файл обязан жить в ветке по умолчанию: GitHub запускает workflow_dispatch только оттуда.
+# Коммит сборки передается входом sha и может лежать в любой ветке.
+name: announce
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Коммит, из которого собрана сборка
+        required: true
+      platform:
+        description: Платформа загруженной сборки
+        type: choice
+        options: [ios, android]
+        required: true
+      channel:
+        description: Куда загружена (TestFlight, Google Play internal)
+        default: ""
+      build:
+        description: Номер сборки в сторе
+        default: ""
+      store_version:
+        description: Версия внутри бинарника, должна совпасть с верхней в CHANGELOG
+        default: ""
+      mode:
+        type: choice
+        options: [release, rollback]
+        default: release
+      reason:
+        description: Причина, обязательна для rollback
+        default: ""
+      dry_run:
+        description: Только показать сообщение, ничего не создавать и не слать
+        type: boolean
+        default: false
+
+concurrency:
+  group: announce
+  cancel-in-progress: false
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha }}
+
+      - name: announce the release
+        # копия alexander0999/release-kit/announce v1.0.0: приватный action другого
+        # владельца отсюда не виден, правки action переносятся сюда вручную
+        uses: ./.github/release-kit/announce
+        with:
+          product: RoadReady PL
+          sha: ${{ inputs.sha }}
+          platform: ${{ inputs.platform }}
+          channel: ${{ inputs.channel }}
+          build: ${{ inputs.build }}
+          store_version: ${{ inputs.store_version }}
+          mode: ${{ inputs.mode }}
+          reason: ${{ inputs.reason }}
+          dry_run: ${{ inputs.dry_run }}
+          warn_if_announced: "true"
+          version_file: app.json
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_RELEASE_CHAT_ID: ${{ vars.TELEGRAM_RELEASE_CHAT_ID }}
+          GH_TOKEN: ${{ github.token }}

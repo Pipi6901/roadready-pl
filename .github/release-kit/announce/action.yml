@@ -1,0 +1,88 @@
+name: announce
+description: >-
+  Announce a mobile release after the store upload: GitHub release vX.Y.Z on the built
+  commit and a message in the Telegram group. A version that was announced before is
+  skipped, a new platform of it gets a short follow-up.
+
+inputs:
+  product:
+    description: Name in the message title, the app name (Kepler, Lorica)
+    required: true
+  sha:
+    description: The commit the store build was made from; it must be checked out
+    required: true
+  mode:
+    description: release (default) or rollback
+    default: release
+  reason:
+    description: Why, required with rollback
+    default: ""
+  platform:
+    description: ios or android, the platform of the uploaded build
+    default: ""
+  channel:
+    description: Where the build went, e.g. TestFlight or Google Play internal
+    default: ""
+  build:
+    description: Build number in the store
+    default: ""
+  store_version:
+    description: The version inside the uploaded binary; must equal the CHANGELOG top
+    default: ""
+  changelog:
+    description: Path to the changelog in the repository
+    default: CHANGELOG.md
+  tag_prefix:
+    description: Tag prefix; a monorepo with several pipelines gives each its own
+    default: v
+  version_file:
+    description: app.json, app.config.ts, project.pbxproj or build.gradle whose version must match
+    default: ""
+  dry_run:
+    description: '"true" prints the message and the plan, creates and sends nothing'
+    default: "false"
+  warn_if_announced:
+    description: '"true" leaves a warning when the build carries no new version'
+    default: "false"
+
+outputs:
+  version:
+    description: The top released version in the changelog
+    value: ${{ steps.announce.outputs.version }}
+  tag:
+    description: The release tag
+    value: ${{ steps.announce.outputs.tag }}
+  announced:
+    description: true when a message was sent
+    value: ${{ steps.announce.outputs.announced }}
+
+runs:
+  using: composite
+  steps:
+    - id: announce
+      shell: bash
+      env:
+        IN_PRODUCT: ${{ inputs.product }}
+        IN_SHA: ${{ inputs.sha }}
+        IN_MODE: ${{ inputs.mode }}
+        IN_REASON: ${{ inputs.reason }}
+        IN_PLATFORM: ${{ inputs.platform }}
+        IN_CHANNEL: ${{ inputs.channel }}
+        IN_BUILD: ${{ inputs.build }}
+        IN_STORE_VERSION: ${{ inputs.store_version }}
+        IN_CHANGELOG: ${{ inputs.changelog }}
+        IN_TAG_PREFIX: ${{ inputs.tag_prefix }}
+        IN_VERSION_FILE: ${{ inputs.version_file }}
+        IN_DRY_RUN: ${{ inputs.dry_run }}
+        IN_WARN: ${{ inputs.warn_if_announced }}
+      run: |
+        args=(
+          --product "$IN_PRODUCT" --sha "$IN_SHA" --repo "$GITHUB_REPOSITORY"
+          --mode "$IN_MODE" --reason "$IN_REASON"
+          --platform "$IN_PLATFORM" --channel "$IN_CHANNEL" --build "$IN_BUILD"
+          --store-version "$IN_STORE_VERSION" --changelog "$IN_CHANGELOG"
+          --tag-prefix "$IN_TAG_PREFIX" --version-file "$IN_VERSION_FILE"
+        )
+        [ "$IN_DRY_RUN" = "true" ] && args+=(--dry-run)
+        [ "$IN_WARN" = "true" ] && args+=(--warn-if-announced)
+        python3 "$GITHUB_ACTION_PATH/announce.py" "${args[@]}"
