@@ -218,8 +218,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const uiLocaleCode = settings.uiLocale ?? deviceUiLocale();
     let daysUntilExam: number | null = null;
     if (settings.examDate) {
+      // Rounded, not ceiled: both ends are local midnights, so the gap between
+      // them is a whole number of days — except across a clock change, where it
+      // comes out an hour short or an hour long. Poland puts its clocks back on
+      // 25 October, and ceil turned that extra hour into an extra day: an exam
+      // six days out read as seven. Rounding lands on the right day either way.
       const diff = new Date(settings.examDate).setHours(0, 0, 0, 0) - today;
-      daysUntilExam = Math.max(0, Math.ceil(diff / 86_400_000));
+      daysUntilExam = Math.max(0, Math.round(diff / 86_400_000));
     }
     return {
       ...settings,
