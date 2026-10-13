@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RoadReady PL — Pomoc / Support</title>
+<meta name="description" content="Pomoc i kontakt dla aplikacji RoadReady PL do nauki na egzamin teoretyczny na prawo jazdy. Support and contact for the RoadReady PL driving theory app.">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f6f8fa;
+    --border: #e2e8f0;
+    --text: #17242f;
+    --muted: #5b6b7a;
+    --accent: #123a5c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1720;
+      --surface: #16222e;
+      --border: #26364a;
+      --text: #e8eef4;
+      --muted: #9fb0c0;
+      --accent: #7cc0f0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0 20px 80px;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 760px; margin: 0 auto; }
+  header { padding: 56px 0 8px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.02em; }
+  h2 {
+    font-size: 1.15rem;
+    margin: 40px 0 12px;
+    letter-spacing: -0.01em;
+    color: var(--accent);
+  }
+  .updated { color: var(--muted); font-size: 0.9rem; margin: 0 0 24px; }
+  .lang-switch { display: flex; gap: 8px; margin: 0 0 16px; }
+  .lang-switch button {
+    font: inherit; font-size: 0.9rem; cursor: pointer;
+    padding: 6px 14px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  }
+  .lang-switch button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .contact {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin: 0 0 8px;
+  }
+  .contact h2 { margin-top: 0; }
+  p, ul, ol { margin: 0 0 14px; }
+  li + li { margin-top: 4px; }
+  a { color: var(--accent); }
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+  [data-lang][hidden] { display: none; }
+</style>
+</head>
+<body>
+<main>
+
+<div class="lang-switch" role="group" aria-label="Język / Language" hidden id="langSwitch">
+  <button type="button" data-set-lang="pl" aria-pressed="true">Polski</button>
+  <button type="button" data-set-lang="en" aria-pressed="false">English</button>
+</div>
+
+<!-- ============================================================ -->
+<!-- POLSKI                                                        -->
+<!-- ============================================================ -->
+<section data-lang="pl" lang="pl">
+
+<header>
+  <h1>RoadReady PL — Pomoc</h1>
+  <p class="updated">Ostatnia aktualizacja: 13 października 2026 r.</p>
+</header>
+
+<div class="contact">
+  <h2>Kontakt</h2>
+  <p>Napisz na <a href="mailto:help@pmoffice.space">help@pmoffice.space</a>. Odpowiadamy w ciągu 14 dni, zwykle szybciej.</p>
+  <p>Żeby sprawa poszła szybciej, podaj: model telefonu i wersję systemu, wersję aplikacji (Ustawienia → O aplikacji), a w sprawach subskrypcji — sklep i przybliżoną datę zakupu.</p>
+</div>
+
+<h2>Czym jest ta aplikacja</h2>
+<p>RoadReady PL przygotowuje do części teoretycznej egzaminu państwowego na prawo jazdy w Polsce. Pytania pochodzą z oficjalnej bazy pytań egzaminacyjnych publikowanej przez ministra właściwego do spraw transportu. Pod każdym pytaniem można włączyć tłumaczenie na jeden z sześciu języków, a cały interfejs aplikacji również jest przetłumaczony.</p>
+
+<h2>Nie pamiętam, co jest bezpłatne</h2>
+<p>Bezpłatnie: lekcje bez limitu, wszystkie tłumaczenia, wyjaśnienia do pytań, lektor i tryb offline.</p>
+<p>RoadReady Pro: egzamin próbny w formule WORD i tryb pracy nad błędami.</p>
+
+<h2>Kupiłem subskrypcję, ale funkcje się nie odblokowały</h2>
+<p>Otwórz Ustawienia → Przywróć zakup, będąc zalogowanym na to samo konto App Store, z którego dokonano zakupu. Jeżeli to nie pomoże, napisz do nas i podaj przybliżoną datę zakupu.</p>
+
+<h2>Jak anulować subskrypcję</h2>
+<p>Subskrypcja jest rozliczana przez App Store, więc anuluje się ją w ustawieniach konta: Ustawienia telefonu → [Twoje imię] → Subskrypcje. Usunięcie aplikacji nie anuluje subskrypcji. Po anulowaniu zachowujesz dostęp do funkcji Pro do końca opłaconego okresu.</p>
+
+<h2>Zwrot płatności</h2>
+<p>Zwroty za zakupy w App Store rozpatruje Apple: <a href="https://reportaproblem.apple.com" rel="noopener">reportaproblem.apple.com</a>. Jeżeli Apple odmówi, a uważasz, że zwrot Ci przysługuje, napisz do nas.</p>
+
+<h2>Zgubiłem postępy po zmianie telefonu</h2>
+<p>Postępy w nauce są przechowywane wyłącznie na urządzeniu i nie są wysyłane na żaden serwer — tak zaprojektowaliśmy aplikację, żeby nie zbierać danych o uczących się. Oznacza to jednak, że po zmianie telefonu lub odinstalowaniu aplikacji postępów nie da się odtworzyć. Sama subskrypcja jest powiązana z kontem App Store, więc ona przenosi się bez problemu.</p>
+
+<h2>Znalazłem błąd w pytaniu lub w tłumaczeniu</h2>
+<p>Napisz na <a href="mailto:help@pmoffice.space">help@pmoffice.space</a> i podaj treść pytania. Tłumaczenia i wyjaśnienia są naszym opracowaniem i poprawiamy je na bieżąco — poprawki trafiają do aplikacji wraz z aktualizacją treści, bez potrzeby aktualizowania samej aplikacji.</p>
+
+<h2>Aplikacja zajmuje dużo miejsca</h2>
+<p>Ilustracje i klipy do pytań pobierane są na urządzenie, żeby działały bez internetu. Można je usunąć w Ustawieniach → Offline. Pytania zostaną, a materiały pobiorą się ponownie, gdy będą potrzebne.</p>
+
+<h2>Dokumenty</h2>
+<p><a href="https://pmoffice.space/roadready-pl-privacy.html">Polityka prywatności</a> · <a href="https://pmoffice.space/roadready-pl-terms.html">Regulamin</a></p>
+
+<footer>
+  RoadReady PL jest niezależną aplikacją do nauki. Pytania egzaminacyjne oraz towarzyszące im ilustracje i klipy pochodzą z oficjalnej bazy pytań stosowanych na egzaminie państwowym, udostępnianej publicznie przez ministra właściwego do spraw transportu. RoadReady PL nie jest powiązana z Ministerstwem Infrastruktury, Wojewódzkimi Ośrodkami Ruchu Drogowego (WORD) ani żadnym organem państwowym.
+</footer>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- ENGLISH                                                       -->
+<!-- ============================================================ -->
+<section data-lang="en" lang="en" hidden>
+
+<header>
+  <h1>RoadReady PL — Support</h1>
+  <p class="updated">Last updated: 13 October 2026</p>
+</header>
+
+<div class="contact">
+  <h2>Contact</h2>
+  <p>Write to <a href="mailto:help@pmoffice.space">help@pmoffice.space</a>. We reply within 14 days, usually sooner.</p>
+  <p>To speed things up, include: your phone model and system version, the app version (Settings → App version), and for subscription questions, the store and the approximate purchase date.</p>
+</div>
+
+<h2>What this app is</h2>
+<p>RoadReady PL prepares you for the theory part of the Polish state driving examination. The questions come from the official bank of examination questions published by the minister responsible for transport. A translation into one of six languages can be shown under every question, and the app's own interface is translated as well.</p>
+
+<h2>What is free</h2>
+<p>Free: unlimited lessons, all translations, question explanations, text-to-speech and offline mode.</p>
+<p>RoadReady Pro: the WORD-style mock exam and weak-spot practice.</p>
+
+<h2>I subscribed but nothing unlocked</h2>
+<p>Open Settings → Restore Purchase while signed in to the same App Store account you bought with. If that does not help, write to us with the approximate purchase date.</p>
+
+<h2>How to cancel</h2>
+<p>The subscription is billed by the App Store, so it is cancelled in your account settings: phone Settings → [your name] → Subscriptions. Deleting the app does not cancel the subscription. After cancelling you keep Pro features until the end of the period already paid for.</p>
+
+<h2>Refunds</h2>
+<p>Refunds for App Store purchases are handled by Apple at <a href="https://reportaproblem.apple.com" rel="noopener">reportaproblem.apple.com</a>. If Apple refuses and you believe you are entitled to one, write to us.</p>
+
+<h2>I lost my progress after changing phones</h2>
+<p>Learning progress is stored on the device only and is never sent to a server — that is deliberate, so that no database of learners exists. The consequence is that progress cannot be recovered after changing phones or reinstalling. The subscription itself is tied to your App Store account and carries over without trouble.</p>
+
+<h2>I found a mistake in a question or a translation</h2>
+<p>Write to <a href="mailto:help@pmoffice.space">help@pmoffice.space</a> and quote the question. Translations and explanations are our own work and we correct them as we go; corrections reach the app with a content update, without updating the app itself.</p>
+
+<h2>The app takes up a lot of space</h2>
+<p>Question illustrations and clips are downloaded to the device so they work without a connection. You can delete them in Settings → Offline. The questions stay, and the media is fetched again when needed.</p>
+
+<h2>Documents</h2>
+<p><a href="https://pmoffice.space/roadready-pl-privacy.html">Privacy Policy</a> · <a href="https://pmoffice.space/roadready-pl-terms.html">Terms of Use</a></p>
+
+<footer>
+  RoadReady PL is an independent study app. The examination questions and their accompanying illustrations and clips come from the official bank of questions used in the Polish state driving examination, made publicly available by the minister responsible for transport. RoadReady PL is not affiliated with the Ministry of Infrastructure, the Voivodeship Road Traffic Centres (WORD) or any government body.
+</footer>
+
+</section>
+
+</main>
+
+<script>
+(function () {
+  var sections = document.querySelectorAll('[data-lang]');
+  var buttons = document.querySelectorAll('[data-set-lang]');
+  var sw = document.getElementById('langSwitch');
+  if (!sections.length) return;
+  sw.hidden = false;
+  function setLang(lang) {
+    for (var i = 0; i < sections.length; i++) sections[i].hidden = sections[i].getAttribute('data-lang') !== lang;
+    for (var j = 0; j < buttons.length; j++) buttons[j].setAttribute('aria-pressed', String(buttons[j].getAttribute('data-set-lang') === lang));
+    document.documentElement.lang = lang;
+    try { localStorage.setItem('rr-lang', lang); } catch (e) {}
+  }
+  for (var k = 0; k < buttons.length; k++) {
+    buttons[k].addEventListener('click', function () { setLang(this.getAttribute('data-set-lang')); });
+  }
+  var pick = null;
+  try { pick = new URLSearchParams(location.search).get('lang'); } catch (e) {}
+  if (pick !== 'pl' && pick !== 'en') { try { pick = localStorage.getItem('rr-lang'); } catch (e) {} }
+  if (pick !== 'pl' && pick !== 'en') pick = /^pl/i.test(navigator.language || '') ? 'pl' : 'en';
+  setLang(pick);
+})();
+</script>
+<noscript><style>[data-lang][hidden] { display: block; } #langSwitch { display: none; }</style></noscript>
+</body>
+</html>
