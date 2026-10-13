@@ -1,5 +1,7 @@
 import * as Notifications from 'expo-notifications';
 
+import { translate } from '@/features/i18n/useT';
+
 /**
  * Local daily lesson reminder. No backend involved — this is a device-local
  * scheduled notification, not a push notification (nothing is sent from a
@@ -30,15 +32,22 @@ export async function requestNotificationPermission(): Promise<boolean> {
   return requested.status === 'granted';
 }
 
-/** `time` is `"HH:MM"`. Replaces any previously scheduled reminder. */
-export async function scheduleDailyReminder(time: string): Promise<void> {
+/**
+ * `time` is `"HH:MM"`. Replaces any previously scheduled reminder.
+ *
+ * The locale is passed in rather than read here: the notification's text is
+ * baked in when it is scheduled, so it has to be rewritten whenever the
+ * interface language changes — which is exactly when SettingsProvider calls
+ * this again.
+ */
+export async function scheduleDailyReminder(time: string, uiLocale: string): Promise<void> {
   const [hour, minute] = time.split(':').map(Number);
   await cancelDailyReminder();
   await Notifications.scheduleNotificationAsync({
     identifier: REMINDER_ID,
     content: {
-      title: 'Time to practise',
-      body: 'A few minutes today keeps your streak alive.',
+      title: translate(uiLocale, 'notif.title'),
+      body: translate(uiLocale, 'notif.body'),
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,

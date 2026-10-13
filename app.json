@@ -2,14 +2,17 @@
   "expo": {
     "name": "RoadReady PL",
     "slug": "roadready-pl",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "roadreadypl",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.astonio.roadreadypl"
+      "bundleIdentifier": "com.astonio.roadreadypl",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +30,12 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
-      "expo-audio",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false
+        }
+      ],
       "expo-video",
       "expo-notifications"
     ],

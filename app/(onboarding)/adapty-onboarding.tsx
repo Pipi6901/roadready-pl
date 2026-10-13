@@ -8,6 +8,7 @@ import { EVENTS, track } from '@/features/analytics/analytics';
 import { loadOnboarding, OnboardingLoadError } from '@/features/onboarding/loadOnboarding';
 import { useSettings } from '@/store/SettingsProvider';
 import { afterOnboarding } from '@/features/onboarding/afterOnboarding';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 /**
@@ -22,6 +23,7 @@ import { useTheme } from '@/theme/ThemeProvider';
  */
 export default function AdaptyOnboardingScreen() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const { licenceChosen, update } = useSettings();
   const [onboarding, setOnboarding] = React.useState<AdaptyOnboarding | null>(null);
@@ -78,7 +80,7 @@ export default function AdaptyOnboardingScreen() {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, backgroundColor: t.colors.bg }}>
         <Txt size={14} weight="700" align="center">
-          Adapty onboarding failed to load
+          {tr('onboarding.adaptyFailed')}
         </Txt>
         <Txt size={12} color={t.colors.textSecondary} align="center">
           {error}
@@ -89,7 +91,7 @@ export default function AdaptyOnboardingScreen() {
           style={{ paddingVertical: 12, paddingHorizontal: 20, backgroundColor: t.colors.blue800, borderRadius: t.radius.md }}
         >
           <Txt size={14} weight="700" color={t.colors.onBlue}>
-            Continue to paywall
+            {tr('onboarding.toPaywall')}
           </Txt>
         </Pressable>
         <Pressable
@@ -99,7 +101,7 @@ export default function AdaptyOnboardingScreen() {
           style={{ paddingVertical: 12, paddingHorizontal: 20 }}
         >
           <Txt size={14} weight="600" color={t.colors.textSecondary}>
-            Skip and start learning
+            {tr('onboarding.skip')}
           </Txt>
         </Pressable>
       </View>

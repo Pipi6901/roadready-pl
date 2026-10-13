@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 
 import { deviceUiLocale, findLocale, findUiLocale, isExamLanguage } from '@/features/i18n/locales';
 import { cancelDailyReminder, hasNotificationPermission, scheduleDailyReminder } from '@/features/notifications/reminders';
@@ -136,6 +137,20 @@ function migrate(stored: Partial<Settings>): Partial<Settings> {
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
   const [ready, setReady] = useState(false);
+
+  // Midnight of the current day, kept in state rather than read during render.
+  // The days-to-exam counter used to take Date.now() inside the memo below,
+  // which froze it to whenever that memo last ran: an app left open overnight
+  // went on saying the exam was in the same number of days it was yesterday.
+  // The foreground event is the only moment the date can have moved under a
+  // running app, so that is when it is re-read.
+  const [today, setToday] = useState(() => new Date().setHours(0, 0, 0, 0));
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') setToday(new Date().setHours(0, 0, 0, 0));
+    });
+    return () => sub.remove();
+  }, []);
   // Patches made before storage has been read. Persisting one of those
   // straight away would write DEFAULTS-plus-patch over whatever is stored:
   // a cold start that lands on the paywall and calls update({ onboarded })
@@ -168,10 +183,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       if (await hasNotificationPermission()) {
-        await scheduleDailyReminder(settings.reminderTime);
+        await scheduleDailyReminder(settings.reminderTime, settings.uiLocale ?? deviceUiLocale());
       }
     })();
-  }, [ready, settings.dailyReminder, settings.reminderTime]);
+    // uiLocale is in here because the notification's text is written when it
+    // is scheduled: changing the interface language has to reschedule it, or
+    // tomorrow's reminder arrives in yesterday's language.
+  }, [ready, settings.dailyReminder, settings.reminderTime, settings.uiLocale]);
 
   const update = useCallback((patch: Partial<Settings>) => {
     if (!readyRef.current) {
@@ -200,7 +218,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const uiLocaleCode = settings.uiLocale ?? deviceUiLocale();
     let daysUntilExam: number | null = null;
     if (settings.examDate) {
-      const diff = new Date(settings.examDate).getTime() - Date.now();
+      const diff = new Date(settings.examDate).setHours(0, 0, 0, 0) - today;
       daysUntilExam = Math.max(0, Math.ceil(diff / 86_400_000));
     }
     return {
@@ -221,7 +239,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       uiLocaleName: findUiLocale(uiLocaleCode)?.nameNative ?? uiLocaleCode,
       daysUntilExam,
     };
-  }, [settings, ready, update, reset]);
+  }, [settings, ready, update, reset, today]);
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
 }

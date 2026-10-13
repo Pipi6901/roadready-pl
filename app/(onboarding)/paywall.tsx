@@ -5,6 +5,7 @@ import RevenueCatUI from 'react-native-purchases-ui';
 
 import { BILLING_CONFIGURED, ENTITLEMENT_ID } from '@/constants/billing';
 import { EVENTS, track } from '@/features/analytics/analytics';
+import { translate } from '@/features/i18n/useT';
 import { useSettings } from '@/store/SettingsProvider';
 import { afterOnboarding } from '@/features/onboarding/afterOnboarding';
 
@@ -19,7 +20,7 @@ import { afterOnboarding } from '@/features/onboarding/afterOnboarding';
  */
 export default function PaywallScreen() {
   const router = useRouter();
-  const { licenceChosen, update } = useSettings();
+  const { licenceChosen, update, uiLocaleCode } = useSettings();
   // Четыре точки входа на пейвол: онбординг, упёрся в дневной лимит, конец
   // триала, настройки. Без разделения их конверсии усредняются в одно число,
   // по которому нельзя понять ничего.
@@ -63,10 +64,8 @@ export default function PaywallScreen() {
         const restored = !!customerInfo.entitlements.active[ENTITLEMENT_ID];
         track(EVENTS.purchaseRestored, { restored });
         Alert.alert(
-          restored ? 'Purchase restored' : 'Nothing to restore',
-          restored
-            ? 'Your subscription is active again.'
-            : 'We found no previous purchase for this store account.',
+          translate(uiLocaleCode, restored ? 'settings.restore.restoredTitle' : 'settings.restore.nothingTitle'),
+          translate(uiLocaleCode, restored ? 'settings.restore.restoredBody' : 'settings.restore.nothingBody'),
         );
         if (restored) finishOnboarding();
       }}

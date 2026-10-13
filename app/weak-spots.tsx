@@ -76,7 +76,7 @@ export default function WeakSpotsScreen() {
         feature="weak_spots"
         icon="trending-down"
         title={tr('weak.proTitle')}
-        body="Adaptive review of the questions you got wrong is part of RoadReady Pro. Lessons stay free."
+        body={tr('weak.proBody')}
       />
     );
   }
@@ -101,7 +101,7 @@ export default function WeakSpotsScreen() {
             {tr('weak.none')}
           </Txt>
           <Txt size={14} color={t.colors.textSecondary} align="center" style={{ maxWidth: 280 }}>
-            Questions you get wrong land here automatically, ready for a second look.
+            {tr('weak.emptyBody')}
           </Txt>
           <Button label={tr('mock.backToPractice')} onPress={backToPractice} />
         </View>

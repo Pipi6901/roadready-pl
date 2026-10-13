@@ -30,28 +30,31 @@ export default function MockSetupScreen() {
   // rather than 68 / 32. Falls back to the question count where every
   // question is worth one.
   const scoreMax = maxPoints ?? questionCount;
+  const passValue = maxPoints
+    ? `${passMark} / ${scoreMax} ${tr('mock.pointsUnit')}`
+    : `${passMark} / ${scoreMax}`;
 
   const rows: { icon: IconName; iconBg: string; iconColor: string; label: string; value: string }[] = [
     {
       icon: 'list-checks',
       iconBg: t.colors.sage100,
       iconColor: t.colors.onSurfaceAlt,
-      label: 'Questions',
+      label: tr('mock.setup.questions'),
       value: `${questionCount}`,
     },
     {
       icon: 'timer',
       iconBg: t.colors.amber50,
       iconColor: t.colors.amberDark,
-      label: 'Time limit',
-      value: `${timeLimitMinutes} min`,
+      label: tr('mock.setup.timeLimit'),
+      value: tr('mock.setup.minutes', { count: timeLimitMinutes }),
     },
     {
       icon: 'flag',
       iconBg: t.colors.successBg,
       iconColor: t.colors.successText,
-      label: 'Pass mark',
-      value: `${passMark} / ${scoreMax} pts`,
+      label: tr('mock.setup.passMark'),
+      value: passValue,
     },
     ...(timing
       ? [
@@ -59,8 +62,11 @@ export default function MockSetupScreen() {
             icon: 'hourglass' as IconName,
             iconBg: t.colors.errorBg,
             iconColor: t.colors.error,
-            label: 'Per question',
-            value: `${timing.basic.readSeconds + timing.basic.answerSeconds} s / ${timing.specialist.readSeconds + timing.specialist.answerSeconds} s`,
+            label: tr('mock.setup.perQuestion'),
+            value: tr('mock.setup.seconds', {
+              basic: timing.basic.readSeconds + timing.basic.answerSeconds,
+              specialist: timing.specialist.readSeconds + timing.specialist.answerSeconds,
+            }),
           },
         ]
       : []),
@@ -77,7 +83,7 @@ export default function MockSetupScreen() {
         feature="mock_test"
         icon="clipboard-check"
         title={tr('mock.proTitle')}
-        body={`The full ${questionCount}-question exam simulation with the real timer is part of RoadReady Pro. Lessons stay free.`}
+        body={tr('mock.proBody', { count: questionCount })}
       />
     );
   }

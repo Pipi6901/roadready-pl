@@ -65,8 +65,11 @@ export default function MockPreparingScreen() {
   const ratio = progress.total ? progress.done / progress.total : 1;
   const status =
     progress.total === 0
-      ? 'Everything is already on this phone'
-      : `Loading pictures and clips — ${Math.min(progress.done, progress.total)} of ${progress.total}`;
+      ? tr('mock.mediaReady')
+      : tr('mock.mediaLoading', {
+          done: Math.min(progress.done, progress.total),
+          total: progress.total,
+        });
 
   return (
     <Screen>

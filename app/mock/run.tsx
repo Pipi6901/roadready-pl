@@ -101,13 +101,10 @@ export default function MockRunScreen() {
   // started a paper by mistake had 25 minutes of countdown and no door; the
   // attempt is simply dropped, never scored, so nothing lands in history.
   const abandon = () => {
-    Alert.alert(
-      'Leave the exam?',
-      'This attempt will not be scored or saved.',
-      [
-        { text: 'Keep going', style: 'cancel' },
-        {
-          text: 'Leave',
+    Alert.alert(tr('mock.leaveTitle'), tr('mock.leaveBody'), [
+      { text: tr('mock.keepGoing'), style: 'cancel' },
+      {
+        text: tr('common.leave'),
           style: 'destructive',
           onPress: () => {
             mockSession.reset();

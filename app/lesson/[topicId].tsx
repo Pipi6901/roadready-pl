@@ -250,14 +250,10 @@ export default function LessonScreen() {
       router.back();
       return;
     }
-    Alert.alert(
-      'Leave this lesson?',
-      'Answers you have already given are saved, but the lesson will not count as complete.',
-      [
-        { text: 'Keep learning', style: 'cancel' },
-        { text: 'Leave', style: 'destructive', onPress: () => router.back() },
-      ],
-    );
+    Alert.alert(tr('lesson.leaveTitle'), tr('lesson.leaveBody'), [
+      { text: tr('lesson.keepLearning'), style: 'cancel' },
+      { text: tr('common.leave'), style: 'destructive', onPress: () => router.back() },
+    ]);
   };
 
   /* ------------------------------------------------------------- gates --- */

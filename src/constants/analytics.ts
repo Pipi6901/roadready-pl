@@ -15,5 +15,13 @@ export const AMPLITUDE_API_KEY = 'REPLACE_WITH_AMPLITUDE_PL_API_KEY';
  */
 export const AMPLITUDE_ENDPOINT = 'https://api2.amplitude.com/2/httpapi';
 
-/** Analytics is off by default in development so local runs don't pollute the funnel. */
-export const ANALYTICS_ENABLED = !__DEV__;
+/**
+ * Whether a real Amplitude project exists yet. Without this a release build
+ * posts every event under the placeholder key above: Amplitude answers 400,
+ * the batch is dropped as unretryable, and the only result is a request per
+ * session that was never going to land anywhere.
+ */
+export const ANALYTICS_CONFIGURED = !AMPLITUDE_API_KEY.startsWith('REPLACE_WITH_');
+
+/** Off in development too, so local runs don't pollute the funnel. */
+export const ANALYTICS_ENABLED = ANALYTICS_CONFIGURED && !__DEV__;

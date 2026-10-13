@@ -8,6 +8,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Row, Screen, ScreenScroll, Txt } from '@/components/ui/primitives';
 import { useContent } from '@/store/ContentProvider';
 import { useSettings } from '@/store/SettingsProvider';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Country } from '@/types/content';
 
@@ -25,6 +26,7 @@ function estimateMb(country: Country): number {
 /** Change country — ТЗ 8.1. */
 export default function CountryModal() {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
   const shadow = useCardShadow();
   const { countries } = useContent();
@@ -44,12 +46,12 @@ export default function CountryModal() {
     // Switching country replaces the whole question bank, so it is confirmed
     // with the download size rather than applied silently (ТЗ 8.1).
     Alert.alert(
-      `Switch to ${country.name}?`,
-      `New content of about ${estimateMb(country)} MB will be downloaded. Continue?`,
+      tr('country.switchTitle', { country: country.name }),
+      tr('country.switchBody', { size: estimateMb(country) }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: tr('common.cancel'), style: 'cancel' },
         {
-          text: 'Continue',
+          text: tr('common.continue'),
           onPress: () => {
             update({ countryCode: country.code });
             router.back();
@@ -61,11 +63,11 @@ export default function CountryModal() {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      <NavBar title="Country" action="close" />
+      <NavBar title={tr('country.navTitle')} action="close" />
 
       <View style={{ paddingHorizontal: 20, paddingTop: 4, gap: 16, flex: 1 }}>
         <Txt size={22} weight="700">
-          Where are you taking your test?
+          {tr('country.heading')}
         </Txt>
 
         <Row
@@ -83,9 +85,9 @@ export default function CountryModal() {
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Search countries"
+            placeholder={tr('country.search')}
             placeholderTextColor={t.colors.textMuted}
-            accessibilityLabel="Search countries"
+            accessibilityLabel={tr('country.search')}
             autoCorrect={false}
             style={{ flex: 1, fontSize: 14, color: t.colors.textPrimary, padding: 0 }}
           />
@@ -104,8 +106,8 @@ export default function CountryModal() {
                 accessibilityRole="button"
                 accessibilityLabel={
                   available
-                    ? `${country.name}, ${country.questionCount} questions available`
-                    : `${country.name}, coming soon`
+                    ? `${country.name}, ${tr('country.available', { count: country.questionCount })}`
+                    : `${country.name}, ${tr('country.comingSoon')}`
                 }
                 accessibilityState={{ selected, disabled: !available }}
                 style={({ pressed }) => [
@@ -135,7 +137,9 @@ export default function CountryModal() {
                     weight={available ? '600' : '400'}
                     color={available ? t.colors.successText : t.colors.textMuted}
                   >
-                    {available ? `${country.questionCount} questions available` : 'Coming soon'}
+                    {available
+                      ? tr('country.available', { count: country.questionCount })
+                      : tr('country.comingSoon')}
                   </Txt>
                 </View>
 
@@ -151,7 +155,7 @@ export default function CountryModal() {
                     }}
                   >
                     <Txt size={11} weight="700" color={t.colors.successText}>
-                      Selected
+                      {tr('country.selected')}
                     </Txt>
                   </View>
                 ) : null}
