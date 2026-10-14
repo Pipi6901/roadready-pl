@@ -3,7 +3,7 @@ import React from 'react';
 import { Pressable, type ScrollView, useWindowDimensions, View } from 'react-native';
 
 import {
-  NODE_SIZE, NODE_SIZE_CURRENT, TopicNode, type TopicNodeState,
+  NODE_LABEL_MAX_WIDTH, NODE_SIZE, NODE_SIZE_CURRENT, TopicNode, type TopicNodeState,
 } from '@/components/learning/TopicNode';
 import { TopicRoute, type RoutePoint } from '@/components/learning/TopicRoute';
 import { useT } from '@/features/i18n/useT';
@@ -26,18 +26,18 @@ const LABEL_TOP = 6;
 const LABEL_LINE = 14;
 /** The "CONTINUE TOPIC" caption, on the current node only. */
 const LABEL_TAG = 13;
-/** Roughly how many characters fit on one line of NODE_LABEL_WIDTH at 11px.
- *  Deliberately low: over-estimating the lines only adds air, while
- *  under-estimating puts a node back on top of a label. */
-const LABEL_CHARS = 14;
+/** Points one character of a label takes at 11px, weight 600. Measured
+ *  against the device: 14 Cyrillic characters filled 120pt exactly.
+ *  Deliberately generous, because over-estimating the lines only adds air
+ *  while under-estimating puts a node back on top of a label. */
+const LABEL_CHAR_PT = 9;
 /** Hard cap, matched by numberOfLines on the label itself. */
 const MAX_NAME_LINES = 3;
 /** Air between one node's last line and the next node's top edge. */
 const ROW_BREATH = 22;
-/** Furthest a node can drift from the centre line. Bounded well inside the
- *  map width so the node's label (NODE_LABEL_WIDTH) and the roadside decor
- *  icons never clip off-screen on a narrow phone. */
-const MAX_OFFSET = 100;
+/** Narrowest the trail is allowed to wander, whatever the screen. Below
+ *  this the route reads as a straight ladder rather than as a trail. */
+const MIN_OFFSET = 40;
 /** Extra pitch a row can pick up, so the trail doesn't read as a ladder.
  *  Positive only — jitter that pulled rows together would undo the spacing
  *  computed from the label above. */
@@ -53,8 +53,8 @@ const CARD_CLEARANCE = 130;
  *  re-renders (no Math.random) so the map's shape doesn't jump around every
  *  time progress changes elsewhere in the app. */
 /** How much room a node's label needs below its centre. */
-function labelHeight(name: string, isCurrent: boolean): number {
-  const lines = Math.min(MAX_NAME_LINES, Math.max(1, Math.ceil(name.length / LABEL_CHARS)));
+function labelHeight(name: string, isCurrent: boolean, charsPerLine: number): number {
+  const lines = Math.min(MAX_NAME_LINES, Math.max(1, Math.ceil(name.length / charsPerLine)));
   // +1 line for the "mastered / total" row under the name.
   return LABEL_TOP + (isCurrent ? LABEL_TAG : 0) + (lines + 1) * LABEL_LINE;
 }
@@ -91,6 +91,19 @@ export default function LearnScreen() {
 
   const mapWidth = width - SCREEN_PADDING * 2;
   const centreX = mapWidth / 2;
+  // The label has to hold the longest single word in any of the seven
+  // interface languages — German "Verkehrssituationen" at roughly 137pt,
+  // Russian "Предупреждающие" and Ukrainian "Попереджувальні" at 129 —
+  // because a word wider than its line is broken mid-word, not wrapped.
+  // At the old fixed 120pt that is exactly what happened, and the map
+  // showed "Предупреждающи" with a lone "е" beneath it.
+  const labelWidth = Math.min(NODE_LABEL_MAX_WIDTH, Math.round(mapWidth * 0.46));
+  // Derived from the label rather than fixed: the trail may only wander as
+  // far as the label can follow without leaving the map. Widening one
+  // without narrowing the other is what would push the outermost label
+  // off the screen edge.
+  const maxOffset = Math.max(MIN_OFFSET, Math.round((mapWidth - labelWidth) / 2));
+  const charsPerLine = Math.max(8, Math.floor(labelWidth / LABEL_CHAR_PT));
 
   const nodes = React.useMemo(() => {
     const stats = topics.map((topic) => ({ topic, stat: progress.topicStats(topic.id) }));
@@ -130,14 +143,14 @@ export default function LearnScreen() {
         // air, plus this node's own top half.
         y +=
           halfNode(states[i - 1]) +
-          labelHeight(stats[i - 1].topic.name, states[i - 1] === 'current') +
+          labelHeight(stats[i - 1].topic.name, states[i - 1] === 'current', charsPerLine) +
           ROW_BREATH +
           pseudoRandom(i * 3.17 + 11) * PITCH_JITTER +
           halfNode(state);
         if (startsSpecialist) y += SECTION_GAP;
       }
       const offset = i === 0 ? 0 : Math.round(
-        prevOffset * 0.35 + (pseudoRandom(i * 7.31 + 1) * 2 - 1) * MAX_OFFSET * 0.65,
+        prevOffset * 0.35 + (pseudoRandom(i * 7.31 + 1) * 2 - 1) * maxOffset * 0.65,
       );
       prevOffset = offset;
 
@@ -150,13 +163,13 @@ export default function LearnScreen() {
         y,
       };
     });
-  }, [topics, progress, centreX]);
+  }, [topics, progress, centreX, maxOffset, charsPerLine]);
 
   const current = nodes.find((n) => n.state === 'current');
   const last = nodes[nodes.length - 1];
   // Room for the final label too, or the bottom of the trail gets clipped.
   const mapHeight = last
-    ? last.y + halfNode(last.state) + labelHeight(last.topic.name, last.state === 'current') + 40
+    ? last.y + halfNode(last.state) + labelHeight(last.topic.name, last.state === 'current', charsPerLine) + 40
     : 0;
   const routePoints: RoutePoint[] = nodes.map((n) => ({ x: n.x, y: n.y }));
 
@@ -277,6 +290,7 @@ export default function LearnScreen() {
                         state={n.state}
                         icon={n.topic.icon}
                         name={n.topic.name}
+                        labelWidth={labelWidth}
                         mastered={n.stat.mastered}
                         total={n.stat.total}
                         onPress={() => router.push(`/topic/${n.topic.id}`)}

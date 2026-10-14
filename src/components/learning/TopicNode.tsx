@@ -11,7 +11,13 @@ export type TopicNodeState = 'completed' | 'current' | 'started' | 'available';
 /** Mockup component "Topic Node" (72×72, radius 24). The current node is drawn larger. */
 export const NODE_SIZE = 72;
 export const NODE_SIZE_CURRENT = 80;
-export const NODE_LABEL_WIDTH = 120;
+/**
+ * Widest a label is ever drawn. The actual width comes from the map, which
+ * sizes it against the screen — see learn.tsx — because the figure that
+ * matters is the longest single WORD in the section names, and a word that
+ * does not fit is broken mid-word rather than wrapped.
+ */
+export const NODE_LABEL_MAX_WIDTH = 168;
 
 interface TopicNodeProps {
   state: TopicNodeState;
@@ -20,6 +26,9 @@ interface TopicNodeProps {
   name: string;
   mastered: number;
   total: number;
+  /** Set by the map, which sizes it against the screen. Defaults to the
+   *  cap so the component is still usable on its own. */
+  labelWidth?: number;
   onPress?: () => void;
 }
 
@@ -30,7 +39,9 @@ const STATE_KEY: Record<TopicNodeState, 'topic.completed' | 'topic.inProgress' |
   started: 'topic.inProgress',
 };
 
-export function TopicNode({ state, icon, name, mastered, total, onPress }: TopicNodeProps) {
+export function TopicNode({
+  state, icon, name, mastered, total, labelWidth = NODE_LABEL_MAX_WIDTH, onPress,
+}: TopicNodeProps) {
   const t = useTheme();
   const tr = useT();
 
@@ -104,7 +115,7 @@ export function TopicNode({ state, icon, name, mastered, total, onPress }: Topic
         <Icon name={skin.iconName} size={state === 'current' ? 34 : 30} color={skin.fg} />
       </View>
 
-      <View style={{ width: NODE_LABEL_WIDTH, marginTop: 6, gap: 1 }}>
+      <View style={{ width: labelWidth, marginTop: 6, gap: 1 }}>
         {state === 'current' ? (
           <Txt size={10} weight="600" align="center" color={t.colors.accentDark} style={{ letterSpacing: 0.5 }}>
             {tr('learn.continueTopic').toUpperCase()}
@@ -120,6 +131,11 @@ export function TopicNode({ state, icon, name, mastered, total, onPress }: Topic
           align="center"
           lineHeight={14}
           numberOfLines={3}
+          // Belt to the braces of the width above: a section name longer
+          // than any of today's shrinks a little rather than losing a
+          // letter to the next line.
+          adjustsFontSizeToFit
+          minimumFontScale={0.8}
           color={t.colors.textPrimary}
         >
           {name}
