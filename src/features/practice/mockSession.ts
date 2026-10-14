@@ -181,7 +181,15 @@ export function questionClock(s: MockSessionState, now: number = Date.now()): Qu
   if (!question) return null;
 
   const { readSeconds, answerSeconds } = s.timing[questionCategory(question)];
-  const elapsed = (now - s.questionStartedAt) / 1000;
+  // Clamped, because `now` is React state that ticks four times a second:
+  // for up to a quarter of a second after the paper moves on, it is still
+  // older than the stamp the new question has just set, and elapsed comes
+  // out negative. A specialist question has no reading phase at all
+  // (readSeconds 0), so a negative elapsed satisfied `elapsed < readSeconds`
+  // and the header announced "reading, 1 second left" — in red, since it
+  // turns red at five — before correcting itself a frame later. Before the
+  // clock has started, no time has passed.
+  const elapsed = Math.max(0, (now - s.questionStartedAt) / 1000);
 
   if (elapsed < readSeconds) {
     return { phase: 'reading', secondsLeft: Math.ceil(readSeconds - elapsed), phaseSeconds: readSeconds };

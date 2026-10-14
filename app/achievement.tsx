@@ -1,10 +1,9 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
-import { cardShadow } from '@/components/practice/shadow';
 import { Icon } from '@/components/ui/Icon';
-import { Button, Txt } from '@/components/ui/primitives';
+import { Button, Screen, Txt } from '@/components/ui/primitives';
 import { ACHIEVEMENT_META } from '@/constants/rules';
 import type { StringKey } from '@/features/i18n/strings';
 import { useT } from '@/features/i18n/useT';
@@ -21,20 +20,18 @@ const BURST_RADIUS = 66;
 const BURST_BOX = 140;
 
 /**
- * New achievement card — ТЗ 8.6. Presented as a transparent modal.
+ * New achievement card — ТЗ 8.6.
  *
- * Lives as its own top-level route rather than inside app/(modals) — that
- * group is presented `modal` (opaque) as a whole because change-country,
- * change-language and trial-ended all paint solid backgrounds and need
- * correct top safe-area insets. This is the one screen that actually wants
- * to show a see-through scrim over whatever awarded it, so it gets its own
- * `transparentModal` presentation in app/_layout.tsx instead of forcing that
- * mode onto the other three (which broke their top inset — see ADR notes).
+ * Takes the whole screen. It used to be a sheet pinned to the bottom edge
+ * under a dimmed scrim, which is the right shape for a chooser and the wrong
+ * one for a celebration: the award sat in the lower third while the top two
+ * thirds were a flat dark panel that looked like a rendering fault rather
+ * than like the screen underneath showing through.
  *
- * `ids` is a comma-separated list: completing a lesson/mock can clear more
- * than one achievement at once (e.g. a topic's only lesson earns both
- * "First Lesson" and "Topic Master" the same moment), and each one deserves
- * its own celebration screen rather than only the first surviving.
+ * `ids` is a comma-separated list: completing a lesson or a mock can clear
+ * more than one achievement at once (a topic's only lesson earns both "First
+ * Lesson" and "Topic Master" the same moment), and each one deserves its own
+ * celebration rather than only the first surviving.
  */
 export default function AchievementModal() {
   const t = useTheme();
@@ -58,41 +55,15 @@ export default function AchievementModal() {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-      {/* Scrim. Tinted from the palette, dimmed with opacity so it stays a
-          token rather than a hardcoded rgba. */}
-      <Pressable
-        onPress={() => router.back()}
-        accessibilityRole="button"
-        accessibilityLabel={tr('a11y.dismiss')}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: t.colors.blue900,
-          opacity: 0.55,
-        }}
-      />
-
+    <Screen edges={['top', 'bottom']}>
       <View
-        style={[
-          {
-            backgroundColor: t.colors.surface,
-            borderTopLeftRadius: 28,
-            borderTopRightRadius: 28,
-            paddingHorizontal: 24,
-            paddingTop: 28,
-            paddingBottom: 40,
-            gap: 20,
-            alignItems: 'center',
-          },
-          // Shadow cast upward (negative y), since the sheet is pinned to
-          // the bottom of the screen — a downward shadow would fall off the
-          // edge and never actually be visible against the scrim.
-          cardShadow(t, 24, -8, 0.18),
-        ]}
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: 24,
+          gap: 28,
+        }}
       >
         <View style={{ width: BURST_BOX, height: BURST_BOX, alignItems: 'center', justifyContent: 'center' }}>
           {BURST.map((dot, i) => (
@@ -131,16 +102,18 @@ export default function AchievementModal() {
             {tr('ach.unlocked')}
             {list.length > 1 ? ` (${index + 1}/${list.length})` : ''}
           </Txt>
-          <Txt size={24} weight="700" align="center">
+          <Txt size={28} weight="700" align="center">
             {title}
           </Txt>
-          <Txt size={14} color={t.colors.textSecondary} align="center" lineHeight={20}>
+          <Txt size={15} color={t.colors.textSecondary} align="center" lineHeight={22}>
             {description}
           </Txt>
         </View>
+      </View>
 
+      <View style={{ paddingHorizontal: 24, paddingBottom: 24 }}>
         <Button label={isLast ? tr('ach.nice') : tr('ach.next')} icon="party-popper" onPress={advance} />
       </View>
-    </View>
+    </Screen>
   );
 }

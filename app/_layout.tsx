@@ -87,10 +87,12 @@ function RootStack() {
           name="(modals)"
           options={{ presentation: 'modal', animation: 'fade_from_bottom' }}
         />
-        {/* Split out from (modals): this is the one screen that actually
-            needs a see-through scrim over whatever awarded the achievement,
-            so only it gets transparentModal — forcing that on the group
-            above is what broke their safe area in the first place. */}
+        {/* Split out from (modals) because it is presented differently, not
+            because it is see-through any more: the celebration now fills the
+            screen through <Screen>, which applies its own insets. The
+            transparent presentation is kept because an opaque child under it
+            looks identical to a full-screen modal, and forcing the group
+            above into this mode is what broke their safe area originally. */}
         <Stack.Screen
           name="achievement"
           options={{ presentation: 'transparentModal', animation: 'fade_from_bottom' }}

@@ -377,10 +377,15 @@ export default function ProfileScreen() {
                             justifyContent: 'center',
                             backgroundColor: t.colors.surface,
                             borderWidth: 2,
-                            borderColor: colors.bg,
+                            // Green on every badge, not the tile's own colour.
+                            // Taking it from the palette meant the navy tiles
+                            // drew a navy tick on a dark surface, which read as
+                            // no tick at all — and the same mark meant a
+                            // different colour on each achievement for no reason.
+                            borderColor: t.colors.success,
                           }}
                         >
-                          <Icon name="check" size={11} color={colors.bg} />
+                          <Icon name="check" size={11} color={t.colors.success} />
                         </View>
                       ) : null}
                     </View>
