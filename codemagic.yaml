@@ -66,7 +66,53 @@ workflows:
           fi
           echo "Issuer ID : $APP_STORE_CONNECT_ISSUER_ID"
           echo "Key ID    : $APP_STORE_CONNECT_KEY_IDENTIFIER"
-          echo "All four credentials are in scope."
+
+          # Shape checks, not contents. Apple answers a malformed key with the
+          # same 401 it uses for a revoked one, so the only way to tell them
+          # apart is to look at what we are about to send, before sending it.
+          problems=$(mktemp)
+
+          case "$APP_STORE_CONNECT_ISSUER_ID" in
+            ????????-????-????-????-????????????) ;;
+            *) echo "  ISSUER_ID is not a UUID: expected 8-4-4-4-12, got ${#APP_STORE_CONNECT_ISSUER_ID} characters" >> "$problems" ;;
+          esac
+
+          if [ ${#APP_STORE_CONNECT_KEY_IDENTIFIER} -ne 10 ]; then
+            echo "  KEY_IDENTIFIER should be 10 characters, got ${#APP_STORE_CONNECT_KEY_IDENTIFIER}" >> "$problems"
+          fi
+
+          # The .p8 is a PEM block. Pasted as one line, or base64-encoded
+          # first, it still arrives as a non-empty string and still signs
+          # something Apple refuses. This is the commonest cause of the 401.
+          p8_lines=$(printf '%s' "$APP_STORE_CONNECT_PRIVATE_KEY" | wc -l | tr -d ' ')
+          case "$APP_STORE_CONNECT_PRIVATE_KEY" in
+            "-----BEGIN PRIVATE KEY-----"*)
+              if [ "$p8_lines" -lt 2 ]; then
+                echo "  PRIVATE_KEY is one line: the .p8 lost its line breaks when it was pasted" >> "$problems"
+              fi
+              ;;
+            *)
+              echo "  PRIVATE_KEY does not begin with -----BEGIN PRIVATE KEY-----" >> "$problems"
+              echo "  Paste the .p8 exactly as downloaded, not base64-encoded" >> "$problems"
+              ;;
+          esac
+
+          case "$CERTIFICATE_PRIVATE_KEY" in
+            "-----BEGIN "*"PRIVATE KEY-----"*) ;;
+            *) echo "  CERTIFICATE_PRIVATE_KEY is not a PEM private key" >> "$problems" ;;
+          esac
+
+          if [ -s "$problems" ]; then
+            echo
+            echo "The credentials are in scope but malformed:"
+            cat "$problems"
+            echo
+            echo "Apple reports every one of these as 401, credentials missing or invalid."
+            exit 1
+          fi
+
+          echo "p8 line breaks: $p8_lines"
+          echo "All four credentials are in scope and well-formed."
 
       - name: Does Apple accept them
         # A 401 here is about the key itself, not about profiles, and saying so
