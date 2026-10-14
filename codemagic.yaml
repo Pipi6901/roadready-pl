@@ -197,8 +197,16 @@ workflows:
         api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        # Internal testers only. Flip to an external group once the debug
-        # screen in the onboarding funnel is gone and the privacy policy is
-        # published — an external group goes through Beta App Review, and both
-        # of those are what it would fail on.
-        submit_to_testflight: true
+        # Nothing else here on purpose.
+        #
+        # Uploading is all internal testing needs: App Store Connect processes
+        # the build and the internal group has it, with no review. The comment
+        # that used to sit here said "internal testers only" directly above
+        # submit_to_testflight: true, which means the opposite — it submits for
+        # EXTERNAL testing, that goes through Beta App Review, and the review
+        # refuses a build whose Test Information is empty. So a build that had
+        # compiled, uploaded and finished processing was reported as failed.
+        #
+        # To add external testers later: fill in Test Information in App Store
+        # Connect (feedback email, and a contact name, phone and email), then
+        # add submit_to_testflight: true with a beta_groups list.
