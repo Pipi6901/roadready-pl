@@ -223,7 +223,7 @@ export default function LessonCompleteScreen() {
           >
             <Icon name="flame" size={15} color={t.colors.amberDark} />
             <Txt size={13} weight="700" color={t.colors.amberDark}>
-              {progress.streak} day streak
+              {tr(progress.streak === 1 ? 'home.streak.one' : 'home.streak', { days: progress.streak })}
             </Txt>
           </Row>
         </Row>
@@ -280,7 +280,10 @@ export default function LessonCompleteScreen() {
               {tr('home.dailyGoal')}
             </Txt>
             <Txt size={12} weight="600" color={t.colors.textSecondary}>
-              {Math.min(progress.lessonsToday, DAILY_GOAL_LESSONS)}/{DAILY_GOAL_LESSONS} lessons
+              {tr('lesson.goalProgress', {
+                done: Math.min(progress.lessonsToday, DAILY_GOAL_LESSONS),
+                goal: DAILY_GOAL_LESSONS,
+              })}
             </Txt>
           </Row>
           <ProgressBar value={progress.lessonsToday / DAILY_GOAL_LESSONS} />
@@ -291,7 +294,7 @@ export default function LessonCompleteScreen() {
       <View style={{ gap: 10, paddingTop: 14, paddingHorizontal: 24, paddingBottom: 24 }}>
         {nextTopicId ? (
           <Button
-            label={nextTopicId === params.topicId ? 'Continue to next lesson' : 'Next section'}
+            label={tr(nextTopicId === params.topicId ? 'lesson.continueNext' : 'lesson.nextSection')}
             onPress={() => router.replace(`/lesson/${nextTopicId}`)}
           />
         ) : null}

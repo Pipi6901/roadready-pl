@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 interface NavBarProps {
@@ -16,6 +17,7 @@ interface NavBarProps {
 /** Mockup frame "Nav Bar" — round back button plus a 17/700 title. */
 export function NavBar({ title, onBack, trailing }: NavBarProps) {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
 
   return (
@@ -30,7 +32,7 @@ export function NavBar({ title, onBack, trailing }: NavBarProps) {
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Go back"
+        accessibilityLabel={tr('a11y.back')}
         onPress={onBack ?? (() => router.back())}
         hitSlop={8}
         style={{

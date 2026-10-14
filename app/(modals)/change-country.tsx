@@ -165,7 +165,7 @@ export default function CountryModal() {
 
           {filtered.length === 0 ? (
             <Txt size={14} color={t.colors.textSecondary} align="center">
-              No countries match “{query}”.
+              {tr('country.noMatch', { query })}
             </Txt>
           ) : null}
         </ScreenScroll>

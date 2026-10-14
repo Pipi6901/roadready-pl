@@ -129,11 +129,11 @@ export default function MockRunScreen() {
         </Pressable>
         <View style={{ flex: 1 }}>
           <Txt size={14} weight="700">
-            Question {index + 1} of {total}
+            {tr('mock.questionOf', { index: index + 1, total })}
           </Txt>
           {clock ? (
             <Txt size={11} color={t.colors.textSecondary}>
-              {specialist ? 'Specialist · A / B / C' : 'Basic · TAK / NIE'}
+              {tr(specialist ? 'mock.classSpecialist' : 'mock.classBasic')}
             </Txt>
           ) : null}
         </View>
@@ -145,7 +145,10 @@ export default function MockRunScreen() {
           accessible
           accessibilityLabel={
             clock
-              ? `${clock.phase === 'reading' ? 'Reading time' : 'Answer time'}, ${clock.secondsLeft} seconds left`
+              ? tr('mock.phaseA11y', {
+                  phase: tr(clock.phase === 'reading' ? 'mock.phaseReading' : 'mock.phaseAnswer'),
+                  seconds: clock.secondsLeft,
+                })
               : tr('mock.timeA11y', { time: formatClock(left) })
           }
           style={{
@@ -178,7 +181,7 @@ export default function MockRunScreen() {
         {canGoBack ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={flagged ? 'Unflag this question' : 'Flag this question for review'}
+            accessibilityLabel={tr(flagged ? 'a11y.unflagQuestion' : 'a11y.flagQuestion')}
             accessibilityState={{ selected: flagged }}
             onPress={() => mockSession.toggleFlag(question.id)}
             hitSlop={12}
@@ -249,7 +252,7 @@ export default function MockRunScreen() {
             />
           ) : null}
           <Button
-            label={isLast ? 'Finish Test' : 'Next'}
+            label={tr(isLast ? 'mock.finish' : 'mock.next')}
             fullWidth={false}
             onPress={() => {
               if (!isLast) return mockSession.goTo(index + 1);

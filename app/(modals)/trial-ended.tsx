@@ -10,6 +10,7 @@ import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/legal';
 import { FREE_TIER } from '@/constants/rules';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/features/i18n/useT';
+import type { Translate } from '@/features/i18n/translate';
 
 interface CompareRow {
   feature: string;
@@ -22,15 +23,18 @@ interface CompareRow {
  * does not enforce (or hide one it does). The daily cap row only appears
  * when there is a cap.
  */
-const COMPARISON: CompareRow[] = [
-  ...(FREE_TIER.questionsPerDay !== null
-    ? [{ feature: 'Questions per day', free: String(FREE_TIER.questionsPerDay), pro: 'Unlimited' } as CompareRow]
-    : [{ feature: 'Lessons', free: 'Unlimited', pro: 'Unlimited' } as CompareRow]),
-  { feature: 'Translations', free: FREE_TIER.translation, pro: true },
-  { feature: 'Mock tests', free: FREE_TIER.mockTest, pro: true },
-  { feature: 'Weak spot practice', free: FREE_TIER.weakSpots, pro: true },
-  { feature: 'Offline mode', free: FREE_TIER.offline, pro: true },
-];
+function comparison(tr: Translate): CompareRow[] {
+  const unlimited = tr('trial.unlimited');
+  return [
+    ...(FREE_TIER.questionsPerDay !== null
+      ? [{ feature: tr('trial.rowQuestionsPerDay'), free: String(FREE_TIER.questionsPerDay), pro: unlimited } as CompareRow]
+      : [{ feature: tr('trial.rowLessons'), free: unlimited, pro: unlimited } as CompareRow]),
+    { feature: tr('trial.rowTranslations'), free: FREE_TIER.translation, pro: true },
+    { feature: tr('trial.rowMockTests'), free: FREE_TIER.mockTest, pro: true },
+    { feature: tr('trial.rowWeakSpots'), free: FREE_TIER.weakSpots, pro: true },
+    { feature: tr('trial.rowOffline'), free: FREE_TIER.offline, pro: true },
+  ];
+}
 
 /** Trial ended — ТЗ 8.4. */
 export default function TrialEndedModal() {
@@ -38,6 +42,9 @@ export default function TrialEndedModal() {
   const tr = useT();
   const router = useRouter();
   const shadow = useCardShadow();
+  // Rebuilt when the language changes, which is why it is no longer a
+  // module-level constant: the rows carry translated labels now.
+  const rows = React.useMemo(() => comparison(tr), [tr]);
 
   const onSubscribe = () => {
     router.push('/paywall?source=trial_ended');
@@ -93,11 +100,15 @@ export default function TrialEndedModal() {
             </Txt>
           </Row>
 
-          {COMPARISON.map((row, i) => (
+          {rows.map((row, i) => (
             <Row
               key={row.feature}
               accessible
-              accessibilityLabel={`${row.feature}. Free: ${row.free === false ? 'not included' : row.free === true ? 'included' : row.free}. Pro: ${row.pro === true ? 'included' : row.pro}.`}
+              accessibilityLabel={tr('trial.rowA11y', {
+                feature: row.feature,
+                free: row.free === false ? tr('trial.notIncluded') : row.free === true ? tr('trial.included') : row.free,
+                pro: row.pro === true ? tr('trial.included') : row.pro,
+              })}
               style={{
                 paddingVertical: 14,
                 paddingHorizontal: 16,

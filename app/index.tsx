@@ -182,7 +182,7 @@ export default function SplashScreen() {
     <Animated.View style={[screenStyle, { flex: 1 }]}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Continue to RoadReady"
+        accessibilityLabel={tr('a11y.continueToApp')}
         onPress={handlePress}
         disabled={exiting}
         style={{ flex: 1, backgroundColor: t.colors.bg }}

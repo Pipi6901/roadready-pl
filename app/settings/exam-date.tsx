@@ -64,7 +64,7 @@ export default function ExamDateScreen() {
             >
               <Icon name="sparkles" size={18} color={t.colors.successDark} />
               <Txt size={13} weight="600" color={t.colors.successDark} style={{ flex: 1 }}>
-                {daysToGo} days to go
+                {tr(daysToGo === 1 ? 'settings.daysAway.one' : 'settings.daysAway', { days: daysToGo })}
               </Txt>
             </Row>
           ) : null}

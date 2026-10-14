@@ -67,7 +67,7 @@ export function ScoreHistoryChart({ attempts, passMark, scoreMax }: Props) {
           {tr('practice.lastResults')}
         </Txt>
         <Txt size={12} color={t.colors.textSecondary}>
-          Pass mark {passMark} / {scoreMax}
+          {tr('chart.passMark', { passMark, scoreMax })}
         </Txt>
       </Row>
 
@@ -83,7 +83,12 @@ export function ScoreHistoryChart({ attempts, passMark, scoreMax }: Props) {
             <View
               key={a.finishedAt}
               accessible
-              accessibilityLabel={`${date}: ${a.score} of ${a.total} points, ${a.passed ? 'passed' : 'not passed'}`}
+              accessibilityLabel={tr('chart.barA11y', {
+                date,
+                score: a.score,
+                total: a.total,
+                verdict: tr(a.passed ? 'chart.passedShort' : 'chart.notPassedShort'),
+              })}
               style={{ flex: 1, alignItems: 'center', gap: 6 }}
             >
               <Txt
@@ -114,8 +119,7 @@ export function ScoreHistoryChart({ attempts, passMark, scoreMax }: Props) {
 
       {/* NFR-07: pass and fail must not be signalled by colour alone. */}
       <Txt size={11} color={t.colors.textSecondary}>
-        Bars show points scored. Green marks a pass — {passPct}% of the points on
-        offer or above.
+        {tr('chart.legend', { percent: passPct })}
       </Txt>
     </View>
   );

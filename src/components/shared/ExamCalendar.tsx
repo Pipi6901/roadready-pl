@@ -154,10 +154,11 @@ function MonthArrow({
   onPress: () => void;
 }) {
   const t = useTheme();
+  const tr = useT();
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={direction === 'prev' ? 'Previous month' : 'Next month'}
+      accessibilityLabel={tr(direction === 'prev' ? 'a11y.prevMonth' : 'a11y.nextMonth')}
       accessibilityState={{ disabled: !!disabled }}
       disabled={disabled}
       onPress={onPress}

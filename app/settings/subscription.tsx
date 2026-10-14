@@ -3,7 +3,7 @@ import React from 'react';
 import { Alert, Linking, Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { NavBar } from '@/components/settings/NavBar';
-import { formatDate, PLAN_PERIOD, PLAN_PRICE, planLabel } from '@/components/settings/plan';
+import { formatDate, PLAN_PRICE, planLabel, planName, planPeriod } from '@/components/settings/plan';
 import { useDateLocale, useT, type Translate } from '@/features/i18n/useT';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { SettingsSection, useCardShadow } from '@/components/settings/SettingsSection';
@@ -68,10 +68,8 @@ export default function SubscriptionScreen() {
       return;
     }
     Alert.alert(
-      'Could not open the store',
-      Platform.OS === 'android'
-        ? 'Open Google Play, then Payments and subscriptions, to manage your plan.'
-        : 'Open Settings, then your Apple ID, then Subscriptions, to manage your plan.',
+      tr('sub.openFailedTitle'),
+      tr(Platform.OS === 'android' ? 'sub.openFailedAndroid' : 'sub.openFailedIos'),
     );
   };
 
@@ -119,7 +117,7 @@ export default function SubscriptionScreen() {
             <Row style={{ gap: 10 }}>
               <Icon name={isPro ? 'gem' : 'sprout'} size={22} color={isPro ? t.colors.amberDark : t.colors.textSecondary} />
               <Txt size={17} weight="700">
-                {planLabel(state)}
+                {planLabel(state, tr)}
               </Txt>
             </Row>
             <Txt size={13} color={t.colors.textSecondary} lineHeight={19}>
@@ -130,7 +128,7 @@ export default function SubscriptionScreen() {
           </View>
 
           <SettingsSection title={tr('subscription.details')} icon="gem" iconColor={t.colors.amberDark}>
-            <SettingsRow label={tr('settings.row.currentPlan')} value={planLabel(state)} />
+            <SettingsRow label={tr('settings.row.currentPlan')} value={planLabel(state, tr)} />
             <SettingsRow label={tr('settings.row.renewalDate')} value={formatDate(state.renewsAt, dateLocale)} last />
           </SettingsSection>
 
@@ -148,7 +146,11 @@ export default function SubscriptionScreen() {
                     key={plan}
                     onPress={() => onChangePlan(plan)}
                     accessibilityRole="button"
-                    accessibilityLabel={`${plan === 'monthly' ? 'Monthly' : 'Yearly'} plan, ${PLAN_PRICE[plan]} ${PLAN_PERIOD[plan]}`}
+                    accessibilityLabel={tr('sub.planA11y', {
+                      plan: planName(plan, tr),
+                      price: PLAN_PRICE[plan],
+                      period: planPeriod(plan, tr),
+                    })}
                     accessibilityState={{ selected: current }}
                     style={({ pressed }) => [
                       {
@@ -173,7 +175,7 @@ export default function SubscriptionScreen() {
                       {PLAN_PRICE[plan]}
                     </Txt>
                     <Txt size={11} color={t.colors.textSecondary}>
-                      {current ? 'Current plan' : PLAN_PERIOD[plan]}
+                      {current ? tr('sub.currentPlan') : planPeriod(plan, tr)}
                     </Txt>
                   </Pressable>
                 );
@@ -182,13 +184,11 @@ export default function SubscriptionScreen() {
           </View>
 
           <Txt size={12} color={t.colors.textSecondary} lineHeight={18}>
-            {Platform.OS === 'android'
-              ? 'Billing runs through Google Play. Changes, cancellations and refunds are handled in your Play Store account, not in RoadReady.'
-              : 'Billing runs through the App Store. Changes, cancellations and refunds are handled in your Apple ID subscription settings, not in RoadReady.'}
+            {tr(Platform.OS === 'android' ? 'sub.billingAndroid' : 'sub.billingIos')}
           </Txt>
 
           <Button
-            label={Platform.OS === 'android' ? 'Open Google Play subscriptions' : 'Open App Store subscriptions'}
+            label={tr(Platform.OS === 'android' ? 'sub.openStoreAndroid' : 'sub.openStoreIos')}
             icon="gem"
             onPress={() => void openStore()}
           />

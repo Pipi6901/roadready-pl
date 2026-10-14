@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 interface NavBarProps {
@@ -16,10 +17,11 @@ interface NavBarProps {
 /** Nav bar from the mockup: 36pt round button + 17pt bold title. */
 export function NavBar({ title, action = 'back', onAction }: NavBarProps) {
   const t = useTheme();
+  const tr = useT();
   const router = useRouter();
 
   const icon: IconName = action === 'close' ? 'x' : 'chevron-left';
-  const label = action === 'close' ? 'Close' : 'Back';
+  const label = tr(action === 'close' ? 'a11y.close' : 'a11y.back');
 
   return (
     <View

@@ -38,7 +38,7 @@ interface QuestionRunnerProps {
  */
 export function QuestionRunner({
   questions, summaryTitle, summarySubtitle, onExit, onRestart,
-  restartLabel = 'Play Again', exitLabel = 'Back to Practice',
+  restartLabel, exitLabel,
 }: QuestionRunnerProps) {
   const t = useTheme();
   const tr = useT();
@@ -147,9 +147,9 @@ export function QuestionRunner({
         correct={correctCount}
         xpEarned={sessionXp}
         onRestart={onRestart ? restart : undefined}
-        restartLabel={restartLabel}
+        restartLabel={restartLabel ?? tr('quiz.playAgain')}
         onExit={onExit}
-        exitLabel={exitLabel}
+        exitLabel={exitLabel ?? tr('mock.backToPractice')}
       />
     );
   }

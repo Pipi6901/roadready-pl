@@ -54,7 +54,7 @@ export default function MockResultsScreen() {
     return {
       id,
       position,
-      topicName: question ? (getTopic(question.topicId)?.name ?? question.topicId) : 'Question',
+      topicName: question ? (getTopic(question.topicId)?.name ?? question.topicId) : tr('mock.questionFallback'),
       subtopic: question?.subtopic ?? null,
     };
   });
@@ -79,7 +79,11 @@ export default function MockResultsScreen() {
           {/* Icon + word carry the verdict; the colour only reinforces it. */}
           <Row
             accessible
-            accessibilityLabel={`${attempt.passed ? 'Passed' : 'Failed'}. Score ${attempt.score} out of ${attempt.total} points`}
+            accessibilityLabel={tr('mock.verdictA11y', {
+              verdict: tr(attempt.passed ? 'mock.passed' : 'mock.notPassed'),
+              score: attempt.score,
+              total: attempt.total,
+            })}
             style={{
               gap: 6,
               paddingVertical: 6,
@@ -90,7 +94,7 @@ export default function MockResultsScreen() {
           >
             <Icon name={attempt.passed ? 'circle-check' : 'circle-x'} size={16} color={verdictColor} />
             <Txt size={14} weight="700" color={verdictColor}>
-              {attempt.passed ? 'Passed!' : 'Not passed'}
+              {tr(attempt.passed ? 'mock.passed' : 'mock.notPassed')}
             </Txt>
           </Row>
 

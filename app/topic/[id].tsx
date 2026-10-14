@@ -66,7 +66,7 @@ export default function TopicDetailScreen() {
       <Row style={{ height: 52, paddingHorizontal: 20 }}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Go back"
+          accessibilityLabel={tr('a11y.back')}
           onPress={() => router.back()}
           hitSlop={8}
           style={{
@@ -250,7 +250,7 @@ export default function TopicDetailScreen() {
             })}
             {hidden > 0 ? (
               <Txt size={12} color={t.colors.textMuted} align="center" style={{ paddingVertical: 6 }}>
-                … and {hidden} more {hidden === 1 ? 'lesson' : 'lessons'}
+                {tr(hidden === 1 ? 'topic.andMore.one' : 'topic.andMore', { count: hidden })}
               </Txt>
             ) : null}
           </View>

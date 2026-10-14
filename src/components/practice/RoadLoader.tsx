@@ -11,6 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { Icon } from '@/components/ui/Icon';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 const DASH = 26;
@@ -25,6 +26,7 @@ const PERIOD = DASH + GAP;
  */
 export function RoadLoader({ width = 260 }: { width?: number }) {
   const t = useTheme();
+  const tr = useT();
   const shift = useSharedValue(0);
   const bob = useSharedValue(0);
 
@@ -51,7 +53,12 @@ export function RoadLoader({ width = 260 }: { width?: number }) {
   const dashCount = Math.ceil(width / PERIOD) + 2;
 
   return (
-    <View style={{ width, alignItems: 'center', gap: 6 }} accessible accessibilityLabel="Loading" accessibilityRole="progressbar">
+    <View
+      style={{ width, alignItems: 'center', gap: 6 }}
+      accessible
+      accessibilityLabel={tr('a11y.loading')}
+      accessibilityRole="progressbar"
+    >
       <Animated.View style={[carStyle, { zIndex: 1 }]}>
         <View
           style={{

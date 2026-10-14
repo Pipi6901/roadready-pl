@@ -1,29 +1,14 @@
 import React from 'react';
 
 import { useSettings } from '@/store/SettingsProvider';
-import { CATALOGUES, EN, type StringKey } from './strings';
-import { dateLocaleFor, FALLBACK_UI_LOCALE } from './locales';
+import { type StringKey } from './strings';
+import { dateLocaleFor } from './locales';
+import { translate, type Translate } from './translate';
 
-export type Translate = (key: StringKey, vars?: Record<string, string | number>) => string;
-
-/** Fills `{name}` placeholders. Unknown names are left alone rather than blanked. */
-function interpolate(template: string, vars?: Record<string, string | number>): string {
-  if (!vars) return template;
-  return template.replace(/\{(\w+)\}/g, (whole, name: string) =>
-    name in vars ? String(vars[name]) : whole,
-  );
-}
-
-export function translate(
-  locale: string,
-  key: StringKey,
-  vars?: Record<string, string | number>,
-): string {
-  // English last, and unconditionally: a key with no translation yet reads in
-  // English rather than as a blank or a raw dotted key.
-  const value = CATALOGUES[locale]?.[key] ?? CATALOGUES[FALLBACK_UI_LOCALE]?.[key] ?? EN[key];
-  return interpolate(value, vars);
-}
+// Re-exported so the many screens that import both the hook and the plain
+// function from here keep working, and so there is still one obvious place to
+// look for either.
+export { translate, type Translate };
 
 /**
  * The interface translator.

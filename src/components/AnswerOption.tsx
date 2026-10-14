@@ -4,6 +4,7 @@ import { Pressable, View } from 'react-native';
 import { BilingualText } from '@/components/BilingualText';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Txt } from '@/components/ui/primitives';
+import { useT } from '@/features/i18n/useT';
 import { useTheme } from '@/theme/ThemeProvider';
 
 /**
@@ -40,6 +41,7 @@ export function AnswerOption({
   text, translation, state, letter, disabled = false, onPress,
 }: AnswerOptionProps) {
   const t = useTheme();
+  const tr = useT();
 
   const skin: Record<
     AnswerOptionState,
@@ -74,7 +76,7 @@ export function AnswerOption({
       badgeFg: t.colors.textInverse,
       icon: 'check',
       iconColor: t.colors.accentDark,
-      a11y: ', your answer',
+      a11y: tr('a11y.yourAnswer'),
     },
     correct: {
       bg: t.colors.successBg,
@@ -84,7 +86,7 @@ export function AnswerOption({
       badgeFg: t.colors.textInverse,
       icon: 'circle-check',
       iconColor: t.colors.successText,
-      a11y: ', correct',
+      a11y: tr('a11y.correct'),
     },
     incorrect: {
       bg: t.colors.errorBg,
@@ -94,7 +96,7 @@ export function AnswerOption({
       badgeFg: t.colors.textInverse,
       icon: 'circle-x',
       iconColor: t.colors.error,
-      a11y: ', incorrect',
+      a11y: tr('a11y.incorrect'),
     },
     'revealed-correct': {
       bg: t.colors.successBg,
@@ -104,7 +106,7 @@ export function AnswerOption({
       badgeFg: t.colors.textInverse,
       icon: 'circle-check',
       iconColor: t.colors.successText,
-      a11y: ', this was the correct answer',
+      a11y: tr('a11y.wasCorrect'),
     },
   };
 

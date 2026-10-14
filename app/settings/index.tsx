@@ -303,7 +303,7 @@ export default function SettingsScreen() {
             icon="gem"
             iconColor={t.colors.amberDark}
           >
-            <SettingsRow label={tr('settings.row.currentPlan')} value={planLabel(subscription.state)} />
+            <SettingsRow label={tr('settings.row.currentPlan')} value={planLabel(subscription.state, tr)} />
             <SettingsRow
               label={tr('settings.row.renewalDate')}
               value={formatDate(subscription.state.renewsAt, dateLocale)}

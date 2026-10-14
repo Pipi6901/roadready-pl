@@ -41,11 +41,12 @@ function useFrameStyle() {
  */
 function LoadingFrame({ media }: { media: MediaAsset }) {
   const t = useTheme();
+  const tr = useT();
   const frame = useFrameStyle();
   return (
     <View
       accessible
-      accessibilityLabel="Loading"
+      accessibilityLabel={tr('a11y.loading')}
       style={[frame, { width: '100%', aspectRatio: aspectOf(media), alignItems: 'center', justifyContent: 'center' }]}
     >
       <ActivityIndicator color={t.colors.accent} />
@@ -54,6 +55,7 @@ function LoadingFrame({ media }: { media: MediaAsset }) {
 }
 
 function QuestionImage({ media }: { media: MediaAsset }) {
+  const tr = useT();
   const frame = useFrameStyle();
   const uri = useMediaUri(media);
   if (!uri) return <LoadingFrame media={media} />;
@@ -66,7 +68,7 @@ function QuestionImage({ media }: { media: MediaAsset }) {
         resizeMode="cover"
         accessibilityIgnoresInvertColors
         accessible
-        accessibilityLabel="Question illustration"
+        accessibilityLabel={tr('a11y.questionImage')}
       />
     </View>
   );

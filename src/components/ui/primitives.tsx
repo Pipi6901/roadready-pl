@@ -272,7 +272,6 @@ export function ProgressBar({ value, height = 8, trackColor, fillColor }: Progre
       useNativeDriver: false,
     }).start();
     return () => progress.removeListener(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pct]);
 
   return (

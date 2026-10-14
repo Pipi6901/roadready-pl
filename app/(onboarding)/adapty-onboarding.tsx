@@ -97,7 +97,7 @@ export default function AdaptyOnboardingScreen() {
         <Pressable
           onPress={skipToApp}
           accessibilityRole="button"
-          accessibilityHint="Skips the intro and opens the app"
+          accessibilityHint={tr('a11y.skipIntro')}
           style={{ paddingVertical: 12, paddingHorizontal: 20 }}
         >
           <Txt size={14} weight="600" color={t.colors.textSecondary}>

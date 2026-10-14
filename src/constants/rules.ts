@@ -55,56 +55,24 @@ export const FREE_TIER_PRESETS = {
 
 export const FREE_TIER: FreeTier = FREE_TIER_PRESETS.launch;
 
-export const ACHIEVEMENT_META: Record<string, { title: string; description: string; icon: string }> = {
-  'first-lesson': {
-    title: 'First Lesson',
-    description: 'Complete your first lesson',
-    icon: 'trophy',
-  },
-  'streak-5': {
-    title: '5-Day Streak',
-    description: 'Practise five days in a row',
-    icon: 'flame',
-  },
-  'questions-100': {
-    title: '100 Questions',
-    description: 'Master 100 questions',
-    icon: 'book-open-check',
-  },
-  'mock-passed': {
-    title: 'Mock Passed',
-    description: 'Pass a full mock test',
-    icon: 'clipboard-check',
-  },
-  'streak-14': {
-    title: 'Two-Week Streak',
-    description: 'Practise fourteen days in a row',
-    icon: 'crown',
-  },
-  'xp-500': {
-    title: '500 XP Club',
-    description: 'Earn 500 total XP',
-    icon: 'gem',
-  },
-  'topic-master': {
-    title: 'Topic Master',
-    description: 'Finish every lesson in a topic',
-    icon: 'list-checks',
-  },
-  'road-ready': {
-    title: 'Road Ready',
-    description: 'Finish every lesson in every topic',
-    icon: 'car-front',
-  },
-  'fifty-correct': {
-    title: 'Half Century',
-    description: 'Answer 50 questions correctly',
-    icon: 'check-check',
-  },
-  'mock-x3': {
-    title: 'Mock Test Regular',
-    description: 'Complete three mock tests',
-    icon: 'timer',
-  },
+/**
+ * Icons only.
+ *
+ * The English title and description that used to sit beside each icon were
+ * never read: both screens take the name and the blurb from the catalogue by
+ * `ach.<id>.title` / `.desc`, which is how they come out in seven languages.
+ * Keeping a second, untranslated copy here only invited the two to diverge.
+ */
+export const ACHIEVEMENT_META: Record<string, { icon: string }> = {
+  'first-lesson': { icon: 'trophy' },
+  'streak-5': { icon: 'flame' },
+  'questions-100': { icon: 'book-open-check' },
+  'mock-passed': { icon: 'clipboard-check' },
+  'streak-14': { icon: 'crown' },
+  'xp-500': { icon: 'gem' },
+  'topic-master': { icon: 'list-checks' },
+  'road-ready': { icon: 'car-front' },
+  'fifty-correct': { icon: 'check-check' },
+  'mock-x3': { icon: 'timer' },
 };
 

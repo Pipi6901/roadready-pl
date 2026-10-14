@@ -81,7 +81,7 @@ export default function MockPreparingScreen() {
             {tr('mock.preparing')}
           </Txt>
           <Txt size={14} color={t.colors.textSecondary} align="center" lineHeight={20}>
-            Every picture and clip is downloaded before the clock starts, so nothing has to load while you are answering.
+            {tr('mock.prepareNote')}
           </Txt>
         </View>
 

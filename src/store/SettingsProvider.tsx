@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { AppState } from 'react-native';
 
 import { deviceUiLocale, findLocale, findUiLocale, isExamLanguage } from '@/features/i18n/locales';
+import { translate } from '@/features/i18n/translate';
 import { cancelDailyReminder, hasNotificationPermission, scheduleDailyReminder } from '@/features/notifications/reminders';
 import { KEYS, load, save } from './storage';
 
@@ -73,7 +74,9 @@ const DEFAULTS: Settings = {
   uiLocale: null,
   themeMode: 'dark',
   examDate: null,
-  displayName: 'Learner',
+  // Empty, not 'Learner': the placeholder is translated at display time
+  // below, so a Polish learner is not greeted by an English noun.
+  displayName: '',
   firstLaunchAt: new Date().toISOString(),
   // Defaults off, not on: nothing ever requests the OS notification
   // permission at first launch, so an "on" default here would show the
@@ -229,6 +232,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     return {
       ...settings,
       ready,
+      // Derived, so no screen has to know the stored value can be empty.
+      displayName: settings.displayName || translate(uiLocaleCode, 'profile.defaultName'),
       update,
       reset,
       questionLocale,

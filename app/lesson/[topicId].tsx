@@ -264,7 +264,7 @@ export default function LessonScreen() {
         <Row style={{ paddingTop: 16, paddingHorizontal: 20 }}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Close"
+            accessibilityLabel={tr('a11y.close')}
             onPress={() => router.back()}
             hitSlop={12}
             style={{ width: 44, height: 44, alignItems: 'flex-start', justifyContent: 'center' }}

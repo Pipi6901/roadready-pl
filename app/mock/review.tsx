@@ -107,7 +107,7 @@ export default function MockReviewScreen() {
                 <Icon name={skin[status].icon} size={9} color={skin[status].fg} />
               </View>
               <Txt size={11} color={t.colors.textSecondary}>
-                {status === 'answered' ? 'Answered' : status === 'unanswered' ? 'Not answered' : 'Flagged'}
+                {skin[status].word}
               </Txt>
             </Row>
           ))}

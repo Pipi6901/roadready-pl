@@ -199,7 +199,7 @@ export default function ProfileScreen() {
               <Pressable
                 onPress={() => router.push('/(modals)/edit-name' as Href)}
                 accessibilityRole="button"
-                accessibilityLabel={`${displayName}. Edit name`}
+                accessibilityLabel={tr('profile.editNameA11y', { name: displayName })}
                 hitSlop={8}
                 style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 8, opacity: pressed ? 0.7 : 1 })}
               >
@@ -288,10 +288,10 @@ export default function ProfileScreen() {
               />
               <View style={{ gap: 2, flex: 1 }}>
                 <Txt size={14} weight="600">
-                  Your test is in {daysUntilExam} {daysUntilExam === 1 ? 'day' : 'days'}
+                  {tr(daysUntilExam === 1 ? 'home.examIn.one' : 'home.examIn', { days: daysUntilExam ?? 0 })}
                 </Txt>
                 <Txt size={12} color={t.colors.textSecondary}>
-                  You&apos;re {progress.readiness}% ready
+                  {tr('home.readiness', { percent: progress.readiness })}
                 </Txt>
               </View>
             </Row>

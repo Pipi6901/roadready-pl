@@ -64,7 +64,7 @@ export default function AchievementModal() {
       <Pressable
         onPress={() => router.back()}
         accessibilityRole="button"
-        accessibilityLabel="Dismiss"
+        accessibilityLabel={tr('a11y.dismiss')}
         style={{
           position: 'absolute',
           top: 0,
