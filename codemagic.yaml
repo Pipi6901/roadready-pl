@@ -134,7 +134,19 @@ workflows:
         script: npx expo prebuild --platform ios --clean --no-install
 
       - name: Install CocoaPods
-        script: cd ios && pod install
+        # React-Core-prebuilt is a ~94 MB download from Maven Central. A dropped
+        # connection ("Connection reset by peer") fails the whole step although
+        # nothing is wrong with the project, so try again before giving up.
+        script: |
+          cd ios
+          for attempt in 1 2 3; do
+            if pod install; then
+              exit 0
+            fi
+            echo "pod install failed (attempt $attempt of 3)"
+            sleep 20
+          done
+          exit 1
 
       - name: Set the build number
         # $BUILD_NUMBER is Codemagic's own counter, so it always goes up.
